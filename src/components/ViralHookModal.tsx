@@ -24,18 +24,18 @@ export default function ViralHookModal({
       onClose={onClose}
       header={
         <BottomSheet.Header>
-          누군가 당신을 궁금해합니다
+          ✨ 인연의 실이 연결되었습니다
         </BottomSheet.Header>
       }
       headerDescription={
         <BottomSheet.HeaderDescription>
-          <span style={{ color: '#A78BFA' }}>{masked}</span>님이 당신과의 <span style={{ color: '#EC4899' }}>오늘의 궁합</span>을 보고 싶어합니다
+          <span style={{ color: '#ffd700' }}>{masked}</span>님이 당신과의 <span style={{ color: '#9370db' }}>운명적 궁합</span>을 알고 싶어합니다
         </BottomSheet.HeaderDescription>
       }
       cta={
         <BottomSheet.DoubleCTA
-          primaryLabel="궁합 확인하기 →"
-          secondaryLabel="나중에 할게요"
+          primaryLabel="✨ 인연 확인하기"
+          secondaryLabel="다음에 볼게요"
           onPrimaryClick={onAccept}
           onSecondaryClick={onClose}
         />
@@ -43,33 +43,34 @@ export default function ViralHookModal({
     >
       {/* 티저 박스 */}
       <div style={{
-        background: 'rgba(139, 92, 246, 0.15)',
+        background: 'linear-gradient(135deg, rgba(147, 112, 219, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%)',
         borderRadius: 12,
         padding: 16,
-        border: '1px solid rgba(139, 92, 246, 0.2)',
+        border: '1px solid rgba(147, 112, 219, 0.3)',
+        boxShadow: '0 0 20px rgba(147, 112, 219, 0.1)',
       }}>
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 8 }}>
-          응답하면 볼 수 있는 것
+          🔮 응답하면 드러나는 운명
         </div>
-        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', lineHeight: 1.6 }}>
-          ✨ 둘 사이의 케미 점수<br />
-          🔥 강점과 마찰 포인트<br />
-          💡 관계 부스터 힌트
+        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', lineHeight: 1.8 }}>
+          💫 둘의 인연 점수<br />
+          🌙 숨겨진 강점과 마찰의 기운<br />
+          🌟 관계를 빛나게 할 비밀
         </div>
       </div>
 
       {/* 긴급성 */}
       <div style={{
         fontSize: 12,
-        color: '#F59E0B',
+        color: '#ffd700',
         marginTop: 16,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 6,
       }}>
-        <span>⏰</span>
-        <span>이 초대는 <strong>오늘만</strong> 유효합니다</span>
+        <span>🌙</span>
+        <span>이 인연의 실은 <strong>오늘 자정</strong>에 사라집니다</span>
       </div>
 
       {/* 사회적 증거 */}
@@ -79,7 +80,7 @@ export default function ViralHookModal({
         color: 'rgba(255,255,255,0.4)',
         textAlign: 'center',
       }}>
-        오늘 <strong style={{ color: 'rgba(255,255,255,0.6)' }}>2,847쌍</strong>이 궁합을 확인했습니다
+        오늘 <strong style={{ color: '#9370db' }}>2,847쌍</strong>의 인연이 운명을 확인했습니다
       </div>
     </BottomSheet>
   );
