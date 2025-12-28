@@ -12,20 +12,20 @@ export type CopyPack = {
 export function copyFor(v: Variant): CopyPack {
   if (v === 'A') {
     return {
-      landingSubtitle: '오늘 점수는 공짜. 디테일은 “행동”으로 연다.',
-      startCta: '1초 만에 분석 시작',
-      shareDaily: (link) => `내 소울 랩 점수 떴다. 너도 찍어봐: ${link}`,
-      shareChemistry: (link) => `너랑 내 케미 궁금함. 링크로 들어와: ${link}`,
-      lockReason: '상세가 잠겨 있습니다. 광고 또는 “궁합 성사”로 오늘 잠금 해제.',
-      unlockedReason: '오늘 상세가 열렸습니다. 지금 공유해서 다음 사람을 끌어오세요.',
+      landingSubtitle: '오늘의 기운이 당신을 기다립니다. 운명의 문을 여세요.',
+      startCta: '✨ 운명의 문 열기',
+      shareDaily: (link) => `✨ 오늘 별들이 내게 전한 메시지야. 너의 운명도 확인해봐: ${link}`,
+      shareChemistry: (link) => `🔮 우리 사이의 인연이 궁금해. 운명의 실을 이어볼래? ${link}`,
+      lockReason: '깊은 운명이 봉인되어 있습니다. 기운을 모으거나 인연을 맺으면 열립니다.',
+      unlockedReason: '봉인이 해제되었습니다. 인연의 실을 이어 운명을 공유하세요.',
     };
   }
   return {
-    landingSubtitle: '가볍게 즐기는 분석. 오늘의 힌트를 확인해요.',
-    startCta: '분석 시작하기',
-    shareDaily: (link) => `오늘의 분석 결과 확인해봐: ${link}`,
-    shareChemistry: (link) => `우리 케미 분석해볼래? ${link}`,
-    lockReason: '상세가 잠겨 있어요. 광고 또는 궁합 성사로 열 수 있어요.',
-    unlockedReason: '상세가 열렸어요. 공유하면 친구도 바로 확인할 수 있어요.',
+    landingSubtitle: '별들이 당신에게 속삭이고 있어요. 오늘의 운명을 확인하세요.',
+    startCta: '✨ 운명 확인하기',
+    shareDaily: (link) => `🌟 오늘 나의 운명이 도착했어. 너도 확인해봐: ${link}`,
+    shareChemistry: (link) => `💫 우리의 인연이 궁금하지 않아? 운명을 확인해보자: ${link}`,
+    lockReason: '깊은 메시지가 봉인되어 있어요. 기운을 모으거나 인연을 맺으면 열려요.',
+    unlockedReason: '운명의 봉인이 풀렸어요. 인연에게 공유하면 함께 볼 수 있어요.',
   };
 }
