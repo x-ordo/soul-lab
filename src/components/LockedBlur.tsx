@@ -1,19 +1,31 @@
 import React from 'react';
 
+const MASKED_PLACEHOLDER = '●●●●●●●●●●●●●●●●●●●●';
+
 export default function LockedBlur({
   title,
   subtitle,
   onUnlock,
-  children,
+  sections,
 }: {
   title: string;
   subtitle: string;
   onUnlock: () => void;
-  children: React.ReactNode;
+  sections: { label: string }[];
 }) {
   return (
     <div className="lockWrap">
-      <div className="lockContent">{children}</div>
+      <div className="lockContent">
+        <div className="card">
+          {sections.map((s, i) => (
+            <React.Fragment key={s.label}>
+              {i > 0 && <hr className="hr" />}
+              <div className="h2">{s.label}</div>
+              <p className="p" style={{ marginTop: 8 }}>{MASKED_PLACEHOLDER}</p>
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
       <div className="lockOverlay">
         <div style={{ width: '100%' }}>
           <div className="lockTitle">{title}</div>

@@ -166,18 +166,16 @@ export default function ResultPage() {
 
       {isLocked ? (
         <>
-          <LockedBlur title="상세 풀이 잠김" subtitle="광고 또는 궁합 성사로 ‘행운의 시간/귀인/주의점’을 공개합니다." onUnlock={unlock}>
-            <div className="card">
-              <div className="h2">행운의 시간</div>
-              <p className="p" style={{ marginTop: 8 }}>{report.luckyTime}</p>
-              <hr className="hr" />
-              <div className="h2">귀인</div>
-              <p className="p" style={{ marginTop: 8 }}>{report.helper}</p>
-              <hr className="hr" />
-              <div className="h2">주의할 것</div>
-              <p className="p" style={{ marginTop: 8 }}>{report.caution}</p>
-            </div>
-          </LockedBlur>
+          <LockedBlur
+            title="상세 풀이 잠김"
+            subtitle="광고 또는 궁합 성사로 '행운의 시간/귀인/주의점'을 공개합니다."
+            onUnlock={unlock}
+            sections={[
+              { label: '행운의 시간' },
+              { label: '귀인' },
+              { label: '주의할 것' },
+            ]}
+          />
 
           <div style={{ height: 12 }} />
           <AdRewardButton adGroupId={adGroupId} userKey={myKey} scope="daily" onUnlocked={unlock} />
