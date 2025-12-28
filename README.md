@@ -1,5 +1,6 @@
 # Soul Lab (소울 랩)
 
+[![CI](https://github.com/Prometheus-P/soul-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/Prometheus-P/soul-lab/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](./LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./package.json)
 
