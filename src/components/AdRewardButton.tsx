@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Button } from '@toss/tds-mobile';
 import { preloadRewardedAd, showRewardedAd } from '../lib/toss';
 import { todayKey } from '../lib/seed';
 import { markRewardEarned } from '../lib/reward';
@@ -55,9 +56,23 @@ export default function AdRewardButton({
     showRewardedAd(adGroupId, onReward, onFallback);
   };
 
+  const buttonText = loading
+    ? '로딩 중...'
+    : ready
+    ? '광고 보고 상세 풀이 무료 확인'
+    : '광고 불러오는 중...';
+
   return (
-    <button className="btn btnPrimary" onClick={onClick} disabled={loading}>
-      {loading ? '로딩 중...' : ready ? '광고 보고 상세 풀이 무료 확인' : '광고 불러오는 중...'}
-    </button>
+    <Button
+      size="large"
+      color="primary"
+      variant="fill"
+      display="full"
+      loading={loading}
+      disabled={loading}
+      onClick={onClick}
+    >
+      {buttonText}
+    </Button>
   );
 }

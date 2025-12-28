@@ -13,7 +13,13 @@
     "jsx": "react-jsx",
 
     "strict": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@toss/tds-mobile": ["./src/mocks/tds-mobile.tsx"],
+      "@toss/tds-mobile-ait": ["./src/mocks/tds-mobile-ait.tsx"],
+      "@apps-in-toss/web-framework": ["./src/mocks/web-framework.ts"]
+    }
   },
   "include": ["src"]
 }

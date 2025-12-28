@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import { getPublicKey, getUserSeed, hasThirdPartyConsent, getUnlockedDate, getViralUnlockedDate } from '../lib/storage';
 import { makeDetailReport } from '../lib/report';
@@ -9,6 +10,7 @@ import { buildInviteDeepLink } from '../lib/handshake';
 import { ogImageUrl } from '../lib/og';
 import { copyFor } from '../lib/copyVariants';
 import { getVariant } from '../lib/variant';
+import { track } from '../lib/analytics';
 
 export default function DetailPage() {
   React.useEffect(() => { track('detail_view'); }, []);
@@ -24,12 +26,14 @@ export default function DetailPage() {
   const unlockedToday = (getUnlockedDate() === dk) || (getViralUnlockedDate() === dk);
   if (!unlockedToday) {
     return (
-      <div className="page">
+      <div className="container">
         <Header title="상세 잠김" subtitle="오늘은 아직 상세가 잠겨 있습니다." />
         <div className="card">
           <div className="p">상세는 <b>광고 1회</b> 또는 <b>궁합 성사</b>로 열립니다.</div>
           <div style={{ marginTop: 12 }}>
-            <button className="btn btnPrimary" onClick={() => nav('/result')}>결과로 돌아가기</button>
+            <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/result')}>
+              결과로 돌아가기
+            </Button>
           </div>
         </div>
       </div>
@@ -50,7 +54,7 @@ export default function DetailPage() {
 
   const onInviteContacts = async () => {
   if (!thirdOk) {
-    alert('친구 초대 기능은 “제3자 정보 제공 동의” 후에만 활성화됩니다.');
+    alert('친구 초대 기능은 "제3자 정보 제공 동의" 후에만 활성화됩니다.');
     nav('/agreement');
     return;
   }
@@ -68,7 +72,7 @@ export default function DetailPage() {
 
     runContactsViral(
       moduleId,
-      () => alert('연락처 초대 UI가 열렸습니다. 메시지 입력칸에 “붙여넣기”로 링크를 보내세요. (링크는 이미 복사됨)'),
+      () => alert('연락처 초대 UI가 열렸습니다. 메시지 입력칸에 "붙여넣기"로 링크를 보내세요. (링크는 이미 복사됨)'),
       () => {}
     );
 
@@ -82,7 +86,7 @@ export default function DetailPage() {
 
   const onInviteShare = async () => {
   if (!thirdOk) {
-    alert('친구 초대 기능은 “제3자 정보 제공 동의” 후에만 활성화됩니다.');
+    alert('친구 초대 기능은 "제3자 정보 제공 동의" 후에만 활성화됩니다.');
     nav('/agreement');
     return;
   }
@@ -129,30 +133,30 @@ export default function DetailPage() {
           <>
             <div className="small">친구 초대 기능은 동의 후 활성화됩니다.</div>
             <div style={{ height: 10 }} />
-            <button className="btn btnPrimary" onClick={() => nav('/agreement')}>
+            <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/agreement')}>
               동의 설정 열기
-            </button>
+            </Button>
           </>
         ) : (
           <>
             <div className="small">상대가 접속해야 결과가 열립니다. (오늘만 유효)</div>
             <div style={{ height: 10 }} />
-            <button className="btn btnPrimary" onClick={onInviteContacts}>
+            <Button size="large" color="primary" variant="fill" display="full" onClick={onInviteContacts}>
               친구 초대(연락처)
-            </button>
+            </Button>
             <div style={{ height: 10 }} />
-            <button className="btn btnGhost" onClick={onInviteShare}>
+            <Button size="large" color="dark" variant="weak" display="full" onClick={onInviteShare}>
               초대 링크 공유(대체)
-            </button>
+            </Button>
           </>
         )}
       </div>
 
-      <button className="btn btnGhost" onClick={() => nav('/result')}>
+      <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/result')}>
         결과 요약으로
-      </button>
+      </Button>
 
-      <div className="footer">* 엔터테인먼트 목적의 “연출된 분석”입니다.</div>
+      <div className="footer">* 엔터테인먼트 목적의 "연출된 분석"입니다.</div>
     </div>
   );
 }

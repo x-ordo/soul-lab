@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button, AgreementV4, TextField } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import { COMPLIANCE_COPY } from '../lib/complianceCopy';
 import { getAgreement, setAgreement, getBirthDate, setBirthDate } from '../lib/storage';
@@ -58,45 +59,66 @@ export default function AgreementPage() {
 
         <div className="h2">동의</div>
 
-        <label className="checkRow">
-          <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} />
-          <span className="p">{COMPLIANCE_COPY.termsTitle}</span>
-        </label>
+        <AgreementV4.SingleCheckboxField
+          type="medium"
+          necessity="mandatory"
+          checked={terms}
+          onCheckedChange={setTerms}
+        >
+          {COMPLIANCE_COPY.termsTitle}
+        </AgreementV4.SingleCheckboxField>
 
-        <label className="checkRow">
-          <input type="checkbox" checked={thirdParty} onChange={(e) => setThirdParty(e.target.checked)} />
-          <span className="p">{COMPLIANCE_COPY.thirdTitle}</span>
-        </label>
+        <AgreementV4.SingleCheckboxField
+          type="medium"
+          necessity="optional"
+          checked={thirdParty}
+          onCheckedChange={setThirdParty}
+        >
+          {COMPLIANCE_COPY.thirdTitle}
+        </AgreementV4.SingleCheckboxField>
 
-        <div className="small" style={{ marginTop: 8 }}>
-          {COMPLIANCE_COPY.thirdExplain.map((t) => (
-            <div key={t}>• {t}</div>
+        <AgreementV4.Description indent={1}>
+          {COMPLIANCE_COPY.thirdExplain.map((t, i) => (
+            <div key={i}>• {t}</div>
           ))}
-        </div>
+        </AgreementV4.Description>
 
-        <label className="checkRow" style={{ marginTop: 12 }}>
-          <input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} />
-          <span className="p">{COMPLIANCE_COPY.marketingTitle}</span>
-        </label>
+        <AgreementV4.SingleCheckboxField
+          type="medium"
+          necessity="optional"
+          checked={marketing}
+          onCheckedChange={setMarketing}
+        >
+          {COMPLIANCE_COPY.marketingTitle}
+        </AgreementV4.SingleCheckboxField>
 
         <hr className="hr" />
         <div className="h2">{COMPLIANCE_COPY.birthTitle}</div>
         <div className="small">{COMPLIANCE_COPY.birthHint}</div>
 
-        <input
-          className="input"
-          value={birth}
-          onChange={(e) => setBirth(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))}
-          placeholder="YYYYMMDD"
-          inputMode="numeric"
-        />
-
-        {err ? <div className="small" style={{ marginTop: 8, color: '#d92d20' }}>{err}</div> : null}
+        <div style={{ marginTop: 8 }}>
+          <TextField
+            value={birth}
+            onChange={(v) => setBirth(v.replace(/[^0-9]/g, '').slice(0, 8))}
+            placeholder="YYYYMMDD"
+            inputMode="numeric"
+            maxLength={8}
+            error={!!err}
+            errorMessage={err ?? undefined}
+          />
+        </div>
       </div>
 
-      <button className="btn btnPrimary" disabled={!canGo} onClick={onContinue}>
+      <Button
+        size="large"
+        color="primary"
+        variant="fill"
+        display="full"
+        disabled={!canGo}
+        onClick={onContinue}
+      >
         동의하고 분석 시작
-      </button>
+      </Button>
 
       <div className="footer">{COMPLIANCE_COPY.privacyFoot}</div>
     </div>

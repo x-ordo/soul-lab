@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import LockedBlur from '../components/LockedBlur';
 import AdRewardButton from '../components/AdRewardButton';
@@ -58,7 +59,7 @@ export default function ChemistryPage() {
 
   const unlockToday = () => setUnlockedDate(dk);
 
-  
+
   const onCopyInviteLink = async () => {
     track('chem_invite_copy');
     // inviter selfInvite: 내 초대 링크를 다시 복사/공유
@@ -112,7 +113,7 @@ const onMakeResponseLink = async () => {
   };
 
   return (
-    <div className="page">
+    <div className="container">
       <Header title="궁합 분석" subtitle="둘 다 접속해야 결과가 열립니다." />
 
       {status.mode === 'invalid' && (
@@ -120,7 +121,9 @@ const onMakeResponseLink = async () => {
           <div className="h2">오류</div>
           <p className="p" style={{ marginTop: 8 }}>{status.message}</p>
           <div style={{ marginTop: 12 }}>
-            <button className="btn btnGhost" onClick={() => nav('/')}>홈으로</button>
+            <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/')}>
+              홈으로
+            </Button>
           </div>
         </div>
       )}
@@ -130,7 +133,9 @@ const onMakeResponseLink = async () => {
           <div className="h2">만료</div>
           <p className="p" style={{ marginTop: 8 }}>{status.message}</p>
           <div style={{ marginTop: 12 }}>
-            <button className="btn btnGhost" onClick={() => nav('/')}>홈으로</button>
+            <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/')}>
+              홈으로
+            </Button>
           </div>
         </div>
       )}
@@ -140,7 +145,9 @@ const onMakeResponseLink = async () => {
           <div className="h2">접근 제한</div>
           <p className="p" style={{ marginTop: 8 }}>{status.message}</p>
           <div style={{ marginTop: 12 }}>
-            <button className="btn btnGhost" onClick={() => nav('/')}>홈으로</button>
+            <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/')}>
+              홈으로
+            </Button>
           </div>
         </div>
       )}
@@ -150,7 +157,9 @@ const onMakeResponseLink = async () => {
           <div className="h2">초대 대기</div>
           <p className="p" style={{ marginTop: 8 }}>{status.message}</p>
           <div style={{ marginTop: 12 }}>
-            <button className="btn btnGhost" onClick={() => nav('/')}>홈으로</button>
+            <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/')}>
+              홈으로
+            </Button>
           </div>
         </div>
       )}
@@ -176,7 +185,9 @@ const onMakeResponseLink = async () => {
               응답 링크를 만들어 상대에게 보내면 궁합이 열립니다.
             </p>
             <div style={{ marginTop: 12 }}>
-              <button className="btn btnPrimary" onClick={onMakeResponseLink}>궁합 확인하고 응답 보내기</button>
+              <Button size="large" color="primary" variant="fill" display="full" onClick={onMakeResponseLink}>
+                궁합 확인하고 응답 보내기
+              </Button>
             </div>
           </div>
         </>
@@ -186,8 +197,8 @@ const onMakeResponseLink = async () => {
         <>
           <div className="card" style={{ marginBottom: 12 }}>
             <div className="h2">궁합 점수</div>
-            <div className="score">{report.score}점</div>
-            <div className="small">{report.rank}</div>
+            <div style={{ fontSize: 32, fontWeight: 900, marginTop: 8 }}>{report.score}점</div>
+            <div className="small">{report.label}</div>
           </div>
 
           <div className="card" style={{ marginBottom: 12 }}>
@@ -200,9 +211,9 @@ const onMakeResponseLink = async () => {
 
             {unlocked ? (
               <div style={{ marginTop: 10 }}>
-                <p className="p"><b>강점</b>: {report.detail.strength}</p>
-                <p className="p"><b>마찰</b>: {report.detail.friction}</p>
-                <p className="p"><b>부스터</b>: {report.detail.booster}</p>
+                <p className="p"><b>요약</b>: {report.summary}</p>
+                <p className="p"><b>마찰 포인트</b>: {report.friction}</p>
+                <p className="p"><b>관계 부스터</b>: {report.booster}</p>
               </div>
             ) : (
               <>
@@ -228,14 +239,18 @@ const onMakeResponseLink = async () => {
             )}
 
             <div style={{ marginTop: 10 }}>
-              <button className="btn btnGhost" onClick={onSharePaired}>결과 링크 공유</button>
+              <Button size="large" color="dark" variant="weak" display="full" onClick={onSharePaired}>
+                결과 링크 공유
+              </Button>
             </div>
           </div>
 
           <div className="card">
             <div className="h2">다음</div>
             <div style={{ marginTop: 12 }}>
-              <button className="btn btnPrimary" onClick={() => nav('/')}>오늘 운세로 돌아가기</button>
+              <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/')}>
+                오늘 운세로 돌아가기
+              </Button>
             </div>
           </div>
         </>
