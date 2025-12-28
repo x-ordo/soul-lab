@@ -1,0 +1,598 @@
+# 타로 카드 풀덱 (78장)
+# Major Arcana (대 아르카나) 22장 + Minor Arcana (소 아르카나) 56장
+
+majorArcana:
+  - id: 0
+    name: "바보"
+    nameEn: "The Fool"
+    emoji: "🃏"
+    upright:
+      keyword: "새로운 시작"
+      meaning: "두려움 없이 새로운 여정을 시작할 때입니다. 순수한 마음으로 모험을 떠나세요."
+      advice: "계획보다 직감을 믿으세요. 실패를 두려워하지 마세요."
+    reversed:
+      keyword: "무모함"
+      meaning: "준비 없이 뛰어들면 위험합니다. 한 번 더 생각해보세요."
+      advice: "충동적인 결정을 미루세요. 기본부터 점검하세요."
+
+  - id: 1
+    name: "마법사"
+    nameEn: "The Magician"
+    emoji: "🧙"
+    upright:
+      keyword: "창조력"
+      meaning: "당신에게 필요한 모든 도구가 준비되어 있습니다. 의지를 발휘할 때입니다."
+      advice: "집중하면 원하는 것을 이룰 수 있습니다. 행동으로 옮기세요."
+    reversed:
+      keyword: "재능 낭비"
+      meaning: "능력이 있지만 제대로 쓰지 못하고 있습니다."
+      advice: "산만함을 정리하세요. 한 가지에 집중하세요."
+
+  - id: 2
+    name: "여사제"
+    nameEn: "The High Priestess"
+    emoji: "🌙"
+    upright:
+      keyword: "직감"
+      meaning: "내면의 목소리에 귀 기울이세요. 답은 이미 당신 안에 있습니다."
+      advice: "조용히 명상하고 기다리세요. 서두르지 마세요."
+    reversed:
+      keyword: "무시된 직감"
+      meaning: "내면의 경고를 무시하고 있습니다."
+      advice: "불안한 느낌이 든다면 멈추세요. 직감을 믿으세요."
+
+  - id: 3
+    name: "여황제"
+    nameEn: "The Empress"
+    emoji: "👑"
+    upright:
+      keyword: "풍요"
+      meaning: "창조적 에너지가 넘칩니다. 결실의 시기가 다가오고 있습니다."
+      advice: "자신을 사랑하고 돌보세요. 아름다움을 추구하세요."
+    reversed:
+      keyword: "결핍감"
+      meaning: "자기 돌봄이 부족합니다. 창조력이 막혀 있습니다."
+      advice: "휴식을 취하세요. 자연과 연결되세요."
+
+  - id: 4
+    name: "황제"
+    nameEn: "The Emperor"
+    emoji: "🏛️"
+    upright:
+      keyword: "권위"
+      meaning: "구조와 질서가 필요한 시기입니다. 리더십을 발휘하세요."
+      advice: "계획을 세우고 체계적으로 움직이세요."
+    reversed:
+      keyword: "통제 욕구"
+      meaning: "너무 경직되어 있거나 통제하려 합니다."
+      advice: "유연해지세요. 통제를 내려놓으세요."
+
+  - id: 5
+    name: "교황"
+    nameEn: "The Hierophant"
+    emoji: "📿"
+    upright:
+      keyword: "전통"
+      meaning: "지혜로운 조언자를 찾거나 전통적인 방법을 따르세요."
+      advice: "멘토를 찾으세요. 검증된 방식을 신뢰하세요."
+    reversed:
+      keyword: "독단"
+      meaning: "맹목적으로 따르지 마세요. 자신만의 길을 찾아야 할 때입니다."
+      advice: "기존 규칙에 의문을 가지세요. 새로운 관점을 탐색하세요."
+
+  - id: 6
+    name: "연인"
+    nameEn: "The Lovers"
+    emoji: "💕"
+    upright:
+      keyword: "선택"
+      meaning: "중요한 선택의 기로에 서 있습니다. 마음이 이끄는 곳으로 가세요."
+      advice: "가치관에 따라 결정하세요. 진정한 연결을 추구하세요."
+    reversed:
+      keyword: "갈등"
+      meaning: "내면의 갈등이나 관계의 불화가 있습니다."
+      advice: "가치관을 점검하세요. 솔직한 대화가 필요합니다."
+
+  - id: 7
+    name: "전차"
+    nameEn: "The Chariot"
+    emoji: "🏇"
+    upright:
+      keyword: "승리"
+      meaning: "의지력으로 장애물을 극복할 때입니다. 전진하세요."
+      advice: "목표에 집중하세요. 포기하지 마세요."
+    reversed:
+      keyword: "방향 상실"
+      meaning: "통제력을 잃었거나 방향을 잃었습니다."
+      advice: "잠시 멈추고 방향을 재설정하세요."
+
+  - id: 8
+    name: "힘"
+    nameEn: "Strength"
+    emoji: "🦁"
+    upright:
+      keyword: "내면의 힘"
+      meaning: "부드러운 힘으로 상황을 다스릴 때입니다. 인내하세요."
+      advice: "분노 대신 자비를, 강압 대신 설득을 선택하세요."
+    reversed:
+      keyword: "자기 의심"
+      meaning: "자신감이 부족하거나 내면의 힘을 잃었습니다."
+      advice: "자신을 믿으세요. 두려움과 마주하세요."
+
+  - id: 9
+    name: "은둔자"
+    nameEn: "The Hermit"
+    emoji: "🏔️"
+    upright:
+      keyword: "성찰"
+      meaning: "홀로 있는 시간이 필요합니다. 내면을 탐구하세요."
+      advice: "조용한 시간을 갖고 깊이 생각하세요."
+    reversed:
+      keyword: "고립"
+      meaning: "너무 오래 홀로 있었습니다. 세상과 연결되세요."
+      advice: "사람들과 교류하세요. 고립에서 벗어나세요."
+
+  - id: 10
+    name: "운명의 수레바퀴"
+    nameEn: "Wheel of Fortune"
+    emoji: "🎡"
+    upright:
+      keyword: "전환점"
+      meaning: "운명이 돌아가고 있습니다. 큰 변화가 다가옵니다."
+      advice: "흐름에 맡기세요. 기회를 잡을 준비를 하세요."
+    reversed:
+      keyword: "저항"
+      meaning: "변화에 저항하고 있습니다. 불운이 찾아올 수 있습니다."
+      advice: "변화를 받아들이세요. 통제할 수 없는 것을 놓으세요."
+
+  - id: 11
+    name: "정의"
+    nameEn: "Justice"
+    emoji: "⚖️"
+    upright:
+      keyword: "공정함"
+      meaning: "진실이 밝혀지고 공정한 결과가 옵니다."
+      advice: "정직하게 행동하세요. 책임을 지세요."
+    reversed:
+      keyword: "불공정"
+      meaning: "부당한 상황이거나 진실이 가려져 있습니다."
+      advice: "진실을 추구하세요. 편견을 버리세요."
+
+  - id: 12
+    name: "매달린 사람"
+    nameEn: "The Hanged Man"
+    emoji: "🙃"
+    upright:
+      keyword: "관점 전환"
+      meaning: "잠시 멈추고 다른 각도에서 보세요. 희생이 필요할 수 있습니다."
+      advice: "기다림의 시간입니다. 관점을 바꾸세요."
+    reversed:
+      keyword: "무의미한 희생"
+      meaning: "불필요한 희생을 하고 있습니다. 앞으로 나아가세요."
+      advice: "지체하지 마세요. 결단을 내리세요."
+
+  - id: 13
+    name: "죽음"
+    nameEn: "Death"
+    emoji: "🦋"
+    upright:
+      keyword: "변화"
+      meaning: "끝남은 새로운 시작입니다. 변화를 받아들이세요."
+      advice: "과거를 놓으세요. 새로운 장이 열립니다."
+    reversed:
+      keyword: "저항"
+      meaning: "필요한 변화에 저항하고 있습니다."
+      advice: "끝내야 할 것을 끝내세요. 집착을 버리세요."
+
+  - id: 14
+    name: "절제"
+    nameEn: "Temperance"
+    emoji: "☯️"
+    upright:
+      keyword: "균형"
+      meaning: "조화와 균형을 찾을 때입니다. 중용을 지키세요."
+      advice: "극단을 피하세요. 인내심을 가지세요."
+    reversed:
+      keyword: "불균형"
+      meaning: "균형이 깨졌습니다. 과도하거나 부족합니다."
+      advice: "중심을 잡으세요. 극단적인 행동을 멈추세요."
+
+  - id: 15
+    name: "악마"
+    nameEn: "The Devil"
+    emoji: "⛓️"
+    upright:
+      keyword: "속박"
+      meaning: "중독이나 집착에 빠져 있습니다. 스스로를 가두고 있습니다."
+      advice: "무엇이 당신을 묶고 있는지 인식하세요. 벗어날 힘이 있습니다."
+    reversed:
+      keyword: "해방"
+      meaning: "속박에서 벗어나고 있습니다. 자유가 다가옵니다."
+      advice: "나쁜 습관을 끊으세요. 자유를 향해 나아가세요."
+
+  - id: 16
+    name: "탑"
+    nameEn: "The Tower"
+    emoji: "⚡"
+    upright:
+      keyword: "붕괴"
+      meaning: "갑작스러운 변화가 옵니다. 낡은 것이 무너집니다."
+      advice: "충격을 받아들이세요. 무너진 자리에 새로 세우세요."
+    reversed:
+      keyword: "저항하는 변화"
+      meaning: "필요한 붕괴를 피하고 있습니다."
+      advice: "피할 수 없는 변화를 받아들이세요."
+
+  - id: 17
+    name: "별"
+    nameEn: "The Star"
+    emoji: "⭐"
+    upright:
+      keyword: "희망"
+      meaning: "희망이 보입니다. 치유와 영감의 시간입니다."
+      advice: "꿈을 따르세요. 희망을 잃지 마세요."
+    reversed:
+      keyword: "절망"
+      meaning: "희망을 잃었거나 믿음이 흔들립니다."
+      advice: "작은 것부터 희망을 찾으세요. 포기하지 마세요."
+
+  - id: 18
+    name: "달"
+    nameEn: "The Moon"
+    emoji: "🌕"
+    upright:
+      keyword: "환상"
+      meaning: "모든 것이 명확하지 않습니다. 직감을 믿되 신중하세요."
+      advice: "두려움에 휘둘리지 마세요. 숨겨진 것을 탐구하세요."
+    reversed:
+      keyword: "혼란 해소"
+      meaning: "안개가 걷히고 진실이 드러납니다."
+      advice: "두려움을 직면하세요. 진실을 받아들이세요."
+
+  - id: 19
+    name: "태양"
+    nameEn: "The Sun"
+    emoji: "☀️"
+    upright:
+      keyword: "성공"
+      meaning: "밝은 에너지가 가득합니다. 성공과 기쁨이 옵니다."
+      advice: "긍정적으로 나아가세요. 빛 아래 서세요."
+    reversed:
+      keyword: "가려진 빛"
+      meaning: "기쁨이 가려져 있거나 과도한 낙관을 경계하세요."
+      advice: "현실을 직시하세요. 긍정을 되찾으세요."
+
+  - id: 20
+    name: "심판"
+    nameEn: "Judgement"
+    emoji: "📯"
+    upright:
+      keyword: "각성"
+      meaning: "과거를 돌아보고 새롭게 태어날 때입니다. 소명을 따르세요."
+      advice: "과거를 용서하세요. 높은 목적을 따르세요."
+    reversed:
+      keyword: "자기 비판"
+      meaning: "과거에 갇혀 있거나 자신을 용서하지 못합니다."
+      advice: "자신을 용서하세요. 앞으로 나아가세요."
+
+  - id: 21
+    name: "세계"
+    nameEn: "The World"
+    emoji: "🌍"
+    upright:
+      keyword: "완성"
+      meaning: "한 주기가 완성됩니다. 성취와 통합의 시간입니다."
+      advice: "성취를 축하하세요. 새로운 여정을 준비하세요."
+    reversed:
+      keyword: "미완성"
+      meaning: "무언가가 완결되지 않았습니다. 마무리가 필요합니다."
+      advice: "끝맺음을 지으세요. 부족한 것을 채우세요."
+
+minorArcana:
+  wands:
+    suit: "완드"
+    suitEn: "Wands"
+    element: "불"
+    theme: "열정, 창조력, 행동"
+    cards:
+      - rank: "ace"
+        name: "완드 에이스"
+        emoji: "🔥"
+        upright: { keyword: "영감", meaning: "새로운 열정과 창조적 에너지가 시작됩니다.", advice: "아이디어를 행동으로 옮기세요." }
+        reversed: { keyword: "지연된 시작", meaning: "시작할 준비가 안 됐거나 동기가 부족합니다.", advice: "타이밍을 기다리세요." }
+      - rank: "2"
+        name: "완드 2"
+        emoji: "🌐"
+        upright: { keyword: "계획", meaning: "미래를 계획하고 결정을 내릴 때입니다.", advice: "장기적 관점에서 선택하세요." }
+        reversed: { keyword: "두려움", meaning: "변화가 두렵거나 결정을 미루고 있습니다.", advice: "안전지대를 벗어나세요." }
+      - rank: "3"
+        name: "완드 3"
+        emoji: "🚢"
+        upright: { keyword: "확장", meaning: "영역을 넓힐 때입니다. 기회가 다가옵니다.", advice: "시야를 넓히세요. 탐험하세요." }
+        reversed: { keyword: "지연", meaning: "계획이 지연되거나 좌절을 겪습니다.", advice: "인내하세요. 준비를 점검하세요." }
+      - rank: "4"
+        name: "완드 4"
+        emoji: "🏠"
+        upright: { keyword: "축하", meaning: "기쁜 일이 있습니다. 성과를 축하하세요.", advice: "함께 기뻐하세요. 안정을 누리세요." }
+        reversed: { keyword: "불안정", meaning: "기반이 흔들리거나 축하할 상황이 아닙니다.", advice: "기초를 다시 다지세요." }
+      - rank: "5"
+        name: "완드 5"
+        emoji: "⚔️"
+        upright: { keyword: "경쟁", meaning: "갈등이나 경쟁 상황입니다. 싸워야 할 수 있습니다.", advice: "건강한 경쟁으로 성장하세요." }
+        reversed: { keyword: "회피", meaning: "갈등을 피하거나 내부 분열이 있습니다.", advice: "문제를 직면하세요." }
+      - rank: "6"
+        name: "완드 6"
+        emoji: "🏆"
+        upright: { keyword: "승리", meaning: "인정과 승리가 옵니다. 리더십을 발휘하세요.", advice: "자신감을 가지고 앞서 나가세요." }
+        reversed: { keyword: "좌절", meaning: "인정받지 못하거나 자존심이 상합니다.", advice: "겸손하세요. 다시 도전하세요." }
+      - rank: "7"
+        name: "완드 7"
+        emoji: "🛡️"
+        upright: { keyword: "방어", meaning: "도전에 맞서 싸워야 합니다. 입장을 지키세요.", advice: "포기하지 마세요. 끝까지 버티세요." }
+        reversed: { keyword: "압도", meaning: "너무 많은 것과 싸우고 있습니다.", advice: "전략적으로 후퇴하세요." }
+      - rank: "8"
+        name: "완드 8"
+        emoji: "✈️"
+        upright: { keyword: "신속함", meaning: "일이 빠르게 진행됩니다. 즉각 행동하세요.", advice: "기회가 왔을 때 잡으세요." }
+        reversed: { keyword: "지연", meaning: "진행이 느리거나 방해가 있습니다.", advice: "조급해하지 마세요." }
+      - rank: "9"
+        name: "완드 9"
+        emoji: "🚧"
+        upright: { keyword: "인내", meaning: "마지막 관문입니다. 조금만 더 버티세요.", advice: "포기하지 마세요. 끝이 가깝습니다." }
+        reversed: { keyword: "탈진", meaning: "지쳐서 포기하고 싶습니다.", advice: "도움을 요청하세요. 휴식이 필요합니다." }
+      - rank: "10"
+        name: "완드 10"
+        emoji: "🎒"
+        upright: { keyword: "과부하", meaning: "너무 많은 짐을 지고 있습니다.", advice: "위임하세요. 짐을 나누세요." }
+        reversed: { keyword: "짐 내려놓기", meaning: "부담을 덜어낼 때입니다.", advice: "필요 없는 것을 버리세요." }
+      - rank: "page"
+        name: "완드 시종"
+        emoji: "🌱"
+        upright: { keyword: "탐험", meaning: "새로운 열정이나 아이디어가 싹틉니다.", advice: "호기심을 따르세요." }
+        reversed: { keyword: "미성숙", meaning: "서두르거나 생각 없이 행동합니다.", advice: "더 배우고 준비하세요." }
+      - rank: "knight"
+        name: "완드 기사"
+        emoji: "🐎"
+        upright: { keyword: "모험", meaning: "열정적으로 돌진할 때입니다. 행동하세요.", advice: "두려움 없이 전진하세요." }
+        reversed: { keyword: "성급함", meaning: "너무 급하거나 무모합니다.", advice: "속도를 늦추세요." }
+      - rank: "queen"
+        name: "완드 여왕"
+        emoji: "👸"
+        upright: { keyword: "자신감", meaning: "독립적이고 카리스마 있게 행동하세요.", advice: "리더십을 발휘하세요." }
+        reversed: { keyword: "질투", meaning: "질투심이나 자존심이 문제입니다.", advice: "너그러워지세요." }
+      - rank: "king"
+        name: "완드 왕"
+        emoji: "🤴"
+        upright: { keyword: "비전", meaning: "큰 그림을 보고 이끌어 나가세요.", advice: "비전을 제시하고 실행하세요." }
+        reversed: { keyword: "독단", meaning: "독재적이거나 융통성이 없습니다.", advice: "다른 의견을 들으세요." }
+
+  cups:
+    suit: "컵"
+    suitEn: "Cups"
+    element: "물"
+    theme: "감정, 관계, 사랑"
+    cards:
+      - rank: "ace"
+        name: "컵 에이스"
+        emoji: "💧"
+        upright: { keyword: "새로운 감정", meaning: "새로운 사랑이나 감정적 시작입니다.", advice: "마음을 열어두세요." }
+        reversed: { keyword: "막힌 감정", meaning: "감정이 막혀 있거나 거부합니다.", advice: "감정을 표현하세요." }
+      - rank: "2"
+        name: "컵 2"
+        emoji: "💑"
+        upright: { keyword: "파트너십", meaning: "균형 잡힌 관계, 진정한 연결입니다.", advice: "상호 존중을 유지하세요." }
+        reversed: { keyword: "불균형", meaning: "관계가 불균형하거나 단절되었습니다.", advice: "소통하세요." }
+      - rank: "3"
+        name: "컵 3"
+        emoji: "🎉"
+        upright: { keyword: "우정", meaning: "친구들과 함께 기쁨을 나눌 때입니다.", advice: "축하하고 감사하세요." }
+        reversed: { keyword: "과잉", meaning: "과도한 향락이나 표면적 관계입니다.", advice: "진정한 연결을 찾으세요." }
+      - rank: "4"
+        name: "컵 4"
+        emoji: "😑"
+        upright: { keyword: "무관심", meaning: "현재에 만족하지 못하거나 지루합니다.", advice: "새로운 것을 시도하세요." }
+        reversed: { keyword: "동기 부여", meaning: "새로운 동기를 찾았습니다.", advice: "기회를 잡으세요." }
+      - rank: "5"
+        name: "컵 5"
+        emoji: "😢"
+        upright: { keyword: "상실", meaning: "상실감이나 슬픔을 겪고 있습니다.", advice: "애도하되 남은 것에 감사하세요." }
+        reversed: { keyword: "회복", meaning: "상실에서 회복하고 있습니다.", advice: "앞으로 나아가세요." }
+      - rank: "6"
+        name: "컵 6"
+        emoji: "🧒"
+        upright: { keyword: "향수", meaning: "과거의 추억에 빠져 있습니다.", advice: "좋은 기억을 되새기되 현재에 머무세요." }
+        reversed: { keyword: "과거 집착", meaning: "과거에 너무 얽매여 있습니다.", advice: "현재에 집중하세요." }
+      - rank: "7"
+        name: "컵 7"
+        emoji: "🌈"
+        upright: { keyword: "환상", meaning: "많은 선택지 앞에서 꿈꾸고 있습니다.", advice: "현실적으로 선택하세요." }
+        reversed: { keyword: "명확함", meaning: "환상에서 벗어나 현실을 봅니다.", advice: "실행에 옮기세요." }
+      - rank: "8"
+        name: "컵 8"
+        emoji: "🚶"
+        upright: { keyword: "떠남", meaning: "무언가를 뒤로하고 새 길을 찾을 때입니다.", advice: "더 깊은 의미를 찾아 떠나세요." }
+        reversed: { keyword: "머무름", meaning: "떠나야 할지 머물지 갈등합니다.", advice: "진짜 원하는 것을 물으세요." }
+      - rank: "9"
+        name: "컵 9"
+        emoji: "😊"
+        upright: { keyword: "만족", meaning: "소원이 이루어집니다. 감정적 충족입니다.", advice: "감사하고 누리세요." }
+        reversed: { keyword: "불만족", meaning: "얻었지만 만족스럽지 않습니다.", advice: "진정 원하는 것을 찾으세요." }
+      - rank: "10"
+        name: "컵 10"
+        emoji: "👨‍👩‍👧‍👦"
+        upright: { keyword: "행복", meaning: "가정의 행복, 감정적 완성입니다.", advice: "사랑하는 이들과 함께하세요." }
+        reversed: { keyword: "불화", meaning: "가정 내 갈등이나 기대와 다른 현실입니다.", advice: "진정한 행복을 정의하세요." }
+      - rank: "page"
+        name: "컵 시종"
+        emoji: "💌"
+        upright: { keyword: "메시지", meaning: "감정적인 소식이나 새로운 감정이 옵니다.", advice: "마음을 열고 받아들이세요." }
+        reversed: { keyword: "감정적 미성숙", meaning: "감정 조절이 어렵습니다.", advice: "감정을 다스리는 법을 배우세요." }
+      - rank: "knight"
+        name: "컵 기사"
+        emoji: "🦢"
+        upright: { keyword: "로맨스", meaning: "로맨틱한 제안이나 감정적 추구입니다.", advice: "마음을 따르세요." }
+        reversed: { keyword: "변덕", meaning: "감정이 변덕스럽거나 비현실적입니다.", advice: "감정에만 의존하지 마세요." }
+      - rank: "queen"
+        name: "컵 여왕"
+        emoji: "🧜‍♀️"
+        upright: { keyword: "공감", meaning: "깊은 공감과 직감으로 이끕니다.", advice: "감정적 지혜를 발휘하세요." }
+        reversed: { keyword: "감정 과잉", meaning: "감정에 휩쓸리거나 의존적입니다.", advice: "균형을 찾으세요." }
+      - rank: "king"
+        name: "컵 왕"
+        emoji: "🐚"
+        upright: { keyword: "감정적 균형", meaning: "감정을 다스리며 지혜롭게 이끕니다.", advice: "감정과 이성의 균형을 유지하세요." }
+        reversed: { keyword: "감정 억압", meaning: "감정을 억누르거나 조종합니다.", advice: "진짜 감정을 인정하세요." }
+
+  swords:
+    suit: "소드"
+    suitEn: "Swords"
+    element: "공기"
+    theme: "생각, 소통, 갈등"
+    cards:
+      - rank: "ace"
+        name: "소드 에이스"
+        emoji: "💡"
+        upright: { keyword: "명확함", meaning: "새로운 아이디어와 명확한 사고입니다.", advice: "진실을 추구하세요." }
+        reversed: { keyword: "혼란", meaning: "생각이 혼란스럽거나 잘못된 정보입니다.", advice: "정리할 시간이 필요합니다." }
+      - rank: "2"
+        name: "소드 2"
+        emoji: "🙈"
+        upright: { keyword: "교착", meaning: "결정을 미루거나 현실을 외면하고 있습니다.", advice: "직면하세요." }
+        reversed: { keyword: "과부하", meaning: "정보 과부하로 결정이 어렵습니다.", advice: "단순화하세요." }
+      - rank: "3"
+        name: "소드 3"
+        emoji: "💔"
+        upright: { keyword: "상처", meaning: "마음의 상처, 슬픔, 배신입니다.", advice: "아픔을 인정하고 치유하세요." }
+        reversed: { keyword: "회복", meaning: "상처에서 회복하고 있습니다.", advice: "용서하고 놓으세요." }
+      - rank: "4"
+        name: "소드 4"
+        emoji: "🛌"
+        upright: { keyword: "휴식", meaning: "재충전이 필요합니다. 쉬어가세요.", advice: "명상하고 회복하세요." }
+        reversed: { keyword: "불안", meaning: "휴식을 취해도 마음이 편치 않습니다.", advice: "근본 원인을 해결하세요." }
+      - rank: "5"
+        name: "소드 5"
+        emoji: "😈"
+        upright: { keyword: "패배", meaning: "갈등에서 졌거나 비열한 상황입니다.", advice: "교훈을 얻고 다시 일어서세요." }
+        reversed: { keyword: "화해", meaning: "갈등이 해소되거나 재기합니다.", advice: "과거를 놓고 앞으로 가세요." }
+      - rank: "6"
+        name: "소드 6"
+        emoji: "⛵"
+        upright: { keyword: "전환", meaning: "어려움에서 벗어나 새로운 곳으로 갑니다.", advice: "과거를 뒤로하고 나아가세요." }
+        reversed: { keyword: "정체", meaning: "벗어나지 못하고 갇혀 있습니다.", advice: "도움을 요청하세요." }
+      - rank: "7"
+        name: "소드 7"
+        emoji: "🦊"
+        upright: { keyword: "전략", meaning: "지혜롭게 행동해야 합니다. 속임수를 조심하세요.", advice: "정직하되 전략적으로 행동하세요." }
+        reversed: { keyword: "발각", meaning: "속임수가 드러나거나 양심의 가책을 느낍니다.", advice: "정직해지세요." }
+      - rank: "8"
+        name: "소드 8"
+        emoji: "🔒"
+        upright: { keyword: "갇힘", meaning: "스스로를 제한하고 있습니다. 피해자 의식입니다.", advice: "구속은 자신이 만든 것임을 깨달으세요." }
+        reversed: { keyword: "해방", meaning: "제한에서 벗어나고 있습니다.", advice: "자유를 향해 걸으세요." }
+      - rank: "9"
+        name: "소드 9"
+        emoji: "😰"
+        upright: { keyword: "불안", meaning: "걱정과 불안에 시달립니다. 악몽.", advice: "도움을 구하세요. 혼자 감당하지 마세요." }
+        reversed: { keyword: "희망", meaning: "불안에서 벗어나고 있습니다.", advice: "빛이 있습니다. 희망을 가지세요." }
+      - rank: "10"
+        name: "소드 10"
+        emoji: "🗡️"
+        upright: { keyword: "끝", meaning: "최악의 상황, 완전한 끝입니다.", advice: "이보다 나빠질 수 없습니다. 새 시작만 남았습니다." }
+        reversed: { keyword: "재기", meaning: "바닥을 치고 일어납니다.", advice: "회복의 길로 들어섰습니다." }
+      - rank: "page"
+        name: "소드 시종"
+        emoji: "🔍"
+        upright: { keyword: "호기심", meaning: "새로운 아이디어, 정보 탐구입니다.", advice: "질문하고 배우세요." }
+        reversed: { keyword: "소문", meaning: "가십이나 잘못된 정보를 조심하세요.", advice: "확인 없이 퍼뜨리지 마세요." }
+      - rank: "knight"
+        name: "소드 기사"
+        emoji: "🦅"
+        upright: { keyword: "행동", meaning: "빠르고 결단력 있게 움직입니다.", advice: "신속하게 실행하세요." }
+        reversed: { keyword: "무모함", meaning: "생각 없이 돌진합니다.", advice: "먼저 생각하세요." }
+      - rank: "queen"
+        name: "소드 여왕"
+        emoji: "🗣️"
+        upright: { keyword: "명철함", meaning: "날카로운 판단과 솔직한 소통입니다.", advice: "진실을 말하되 배려하세요." }
+        reversed: { keyword: "냉정함", meaning: "너무 차갑거나 비판적입니다.", advice: "공감과 따뜻함을 더하세요." }
+      - rank: "king"
+        name: "소드 왕"
+        emoji: "🎓"
+        upright: { keyword: "지적 권위", meaning: "논리와 지성으로 결정합니다.", advice: "공정하고 명확하게 판단하세요." }
+        reversed: { keyword: "폭군", meaning: "권력을 남용하거나 잔인합니다.", advice: "권력을 현명하게 사용하세요." }
+
+  pentacles:
+    suit: "펜타클"
+    suitEn: "Pentacles"
+    element: "땅"
+    theme: "물질, 건강, 현실"
+    cards:
+      - rank: "ace"
+        name: "펜타클 에이스"
+        emoji: "💰"
+        upright: { keyword: "기회", meaning: "물질적 새 시작, 재정적 기회입니다.", advice: "기회를 잡고 실현하세요." }
+        reversed: { keyword: "놓친 기회", meaning: "기회를 놓쳤거나 탐욕입니다.", advice: "다음 기회를 준비하세요." }
+      - rank: "2"
+        name: "펜타클 2"
+        emoji: "⚖️"
+        upright: { keyword: "균형", meaning: "여러 일을 동시에 다루고 있습니다.", advice: "우선순위를 정하세요." }
+        reversed: { keyword: "과부하", meaning: "너무 많은 것을 다루려 합니다.", advice: "덜어내세요." }
+      - rank: "3"
+        name: "펜타클 3"
+        emoji: "🔨"
+        upright: { keyword: "협력", meaning: "팀워크로 결과를 만들어냅니다.", advice: "전문성을 발휘하세요." }
+        reversed: { keyword: "질 저하", meaning: "결과물의 질이 떨어집니다.", advice: "기본에 충실하세요." }
+      - rank: "4"
+        name: "펜타클 4"
+        emoji: "🏦"
+        upright: { keyword: "안정", meaning: "재정적 안정, 그러나 집착입니다.", advice: "안정을 유지하되 인색하지 마세요." }
+        reversed: { keyword: "탐욕", meaning: "너무 움켜쥐거나 반대로 낭비합니다.", advice: "균형을 찾으세요." }
+      - rank: "5"
+        name: "펜타클 5"
+        emoji: "❄️"
+        upright: { keyword: "결핍", meaning: "물질적 어려움, 경제적 곤란입니다.", advice: "도움을 구하세요. 혼자가 아닙니다." }
+        reversed: { keyword: "회복", meaning: "어려움에서 벗어나고 있습니다.", advice: "교훈을 기억하세요." }
+      - rank: "6"
+        name: "펜타클 6"
+        emoji: "🎁"
+        upright: { keyword: "나눔", meaning: "베풀고 받습니다. 균형 있는 교환입니다.", advice: "관대하게 나누세요." }
+        reversed: { keyword: "빚", meaning: "주고받음이 불균형합니다.", advice: "조건을 명확히 하세요." }
+      - rank: "7"
+        name: "펜타클 7"
+        emoji: "🌾"
+        upright: { keyword: "인내", meaning: "결실을 기다리는 중입니다. 평가 시간입니다.", advice: "장기적 관점을 가지세요." }
+        reversed: { keyword: "조급함", meaning: "결과가 느려 답답합니다.", advice: "인내하세요. 때가 옵니다." }
+      - rank: "8"
+        name: "펜타클 8"
+        emoji: "⚒️"
+        upright: { keyword: "장인정신", meaning: "기술을 갈고닦고 있습니다. 성실함.", advice: "완벽을 추구하세요." }
+        reversed: { keyword: "무의미함", meaning: "노력이 보상받지 못한다고 느낍니다.", advice: "방향을 점검하세요." }
+      - rank: "9"
+        name: "펜타클 9"
+        emoji: "🏡"
+        upright: { keyword: "풍요", meaning: "노력의 결실, 물질적 성공입니다.", advice: "성취를 즐기세요." }
+        reversed: { keyword: "과시", meaning: "겉치레에 빠지거나 손실 위험이 있습니다.", advice: "진정한 가치에 집중하세요." }
+      - rank: "10"
+        name: "펜타클 10"
+        emoji: "👪"
+        upright: { keyword: "유산", meaning: "세대를 잇는 부, 장기적 안정입니다.", advice: "미래를 위해 투자하세요." }
+        reversed: { keyword: "분쟁", meaning: "가족 재산 문제, 불안정입니다.", advice: "가치관을 재정립하세요." }
+      - rank: "page"
+        name: "펜타클 시종"
+        emoji: "📚"
+        upright: { keyword: "학습", meaning: "새로운 기술을 배우고 있습니다.", advice: "성실히 배우세요." }
+        reversed: { keyword: "게으름", meaning: "집중하지 못하거나 현실성이 부족합니다.", advice: "기초부터 다시 시작하세요." }
+      - rank: "knight"
+        name: "펜타클 기사"
+        emoji: "🐂"
+        upright: { keyword: "꾸준함", meaning: "느리지만 확실하게 전진합니다.", advice: "인내심을 가지고 꾸준히 하세요." }
+        reversed: { keyword: "정체", meaning: "너무 느리거나 완벽주의에 빠졌습니다.", advice: "때로는 진행하세요." }
+      - rank: "queen"
+        name: "펜타클 여왕"
+        emoji: "🌻"
+        upright: { keyword: "풍요", meaning: "실용적이고 돌보는 에너지입니다.", advice: "현실적으로 돌보세요." }
+        reversed: { keyword: "질투", meaning: "물질에 집착하거나 질투합니다.", advice: "감사하는 마음을 가지세요." }
+      - rank: "king"
+        name: "펜타클 왕"
+        emoji: "🦬"
+        upright: { keyword: "성공", meaning: "재정적 성공, 사업적 안정입니다.", advice: "지혜롭게 관리하세요." }
+        reversed: { keyword: "탐욕", meaning: "돈에만 집착하거나 실패 위험입니다.", advice: "물질 외의 가치를 기억하세요." }

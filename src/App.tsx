@@ -10,6 +10,7 @@ import ChemistryPage from './pages/ChemistryPage';
 import AgreementPage from './pages/AgreementPage';
 import NotFoundPage from './pages/NotFoundPage';
 import DebugPage from './pages/DebugPage';
+import TarotPage from './pages/TarotPage';
 
 import { captureAttributionFromUrl } from './lib/attribution';
 import { updateStreak } from './lib/streak';
@@ -36,6 +37,7 @@ function Bootstrap() {
       <Route path="/result" element={<ResultPage />} />
       <Route path="/detail" element={<DetailPage />} />
       <Route path="/chemistry" element={<ChemistryPage />} />
+      <Route path="/tarot" element={<TarotPage />} />
       <Route path="/debug" element={<DebugPage />} />
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
