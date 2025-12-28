@@ -1,18 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
+import ViralHookModal from '../components/ViralHookModal';
 import { hasRequiredAgreement, hasBirthDate, getPublicKey, getUserSeed } from '../lib/storage';
 import { getStreak } from '../lib/streak';
 import { copyFor } from '../lib/copyVariants';
 import { getVariant } from '../lib/variant';
 import { getAttribution } from '../lib/attribution';
 import { track } from '../lib/analytics';
-
-function maskId(id: string) {
-  if (!id) return '';
-  if (id.length <= 6) return id;
-  return `${id.slice(0, 3)}***${id.slice(-2)}`;
-}
 
 export default function LandingPage() {
   React.useEffect(() => { track('landing_view'); }, []);
@@ -29,19 +24,20 @@ export default function LandingPage() {
   const streak = getStreak();
   const attr = getAttribution();
 
-  const banner = useMemo(() => {
-    // chemistry invite entry (from query)
+  const referrerInfo = useMemo(() => {
     const sp = new URLSearchParams(loc.search);
     const from = sp.get('from') || sp.get('referrer_id') || attr?.referrerId || '';
     const type = sp.get('type') || attr?.entryType || '';
     if (!from || type !== 'chemistry') return null;
-    return `친구(${maskId(from)})가 너랑 케미를 보고 싶어함`;
+    return { from, search: loc.search };
   }, [loc.search, attr?.referrerId, attr?.entryType]);
 
-  
-  React.useEffect(() => { if (banner) track('entry_chemistry'); }, [banner]);
-const onStart = () => {
-    track('cta_start', { banner: !!banner });
+  const [showModal, setShowModal] = useState(!!referrerInfo);
+
+  React.useEffect(() => { if (referrerInfo) track('entry_chemistry'); }, [referrerInfo]);
+
+  const onStart = () => {
+    track('cta_start', { hasReferrer: !!referrerInfo });
     if (!hasRequiredAgreement() || !hasBirthDate()) {
       track('cta_needs_agreement');
       nav('/agreement');
@@ -51,19 +47,41 @@ const onStart = () => {
     nav('/loading');
   };
 
+  const onGoToChemistry = () => {
+    track('viral_modal_accept_landing');
+    setShowModal(false);
+    if (referrerInfo) {
+      nav(`/chemistry${referrerInfo.search}`);
+    }
+  };
+
   return (
     <div className="container">
+      {/* 바이럴 훅 모달: 초대 링크로 진입 시 */}
+      {showModal && referrerInfo && (
+        <ViralHookModal
+          inviterKey={referrerInfo.from}
+          onAccept={onGoToChemistry}
+          onClose={() => {
+            track('viral_modal_close_landing');
+            setShowModal(false);
+          }}
+        />
+      )}
+
       <Header title="SOUL LAB" subtitle={cp.landingSubtitle} />
 
-      {banner ? (
-        <div className="card" style={{ marginBottom: 12 }}>
-          <div className="badge">{banner}</div>
+      {referrerInfo && !showModal ? (
+        <div className="card" style={{ marginBottom: 12, border: '1px solid rgba(139, 92, 246, 0.3)' }}>
+          <div className="badge" style={{ background: 'rgba(139, 92, 246, 0.2)', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
+            💜 케미 초대가 도착했습니다
+          </div>
           <div className="small" style={{ marginTop: 8 }}>
             들어오면 궁합 결과가 양쪽 모두 열립니다.
           </div>
           <div style={{ height: 10 }} />
-          <button className="btn btnPrimary" onClick={() => nav(`/chemistry${loc.search}`)}>
-            케미 분석으로 이동
+          <button className="btn btnPrimary" onClick={onGoToChemistry}>
+            궁합 확인하러 가기
           </button>
         </div>
       ) : null}

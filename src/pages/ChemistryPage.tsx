@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import LockedBlur from '../components/LockedBlur';
 import AdRewardButton from '../components/AdRewardButton';
+import ViralHookModal from '../components/ViralHookModal';
 import { getEffectiveUserKey, getUnlockedDate, setUnlockedDate, setViralUnlockedDate } from '../lib/storage';
 import { makeChemistryReport } from '../lib/report';
 import { todayKey } from '../lib/seed';
@@ -15,6 +16,7 @@ export default function ChemistryPage() {
 
   const nav = useNavigate();
   const [sp] = useSearchParams();
+  const [showModal, setShowModal] = useState(true);
 
   const myKey = getEffectiveUserKey();
   const dk = todayKey();
@@ -154,15 +156,30 @@ const onMakeResponseLink = async () => {
       )}
 
       {status.mode === 'needResponse' && (
-        <div className="card">
-          <div className="h2">초대장이 도착했습니다</div>
-          <p className="p" style={{ marginTop: 8 }}>
-            응답 링크를 만들어 {status.inviterKey.slice(0, 6)}…님에게 보내면 궁합이 열립니다.
-          </p>
-          <div style={{ marginTop: 12 }}>
-            <button className="btn btnPrimary" onClick={onMakeResponseLink}>응답 링크 만들고 보내기</button>
+        <>
+          {showModal && (
+            <ViralHookModal
+              inviterKey={status.inviterKey}
+              onAccept={() => {
+                track('viral_modal_accept');
+                setShowModal(false);
+              }}
+              onClose={() => {
+                track('viral_modal_close');
+                setShowModal(false);
+              }}
+            />
+          )}
+          <div className="card">
+            <div className="h2">초대장이 도착했습니다</div>
+            <p className="p" style={{ marginTop: 8 }}>
+              응답 링크를 만들어 상대에게 보내면 궁합이 열립니다.
+            </p>
+            <div style={{ marginTop: 12 }}>
+              <button className="btn btnPrimary" onClick={onMakeResponseLink}>궁합 확인하고 응답 보내기</button>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {status.mode === 'paired' && report && (
@@ -188,24 +205,26 @@ const onMakeResponseLink = async () => {
                 <p className="p"><b>부스터</b>: {report.detail.booster}</p>
               </div>
             ) : (
-              <LockedBlur>
-                <div style={{ marginTop: 10 }}>
-                  <p className="p"><b>강점</b>: {report.detail.strength}</p>
-                  <p className="p"><b>마찰</b>: {report.detail.friction}</p>
-                  <p className="p"><b>부스터</b>: {report.detail.booster}</p>
-                </div>
-              </LockedBlur>
-            )}
-
-            {!unlocked && (
-              <div style={{ marginTop: 12 }}>
-                <AdRewardButton
-                  adGroupId={(import.meta.env.VITE_REWARDED_AD_GROUP_ID as string) || 'ait-ad-test-rewarded-id'}
-                  userKey={myKey}
-                  scope="chem_detail"
-                  onUnlocked={unlockToday}
+              <>
+                <LockedBlur
+                  title="상세 분석 잠김"
+                  subtitle="광고 시청으로 강점/마찰/부스터를 확인하세요"
+                  onUnlock={unlockToday}
+                  sections={[
+                    { label: '강점' },
+                    { label: '마찰' },
+                    { label: '부스터' },
+                  ]}
                 />
-              </div>
+                <div style={{ marginTop: 12 }}>
+                  <AdRewardButton
+                    adGroupId={(import.meta.env.VITE_REWARDED_AD_GROUP_ID as string) || 'ait-ad-test-rewarded-id'}
+                    userKey={myKey}
+                    scope="chem_detail"
+                    onUnlocked={unlockToday}
+                  />
+                </div>
+              </>
             )}
 
             <div style={{ marginTop: 10 }}>
