@@ -147,7 +147,7 @@ export default function ResultPage() {
 
   return (
     <div className="container">
-      <Header title="오늘의 분석 결과" subtitle={report.subtitle} />
+      <Header title="오늘의 운명" subtitle="별들이 당신에게 전하는 메시지" />
 
       <UnlockStatus
         locked={isLocked}
@@ -156,10 +156,10 @@ export default function ResultPage() {
 
       <div className="card" style={{ marginBottom: 12 }}>
         <div className="row">
-          <div className="h2">총점</div>
-          <div style={{ fontSize: 28, fontWeight: 900 }}>{report.score}점</div>
+          <div className="h2 glow-text">오늘의 기운</div>
+          <div className="score-display">{report.score}</div>
         </div>
-        <div className="small">{report.rankText}</div>
+        <div className="small" style={{ color: 'var(--accent)' }}>{report.rankText}</div>
         <div style={{ marginTop: 10 }} className="p">
           {report.oneLiner}
         </div>
@@ -168,8 +168,8 @@ export default function ResultPage() {
       {isLocked ? (
         <>
           <LockedBlur
-            title="상세 풀이 잠김"
-            subtitle="광고 또는 궁합 성사로 '행운의 시간/귀인/주의점'을 공개합니다."
+            title="✨ 운명의 봉인"
+            subtitle="기운을 모아 행운의 시간, 귀인, 주의점을 열어보세요"
             onUnlock={unlock}
             sections={[
               { label: '행운의 시간' },
@@ -183,30 +183,30 @@ export default function ResultPage() {
 
           <div style={{ height: 12 }} />
           <Button size="large" color="dark" variant="weak" display="full" onClick={onShareResult}>
-            내 결과 공유하기
+            오늘의 운명 공유하기
           </Button>
 
           <div style={{ height: 12 }} />
-          <div className="card">
-            <div className="h2">친구 초대하고 '오늘 잠금' 해제</div>
+          <div className="card" style={{ border: '1px solid rgba(147, 112, 219, 0.3)' }}>
+            <div className="h2 mystical-title">인연의 실로 봉인 해제</div>
             {!thirdOk ? (
               <>
-                <div className="small">제3자 정보 제공 동의가 필요합니다. (개인 분석은 계속 이용 가능)</div>
+                <div className="small">인연을 맺으려면 동의가 필요합니다.</div>
                 <div style={{ height: 10 }} />
                 <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/agreement')}>
-                  동의 설정 열기
+                  동의하고 인연 맺기
                 </Button>
               </>
             ) : (
               <>
-                <div className="small">상대가 접속해서 궁합이 성사되면 오늘 상세가 열립니다.</div>
+                <div className="small">둘의 기운이 만나면 봉인이 풀립니다.</div>
                 <div style={{ height: 10 }} />
                 <Button size="large" color="primary" variant="fill" display="full" onClick={onInviteChemistryContacts}>
-                  친구 초대(연락처)
+                  ✨ 인연 초대하기
                 </Button>
                 <div style={{ height: 10 }} />
                 <Button size="large" color="dark" variant="weak" display="full" onClick={onInviteChemistryLink}>
-                  초대 링크 공유(대체)
+                  초대 링크 보내기
                 </Button>
               </>
             )}
@@ -215,47 +215,47 @@ export default function ResultPage() {
       ) : (
         <>
           <div className="card">
-            <div className="h2">행운의 시간</div>
+            <div className="h2 glow-text">🌟 행운의 시간</div>
             <p className="p" style={{ marginTop: 8 }}>{report.luckyTime}</p>
             <hr className="hr" />
-            <div className="h2">귀인</div>
+            <div className="h2 glow-text">👤 오늘의 귀인</div>
             <p className="p" style={{ marginTop: 8 }}>{report.helper}</p>
             <hr className="hr" />
-            <div className="h2">주의할 것</div>
+            <div className="h2 glow-text">⚠️ 주의할 기운</div>
             <p className="p" style={{ marginTop: 8 }}>{report.caution}</p>
           </div>
 
           <div style={{ height: 12 }} />
           <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/detail')}>
-            상세 결과로
+            더 깊은 운명 보기
           </Button>
 
           <div style={{ height: 12 }} />
           <Button size="large" color="dark" variant="weak" display="full" onClick={onShareResult}>
-            내 결과 공유하기
+            오늘의 운명 공유하기
           </Button>
 
           <div style={{ height: 12 }} />
-          <div className="card">
-            <div className="h2">이 친구와 나의 케미는?</div>
+          <div className="card" style={{ border: '1px solid rgba(147, 112, 219, 0.3)' }}>
+            <div className="h2 mystical-title">✨ 인연의 궁합 보기</div>
             {!thirdOk ? (
               <>
-                <div className="small">친구 초대 기능은 동의 후 활성화됩니다.</div>
+                <div className="small">인연을 맺으려면 동의가 필요합니다.</div>
                 <div style={{ height: 10 }} />
                 <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/agreement')}>
-                  동의 설정 열기
+                  동의하고 인연 맺기
                 </Button>
               </>
             ) : (
               <>
-                <div className="small">상대가 접속해야만 결과가 열립니다.</div>
+                <div className="small">둘의 기운이 만나야 운명이 드러납니다.</div>
                 <div style={{ height: 10 }} />
                 <Button size="large" color="primary" variant="fill" display="full" onClick={onInviteChemistryContacts}>
-                  친구 초대(연락처)
+                  ✨ 인연 초대하기
                 </Button>
                 <div style={{ height: 10 }} />
                 <Button size="large" color="dark" variant="weak" display="full" onClick={onInviteChemistryLink}>
-                  초대 링크 공유(대체)
+                  초대 링크 보내기
                 </Button>
               </>
             )}

@@ -4,6 +4,7 @@ import { preloadRewardedAd, showRewardedAd } from '../lib/toss';
 import { todayKey } from '../lib/seed';
 import { markRewardEarned } from '../lib/reward';
 import { track } from '../lib/analytics';
+import MeditationScreen from './MeditationScreen';
 
 export default function AdRewardButton({
   adGroupId,
@@ -18,6 +19,7 @@ export default function AdRewardButton({
 }) {
   const [ready, setReady] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showMeditation, setShowMeditation] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -37,7 +39,14 @@ export default function AdRewardButton({
 
   const onClick = () => {
     if (loading) return;
+    track('meditation_start');
+    setShowMeditation(true);
+  };
+
+  const onMeditationComplete = () => {
+    setShowMeditation(false);
     setLoading(true);
+    track('meditation_complete');
 
     const onReward = () => {
       try {
@@ -57,22 +66,27 @@ export default function AdRewardButton({
   };
 
   const buttonText = loading
-    ? '로딩 중...'
+    ? '기운을 불러오는 중...'
     : ready
-    ? '광고 보고 상세 풀이 무료 확인'
-    : '광고 불러오는 중...';
+    ? '✨ 오늘의 운명 열어보기'
+    : '기운을 모으는 중...';
 
   return (
-    <Button
-      size="large"
-      color="primary"
-      variant="fill"
-      display="full"
-      loading={loading}
-      disabled={loading}
-      onClick={onClick}
-    >
-      {buttonText}
-    </Button>
+    <>
+      {showMeditation && (
+        <MeditationScreen onComplete={onMeditationComplete} duration={5} />
+      )}
+      <Button
+        size="large"
+        color="primary"
+        variant="fill"
+        display="full"
+        loading={loading}
+        disabled={loading}
+        onClick={onClick}
+      >
+        {buttonText}
+      </Button>
+    </>
   );
 }

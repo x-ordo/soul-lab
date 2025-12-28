@@ -37,14 +37,19 @@ export function Button({
 
   const colorStyles: Record<string, Record<string, React.CSSProperties>> = {
     fill: {
-      primary: { background: '#3182f6', color: 'white', border: 'none' },
-      dark: { background: '#191f28', color: 'white', border: 'none' },
+      primary: {
+        background: 'linear-gradient(135deg, #7c3aed 0%, #9370db 50%, #a855f7 100%)',
+        color: 'white',
+        border: 'none',
+        boxShadow: '0 0 20px rgba(147, 112, 219, 0.4)',
+      },
+      dark: { background: 'rgba(26, 15, 46, 0.9)', color: 'white', border: '1px solid rgba(147, 112, 219, 0.3)' },
       danger: { background: '#f04452', color: 'white', border: 'none' },
       light: { background: 'white', color: '#191f28', border: 'none' },
     },
     weak: {
-      primary: { background: 'rgba(49,130,246,0.1)', color: '#3182f6', border: 'none' },
-      dark: { background: 'rgba(25,31,40,0.1)', color: '#191f28', border: 'none' },
+      primary: { background: 'rgba(147, 112, 219, 0.15)', color: '#9370db', border: '1px solid rgba(147, 112, 219, 0.3)' },
+      dark: { background: 'rgba(26, 15, 46, 0.5)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(147, 112, 219, 0.2)' },
       danger: { background: 'rgba(240,68,82,0.1)', color: '#f04452', border: 'none' },
       light: { background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none' },
     },
@@ -103,11 +108,11 @@ export function Badge({
   };
 
   const colorMap: Record<string, string> = {
-    blue: '#3182f6',
+    blue: '#9370db',
     teal: '#00b8d9',
-    green: '#00c853',
+    green: '#22c55e',
     red: '#f04452',
-    gray: '#8b95a1',
+    gray: '#6b7280',
   };
 
   const baseColor = colorMap[color];
@@ -172,7 +177,7 @@ function AgreementSingleCheckboxField({
         type="checkbox"
         checked={checked}
         onChange={(e) => onCheckedChange?.(e.target.checked)}
-        style={{ marginTop: 2, width: 20, height: 20, accentColor: '#3182f6' }}
+        style={{ marginTop: 2, width: 20, height: 20, accentColor: '#9370db' }}
       />
       <span
         style={{

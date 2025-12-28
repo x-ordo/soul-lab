@@ -70,42 +70,42 @@ export default function LandingPage() {
         />
       )}
 
-      <Header title="SOUL LAB" subtitle={cp.landingSubtitle} />
+      <Header title="SOUL LAB" subtitle="오늘, 당신의 운명이 속삭입니다" />
 
       {referrerInfo && !showModal ? (
-        <div className="card" style={{ marginBottom: 12, border: '1px solid rgba(139, 92, 246, 0.3)' }}>
-          <Badge size="small" color="blue" variant="weak" style={{ background: 'rgba(139, 92, 246, 0.2)' }}>
-            💜 케미 초대가 도착했습니다
+        <div className="card" style={{ marginBottom: 12, border: '1px solid rgba(147, 112, 219, 0.4)' }}>
+          <Badge size="small" color="blue" variant="weak" style={{ background: 'rgba(147, 112, 219, 0.25)' }}>
+            ✨ 인연의 실이 연결되었습니다
           </Badge>
           <div className="small" style={{ marginTop: 8 }}>
-            들어오면 궁합 결과가 양쪽 모두 열립니다.
+            둘의 기운이 만나면 운명이 드러납니다.
           </div>
           <div style={{ height: 10 }} />
           <Button size="large" color="primary" variant="fill" display="full" onClick={onGoToChemistry}>
-            궁합 확인하러 가기
+            운명의 인연 확인하기
           </Button>
         </div>
       ) : null}
 
       <div className="card" style={{ marginBottom: 12 }}>
         <div className="row">
-          <div className="h2">오늘의 점수</div>
+          <div className="h2 glow-text">오늘의 기운</div>
           {streak > 1 ? (
-            <Badge size="small" color="blue" variant="fill">{`연속 ${streak}일`}</Badge>
+            <Badge size="small" color="blue" variant="fill">{`${streak}일째 교감 중`}</Badge>
           ) : (
-            <Badge size="small" color="gray" variant="weak">첫 방문</Badge>
+            <Badge size="small" color="gray" variant="weak">첫 만남</Badge>
           )}
         </div>
         <div className="small" style={{ marginTop: 8 }}>
-          점수는 즉시 공개. 디테일은 광고/케미로 해제.
+          별들이 당신에게 전하는 메시지를 확인하세요.
         </div>
       </div>
 
       <Button size="large" color="primary" variant="fill" display="full" onClick={onStart}>
-        {cp.startCta}
+        ✨ 운명의 문 열기
       </Button>
 
-      <div className="footer">* 재미용 엔터테인먼트입니다.</div>
+      <div className="footer">* 엔터테인먼트 목적의 운세 분석입니다.</div>
     </div>
   );
 }
