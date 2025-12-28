@@ -3,11 +3,11 @@ import { pickTemplate, dailyScore, chemistryScore, hash32 } from '../utils/engin
 import { getBirthDate } from './storage';
 
 function rankText(score: number) {
-  if (score >= 96) return '상위 1%';
-  if (score >= 92) return '상위 3%';
-  if (score >= 88) return '상위 7%';
-  if (score >= 82) return '상위 15%';
-  return '상위 30%';
+  if (score >= 96) return '✨ 축복받은 운명 (상위 1%)';
+  if (score >= 92) return '🌟 빛나는 기운 (상위 3%)';
+  if (score >= 88) return '💫 강한 흐름 (상위 7%)';
+  if (score >= 82) return '🌙 안정된 기운 (상위 15%)';
+  return '☁️ 잠재된 기운 (상위 30%)';
 }
 
 export function makeTodayReport(userKey: string) {
@@ -47,26 +47,26 @@ export function makeChemistryReport(aKey: string, bKey: string) {
   const score = chemistryScore(aKey, bKey, dk);
 
   const h = hash32(`${[aKey, bKey].sort().join('|')}|${dk}|chem_text`);
-  const labels = ['폭발', '강력', '안정', '애매', '주의'];
+  const labels = ['🔥 운명적 불꽃', '💫 강렬한 인연', '🌙 안정된 조화', '🌀 미묘한 기류', '⚡ 도전적 관계'];
   const label = labels[h % labels.length];
 
   const summary = score >= 85
-    ? '서로의 약점을 “보완”하는 조합. 손을 잡으면 결과가 빨라집니다.'
+    ? '✨ 두 영혼이 서로를 완성하는 조합입니다. 함께하면 빛이 더 강해집니다.'
     : score >= 70
-      ? '서로를 자극합니다. 룰을 먼저 정하면 시너지가 납니다.'
-      : '각자 스타일이 강합니다. 목표를 쪼개서 충돌을 줄이세요.';
+      ? '💫 서로의 에너지가 부딪히며 불꽃을 만듭니다. 균형을 맞추면 시너지가 폭발합니다.'
+      : '🌙 각자의 빛이 강한 두 별입니다. 거리를 두고 빛나면 서로를 비출 수 있습니다.';
 
   const friction = score >= 85
-    ? '속도 차이: 한쪽은 “즉시”, 한쪽은 “확인 후”.'
+    ? '⚡ 흐름의 차이: 한쪽은 직감으로, 한쪽은 확인 후 움직입니다.'
     : score >= 70
-      ? '우선순위: 돈/일 vs 감정/관계가 부딪힐 수 있음.'
-      : '말투/톤: 짧은 말이 오해로 번지기 쉬움. “의도”를 먼저 말해라.';
+      ? '🌀 우선순위의 엇갈림: 현실과 감정 사이에서 조율이 필요합니다.'
+      : '💨 소통의 파장: 짧은 말이 깊은 오해가 될 수 있습니다. 마음을 먼저 전하세요.';
 
   const booster = score >= 85
-    ? '결정은 2분 안에. 대신 기록(메모)로 리스크를 닫아라.'
+    ? '🌟 직감을 믿되, 중요한 순간은 기록으로 남기세요. 두 에너지가 하나로 모입니다.'
     : score >= 70
-      ? '하루 1번만 “결론 한 문장” 공유하면 마찰이 줄어든다.'
-      : '만나는 시간은 짧게, 빈도는 높게. 10분이라도 자주.';
+      ? '💫 하루 한 번, 핵심만 나누세요. 작은 공유가 큰 이해를 만듭니다.'
+      : '🌙 짧지만 자주 연결하세요. 잦은 교류가 파장을 맞춰갑니다.';
 
   return { score, label, summary, friction, booster };
 }
