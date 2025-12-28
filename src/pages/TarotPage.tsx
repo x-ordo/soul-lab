@@ -275,59 +275,83 @@ function TarotCardDisplay({ card, revealed }: { card: DrawnCard; revealed: boole
 }
 
 function TarotCardMini({ card, revealed }: { card: DrawnCard; revealed: boolean }) {
-  if (!revealed) {
-    return (
-      <div style={{
-        aspectRatio: '2/3',
-        background: 'linear-gradient(180deg, rgba(75, 0, 130, 0.6) 0%, rgba(26, 15, 46, 0.9) 100%)',
-        border: '2px solid rgba(147, 112, 219, 0.5)',
-        borderRadius: 12,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        boxShadow: '0 0 20px rgba(147, 112, 219, 0.3)',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-      }}>
-        <div style={{ fontSize: 32 }}>🔮</div>
-      </div>
-    );
-  }
-
   const meaning = card.isReversed ? card.card.reversed : card.card.upright;
 
   return (
     <div style={{
       aspectRatio: '2/3',
-      background: 'linear-gradient(180deg, rgba(26, 15, 46, 0.9) 0%, rgba(75, 0, 130, 0.3) 100%)',
-      border: '2px solid rgba(255, 215, 0, 0.4)',
-      borderRadius: 12,
-      padding: 8,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 0 20px rgba(255, 215, 0, 0.2)',
+      perspective: '1000px',
+      cursor: revealed ? 'default' : 'pointer',
     }}>
-      <div className="small" style={{ color: 'rgba(147, 112, 219, 0.8)', marginBottom: 4, fontSize: 10 }}>
-        {card.positionLabel}
-      </div>
       <div style={{
-        fontSize: 28,
-        marginBottom: 4,
-        transform: card.isReversed ? 'rotate(180deg)' : 'none',
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        transformStyle: 'preserve-3d',
+        transition: 'transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)',
+        transform: revealed ? 'rotateY(180deg)' : 'rotateY(0deg)',
       }}>
-        {card.card.emoji}
-      </div>
-      <div style={{ fontSize: 10, fontWeight: 600, textAlign: 'center' }}>
-        {card.card.name}
-      </div>
-      <div style={{
-        fontSize: 9,
-        color: 'rgba(255, 215, 0, 0.8)',
-        marginTop: 4,
-      }}>
-        {meaning.keyword}
+        {/* 카드 뒷면 (수정구슬) */}
+        <div style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+          background: 'linear-gradient(180deg, rgba(75, 0, 130, 0.6) 0%, rgba(26, 15, 46, 0.9) 100%)',
+          border: '2px solid rgba(147, 112, 219, 0.5)',
+          borderRadius: 12,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 0 20px rgba(147, 112, 219, 0.3)',
+        }}>
+          <div style={{
+            fontSize: 32,
+            animation: 'pulse 2s ease-in-out infinite',
+          }}>🔮</div>
+        </div>
+
+        {/* 카드 앞면 (공개된 카드) */}
+        <div style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+          transform: 'rotateY(180deg)',
+          background: 'linear-gradient(180deg, rgba(26, 15, 46, 0.9) 0%, rgba(75, 0, 130, 0.3) 100%)',
+          border: '2px solid rgba(255, 215, 0, 0.4)',
+          borderRadius: 12,
+          padding: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 0 20px rgba(255, 215, 0, 0.2)',
+          boxSizing: 'border-box',
+        }}>
+          <div className="small" style={{ color: 'rgba(147, 112, 219, 0.8)', marginBottom: 4, fontSize: 10 }}>
+            {card.positionLabel}
+          </div>
+          <div style={{
+            fontSize: 28,
+            marginBottom: 4,
+            transform: card.isReversed ? 'rotate(180deg)' : 'none',
+          }}>
+            {card.card.emoji}
+          </div>
+          <div style={{ fontSize: 10, fontWeight: 600, textAlign: 'center' }}>
+            {card.card.name}
+          </div>
+          <div style={{
+            fontSize: 9,
+            color: 'rgba(255, 215, 0, 0.8)',
+            marginTop: 4,
+          }}>
+            {meaning.keyword}
+          </div>
+        </div>
       </div>
     </div>
   );
