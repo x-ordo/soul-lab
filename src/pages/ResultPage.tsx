@@ -1,0 +1,270 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
+import UnlockStatus from '../components/UnlockStatus';
+import { copyFor } from '../lib/copyVariants';
+import { getVariant } from '../lib/variant';
+import { ogImageUrl } from '../lib/og';
+import LockedBlur from '../components/LockedBlur';
+import AdRewardButton from '../components/AdRewardButton';
+import { makeTodayReport } from '../lib/report';
+import {
+  getPublicKey,
+  getUnlockedDate,
+  getUserSeed,
+  setUnlockedDate,
+  getViralUnlockedDate,
+  hasRequiredAgreement,
+  hasBirthDate,
+  hasThirdPartyConsent,
+} from '../lib/storage';
+import { todayKey } from '../lib/seed';
+import { makeShareLink, runContactsViral, shareMessage } from '../lib/toss';
+import { buildInviteDeepLink } from '../lib/handshake';
+import { track } from '../lib/analytics';
+
+export default function ResultPage() {
+  React.useEffect(() => { track('result_view'); }, []);
+
+  const nav = useNavigate();
+
+  const seed = getUserSeed() ?? 'anon';
+  const myKey = getPublicKey() ?? seed;
+
+  const dk = todayKey();
+  const adUnlocked = getUnlockedDate() === dk;
+  const viralUnlocked = getViralUnlockedDate() === dk;
+  const thirdOk = hasThirdPartyConsent();
+
+  const report = useMemo(() => makeTodayReport(myKey), [myKey]);
+  const v = getVariant(myKey);
+  const cp = copyFor(v);
+
+
+  const [isLocked, setIsLocked] = useState(!(adUnlocked || viralUnlocked));
+
+  useEffect(() => {
+    if (!hasRequiredAgreement() || !hasBirthDate()) {
+      nav('/agreement', { replace: true });
+      return;
+    }
+    setIsLocked(!(adUnlocked || viralUnlocked));
+  }, [adUnlocked, viralUnlocked, nav]);
+
+  const adGroupId = (import.meta.env.VITE_REWARDED_AD_GROUP_ID as string) || 'ait-ad-test-rewarded-id';
+  const moduleId = (import.meta.env.VITE_CONTACTS_MODULE_ID as string) || '';
+
+  const unlock = () => {
+    setUnlockedDate(dk);
+    setIsLocked(false);
+  };
+
+  const onShareResult = async () => {
+    track('share_click_daily');
+  try {
+    const link = await makeShareLink(`intoss://soul-lab/result`, ogImageUrl('daily'));
+    const ok = await shareMessage(cp.shareDaily(link));
+    if (!ok) {
+      await navigator.clipboard.writeText(link);
+      alert('공유 실패 → 링크를 복사했습니다.');
+    }
+  } catch (e) {
+    console.error(e);
+    alert('공유 실패. 권한/환경을 확인하세요.');
+  }
+};
+
+  const makeInviteLink = async () => {
+    // 서버 없이: inviter 링크 생성
+    const deepLink = buildInviteDeepLink(myKey, dk);
+    const shareLink = await makeShareLink(deepLink, ogImageUrl('chemistry'));
+    const qs = deepLink.split('?')[1] ?? '';
+    return { deepLink, shareLink, qs };
+  };
+
+  const onInviteChemistryContacts = async () => {
+    track('invite_click_contacts');
+  if (!thirdOk) {
+    alert('친구 초대 기능은 “제3자 정보 제공 동의” 후에만 활성화됩니다.');
+    nav('/agreement');
+    return;
+  }
+
+  if (!moduleId.trim()) {
+    alert('연락처 모듈 ID(VITE_CONTACTS_MODULE_ID)가 비어있습니다. 링크 공유(대체)로 진행하세요.');
+    return;
+  }
+
+  try {
+    const { shareLink, qs } = await makeInviteLink();
+
+    // 실전: 링크 자동 주입이 불확실 → 먼저 복사해두고 유저가 붙여넣게 한다.
+    try {
+      await navigator.clipboard.writeText(shareLink);
+    } catch {}
+
+    runContactsViral(
+      moduleId,
+      () => {
+        alert('연락처 초대 UI가 열렸습니다. 메시지 입력칸에 “붙여넣기”로 링크를 보내세요. (링크는 이미 복사됨)');
+      },
+      () => {}
+    );
+
+    // 초대 대기 화면으로 이동(내가 만든 초대 링크 상태)
+    nav(`/chemistry?${qs}`);
+  } catch (e) {
+    console.error(e);
+    alert('초대 생성 실패. 설정 또는 권한을 확인하세요.');
+  }
+};
+
+  const onInviteChemistryLink = async () => {
+    track('invite_click_link');
+  if (!thirdOk) {
+    alert('친구 초대 기능은 “제3자 정보 제공 동의” 후에만 활성화됩니다.');
+    nav('/agreement');
+    return;
+  }
+
+  try {
+    const { shareLink, qs } = await makeInviteLink();
+    const ok = await shareMessage(cp.shareChemistry(shareLink));
+    if (!ok) {
+      try {
+        await navigator.clipboard.writeText(shareLink);
+      } catch {}
+      alert('공유 실패 → 링크를 복사했습니다.');
+    }
+    alert('상대가 링크로 접속하면 궁합이 열립니다.');
+    nav(`/chemistry?${qs}`);
+  } catch (e) {
+    console.error(e);
+    alert('초대 링크 생성 실패.');
+  }
+};
+
+  return (
+    <div className="container">
+      <Header title="오늘의 분석 결과" subtitle={report.subtitle} />
+
+      <UnlockStatus
+        locked={isLocked}
+        reason={isLocked ? cp.lockReason : cp.unlockedReason}
+      />
+
+      <div className="card" style={{ marginBottom: 12 }}>
+        <div className="row">
+          <div className="h2">총점</div>
+          <div style={{ fontSize: 28, fontWeight: 900 }}>{report.score}점</div>
+        </div>
+        <div className="small">{report.rankText}</div>
+        <div style={{ marginTop: 10 }} className="p">
+          {report.oneLiner}
+        </div>
+      </div>
+
+      {isLocked ? (
+        <>
+          <LockedBlur title="상세 풀이 잠김" subtitle="광고 또는 궁합 성사로 ‘행운의 시간/귀인/주의점’을 공개합니다." onUnlock={unlock}>
+            <div className="card">
+              <div className="h2">행운의 시간</div>
+              <p className="p" style={{ marginTop: 8 }}>{report.luckyTime}</p>
+              <hr className="hr" />
+              <div className="h2">귀인</div>
+              <p className="p" style={{ marginTop: 8 }}>{report.helper}</p>
+              <hr className="hr" />
+              <div className="h2">주의할 것</div>
+              <p className="p" style={{ marginTop: 8 }}>{report.caution}</p>
+            </div>
+          </LockedBlur>
+
+          <div style={{ height: 12 }} />
+          <AdRewardButton adGroupId={adGroupId} userKey={myKey} scope="daily" onUnlocked={unlock} />
+
+          <div style={{ height: 12 }} />
+          <button className="btn btnGhost" onClick={onShareResult}>
+            내 결과 공유하기
+          </button>
+
+          <div style={{ height: 12 }} />
+          <div className="card">
+            <div className="h2">친구 초대하고 ‘오늘 잠금’ 해제</div>
+            {!thirdOk ? (
+              <>
+                <div className="small">제3자 정보 제공 동의가 필요합니다. (개인 분석은 계속 이용 가능)</div>
+                <div style={{ height: 10 }} />
+                <button className="btn btnPrimary" onClick={() => nav('/agreement')}>
+                  동의 설정 열기
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="small">상대가 접속해서 궁합이 성사되면 오늘 상세가 열립니다.</div>
+                <div style={{ height: 10 }} />
+                <button className="btn btnPrimary" onClick={onInviteChemistryContacts}>
+                  친구 초대(연락처)
+                </button>
+                <div style={{ height: 10 }} />
+                <button className="btn btnGhost" onClick={onInviteChemistryLink}>
+                  초대 링크 공유(대체)
+                </button>
+              </>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="card">
+            <div className="h2">행운의 시간</div>
+            <p className="p" style={{ marginTop: 8 }}>{report.luckyTime}</p>
+            <hr className="hr" />
+            <div className="h2">귀인</div>
+            <p className="p" style={{ marginTop: 8 }}>{report.helper}</p>
+            <hr className="hr" />
+            <div className="h2">주의할 것</div>
+            <p className="p" style={{ marginTop: 8 }}>{report.caution}</p>
+          </div>
+
+          <div style={{ height: 12 }} />
+          <button className="btn btnPrimary" onClick={() => nav('/detail')}>
+            상세 결과로
+          </button>
+
+          <div style={{ height: 12 }} />
+          <button className="btn btnGhost" onClick={onShareResult}>
+            내 결과 공유하기
+          </button>
+
+          <div style={{ height: 12 }} />
+          <div className="card">
+            <div className="h2">이 친구와 나의 케미는?</div>
+            {!thirdOk ? (
+              <>
+                <div className="small">친구 초대 기능은 동의 후 활성화됩니다.</div>
+                <div style={{ height: 10 }} />
+                <button className="btn btnPrimary" onClick={() => nav('/agreement')}>
+                  동의 설정 열기
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="small">상대가 접속해야만 결과가 열립니다.</div>
+                <div style={{ height: 10 }} />
+                <button className="btn btnPrimary" onClick={onInviteChemistryContacts}>
+                  친구 초대(연락처)
+                </button>
+                <div style={{ height: 10 }} />
+                <button className="btn btnGhost" onClick={onInviteChemistryLink}>
+                  초대 링크 공유(대체)
+                </button>
+              </>
+            )}
+          </div>
+        </>
+      )}
+
+      <div className="footer">* 엔터테인먼트 목적의 “연출된 분석”입니다.</div>
+    </div>
+  );
+}
