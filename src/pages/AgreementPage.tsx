@@ -49,7 +49,7 @@ export default function AgreementPage() {
       <Header title={COMPLIANCE_COPY.headline} subtitle={COMPLIANCE_COPY.sub} />
 
       <div className="card" style={{ marginBottom: 12 }}>
-        <div className="h2">요약</div>
+        <div className="h2 glow-text">✨ 시작하기 전에</div>
         <ul className="ul">
           {COMPLIANCE_COPY.bullets.map((b) => (
             <li key={b} className="p">{b}</li>
@@ -57,7 +57,7 @@ export default function AgreementPage() {
         </ul>
         <hr className="hr" />
 
-        <div className="h2">동의</div>
+        <div className="h2 glow-text">🔮 운명을 열기 위한 동의</div>
 
         <AgreementV4.SingleCheckboxField
           type="medium"
@@ -93,7 +93,7 @@ export default function AgreementPage() {
         </AgreementV4.SingleCheckboxField>
 
         <hr className="hr" />
-        <div className="h2">{COMPLIANCE_COPY.birthTitle}</div>
+        <div className="h2 glow-text">{COMPLIANCE_COPY.birthTitle}</div>
         <div className="small">{COMPLIANCE_COPY.birthHint}</div>
 
         <div style={{ marginTop: 8 }}>
@@ -117,7 +117,7 @@ export default function AgreementPage() {
         disabled={!canGo}
         onClick={onContinue}
       >
-        동의하고 분석 시작
+        ✨ 운명의 문 열기
       </Button>
 
       <div className="footer">{COMPLIANCE_COPY.privacyFoot}</div>
