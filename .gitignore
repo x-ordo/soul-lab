@@ -3,6 +3,7 @@ dist
 .env
 .DS_Store
 server/data/
+.claude/
 
 # Build cache
 *.tsbuildinfo

@@ -11,6 +11,7 @@ import { todayKey } from '../lib/seed';
 import { makeShareLink, shareMessage } from '../lib/toss';
 import { buildInviteDeepLink, buildResponseDeepLink, parseHandshake } from '../lib/handshake';
 import { track } from '../lib/analytics';
+import { incrementReferral, getLevelUpMessage } from '../lib/referralLevel';
 
 export default function ChemistryPage() {
   React.useEffect(() => { track('chemistry_view'); }, []);
@@ -52,10 +53,27 @@ export default function ChemistryPage() {
     return makeChemistryReport(myKey, status.partnerKey);
   }, [status, myKey]);
 
-  // paired 순간: 바이럴 언락 기록(오늘)
+  const [levelUpMsg, setLevelUpMsg] = useState<string | null>(null);
+
+  // paired 순간: 바이럴 언락 기록(오늘) + 초대자 리퍼럴 카운트 증가
   React.useEffect(() => {
-    if (status.mode === 'paired') { setViralUnlockedDate(dk); track('chemistry_paired'); }
-  }, [status, dk]);
+    if (status.mode === 'paired') {
+      setViralUnlockedDate(dk);
+      track('chemistry_paired');
+
+      // 초대자(inviter)일 경우, 리퍼럴 카운트 증가 (중복 방지)
+      if (status.from === myKey) {
+        const pairedKey = `sl_paired_${status.from}_${status.to}_${dk}`;
+        if (!localStorage.getItem(pairedKey)) {
+          localStorage.setItem(pairedKey, 'true');
+          const newCount = incrementReferral();
+          const msg = getLevelUpMessage(newCount);
+          if (msg) setLevelUpMsg(msg);
+          track('referral_increment', { count: newCount });
+        }
+      }
+    }
+  }, [status, dk, myKey]);
 
   const unlockToday = () => setUnlockedDate(dk);
 
@@ -195,6 +213,20 @@ const onMakeResponseLink = async () => {
 
       {status.mode === 'paired' && report && (
         <>
+          {/* 레벨업 메시지 */}
+          {levelUpMsg && (
+            <div
+              className="card"
+              style={{
+                marginBottom: 12,
+                background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(147, 112, 219, 0.2))',
+                border: '1px solid rgba(255, 215, 0, 0.4)',
+              }}
+            >
+              <div className="h2" style={{ color: '#ffd700' }}>{levelUpMsg}</div>
+            </div>
+          )}
+
           <div className="card" style={{ marginBottom: 12 }}>
             <div className="row">
               <div className="h2 glow-text">인연의 기운</div>

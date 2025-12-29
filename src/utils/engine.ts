@@ -30,3 +30,20 @@ export function chemistryScore(aKey: string, bKey: string, targetDateYYYYMMDD: s
   // 궁합은 더 극단적으로: 50~100
   return 50 + (h % 51);
 }
+
+/**
+ * 내일 운세 힌트 (블러 처리된 티저)
+ * - 내일 점수 기반으로 모호한 힌트 제공
+ * - 복귀 동기 유발
+ */
+export function tomorrowHint(userKey: string, birthDateYYYYMMDD: string): string {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowKey = tomorrow.toISOString().slice(0, 10).replace(/-/g, '');
+  const score = dailyScore(userKey, birthDateYYYYMMDD, tomorrowKey);
+
+  if (score >= 90) return '내일은 특별한 기운이 감지됩니다...';
+  if (score >= 80) return '밝은 에너지가 다가오고 있습니다...';
+  if (score >= 70) return '평온한 하루가 예상됩니다...';
+  return '신중한 움직임이 필요할 것 같습니다...';
+}

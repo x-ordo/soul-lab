@@ -4,7 +4,8 @@ import { Button, Badge } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import ViralHookModal from '../components/ViralHookModal';
 import { hasRequiredAgreement, hasBirthDate, getPublicKey, getUserSeed } from '../lib/storage';
-import { getStreak } from '../lib/streak';
+import { getStreak, wasGraceUsed, clearGraceFlag } from '../lib/streak';
+import { getStreakLevel, getStreakReward } from '../lib/streakBonus';
 import { copyFor } from '../lib/copyVariants';
 import { getVariant } from '../lib/variant';
 import { getAttribution } from '../lib/attribution';
@@ -23,6 +24,9 @@ export default function LandingPage() {
   const cp = useMemo(() => copyFor(v), [v]);
 
   const streak = getStreak();
+  const streakLevel = getStreakLevel(streak);
+  const streakReward = getStreakReward(streak);
+  const graceUsed = wasGraceUsed();
   const attr = getAttribution();
 
   const referrerInfo = useMemo(() => {
@@ -91,11 +95,53 @@ export default function LandingPage() {
         <div className="row">
           <div className="h2 glow-text">오늘의 기운</div>
           {streak > 1 ? (
-            <Badge size="small" color="blue" variant="fill">{`${streak}일째 교감 중`}</Badge>
+            <Badge
+              size="small"
+              color="blue"
+              variant="fill"
+              style={{ background: streakLevel.color }}
+            >
+              {streakLevel.icon} {streak}일째 교감 중
+            </Badge>
           ) : (
-            <Badge size="small" color="gray" variant="weak">첫 만남</Badge>
+            <Badge size="small" color="gray" variant="weak">
+              {streakLevel.icon} 첫 만남
+            </Badge>
           )}
         </div>
+
+        {/* 그레이스 데이 사용 시 메시지 */}
+        {graceUsed && (
+          <div
+            className="small"
+            style={{
+              marginTop: 8,
+              padding: '8px 12px',
+              background: 'rgba(147, 112, 219, 0.15)',
+              borderRadius: 8,
+              color: '#ffd700',
+            }}
+          >
+            ✨ 다행이에요! 인연의 끈이 유지되었습니다
+          </div>
+        )}
+
+        {/* 마일스톤 보상 메시지 */}
+        {streakReward && (
+          <div
+            className="small"
+            style={{
+              marginTop: 8,
+              padding: '8px 12px',
+              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(147, 112, 219, 0.2))',
+              borderRadius: 8,
+              color: '#ffd700',
+            }}
+          >
+            {streakReward}
+          </div>
+        )}
+
         <div className="small" style={{ marginTop: 8 }}>
           별들이 당신에게 전하는 메시지를 확인하세요.
         </div>
@@ -104,8 +150,6 @@ export default function LandingPage() {
       <Button size="large" color="primary" variant="fill" display="full" onClick={onStart}>
         ✨ 운명의 문 열기
       </Button>
-
-      <div className="footer">* 엔터테인먼트 목적의 운세 분석입니다.</div>
     </div>
   );
 }

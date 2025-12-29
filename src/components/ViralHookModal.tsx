@@ -1,5 +1,6 @@
 import React from 'react';
 import { BottomSheet, Button } from '@toss/tds-mobile';
+import { getDailyPairCount } from '../lib/mystical';
 
 function maskId(id: string) {
   if (!id) return '???';
@@ -70,7 +71,7 @@ export default function ViralHookModal({
         gap: 6,
       }}>
         <span>🌙</span>
-        <span>이 인연의 실은 <strong>오늘 자정</strong>에 사라집니다</span>
+        <span>이 인연의 실은 <strong>오늘 자정</strong>에 우주로 돌아갑니다</span>
       </div>
 
       {/* 사회적 증거 */}
@@ -80,7 +81,7 @@ export default function ViralHookModal({
         color: 'rgba(255,255,255,0.4)',
         textAlign: 'center',
       }}>
-        오늘 <strong style={{ color: '#9370db' }}>2,847쌍</strong>의 인연이 운명을 확인했습니다
+        오늘 <strong style={{ color: '#9370db' }}>{getDailyPairCount()}쌍</strong>의 인연이 운명을 확인했습니다
       </div>
     </BottomSheet>
   );

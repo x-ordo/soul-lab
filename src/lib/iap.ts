@@ -1,0 +1,418 @@
+/**
+ * In-App Purchase (IAP) - 토스 인앱결제 연동
+ *
+ * @apps-in-toss/web-framework SDK의 IAP 기능을 래핑
+ * 개발 환경에서는 모킹으로 동작
+ */
+
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8787';
+
+// 개발 모드 체크
+const isDev = import.meta.env.DEV;
+
+// ============================================================
+// Types
+// ============================================================
+
+export interface CreditProduct {
+  sku: string;
+  name: string;
+  nameKorean: string;
+  credits: number;
+  price: number;
+  bonus?: number;
+  totalCredits: number;
+  priceFormatted: string;
+}
+
+export interface CreditBalance {
+  credits: number;
+  totalPurchased: number;
+  totalUsed: number;
+  lastUpdated: string;
+}
+
+export interface PurchaseResult {
+  success: boolean;
+  orderId?: string;
+  credits?: number;
+  error?: string;
+}
+
+interface IAPModule {
+  createOneTimePurchaseOrder: (options: {
+    options: {
+      sku: string;
+      processProductGrant?: (params: { orderId: string }) => Promise<boolean>;
+    };
+    onEvent: (event: { type: string; data?: { orderId?: string } }) => void;
+    onError: (error: unknown) => void;
+  }) => () => void;
+  getPendingOrders: () => Promise<{ orders?: Array<{ orderId: string }> }>;
+  completeProductGrant: (params: { orderId: string }) => Promise<void>;
+  getCompletedOrRefundedOrders: () => Promise<{ orders?: Array<{ orderId: string; sku: string }> }>;
+}
+
+// ============================================================
+// IAP Module Loader
+// ============================================================
+
+let iapModule: IAPModule | null = null;
+
+async function getIAPModule(): Promise<IAPModule | null> {
+  if (iapModule) return iapModule;
+
+  try {
+    // 동적으로 @apps-in-toss/web-framework에서 IAP 모듈 로드 시도
+    const module = await import('@apps-in-toss/web-framework');
+    if ('IAP' in module && module.IAP) {
+      iapModule = module.IAP as IAPModule;
+      console.log('IAP module loaded from SDK');
+      return iapModule;
+    }
+  } catch (e) {
+    console.log('IAP module not available, using mock');
+  }
+
+  return null;
+}
+
+// ============================================================
+// API Functions
+// ============================================================
+
+/**
+ * 크레딧 상품 목록 조회
+ */
+export async function getProducts(): Promise<CreditProduct[]> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/products`);
+    const data = await res.json();
+    return data.products || [];
+  } catch (e) {
+    console.error('Failed to get products:', e);
+    return [];
+  }
+}
+
+/**
+ * 크레딧 잔액 조회
+ */
+export async function getBalance(userKey: string): Promise<CreditBalance | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/balance?userKey=${encodeURIComponent(userKey)}`);
+    const data = await res.json();
+    return data.balance || null;
+  } catch (e) {
+    console.error('Failed to get balance:', e);
+    return null;
+  }
+}
+
+/**
+ * 크레딧 사용 (차감)
+ */
+export async function useCredits(
+  userKey: string,
+  action: string,
+  description?: string
+): Promise<{ success: boolean; remainingCredits?: number; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/use`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userKey, action, description }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false, error: data.error || 'use_failed' };
+    }
+
+    return { success: true, remainingCredits: data.remainingCredits };
+  } catch (e) {
+    console.error('Failed to use credits:', e);
+    return { success: false, error: 'network_error' };
+  }
+}
+
+/**
+ * 크레딧 충분 여부 확인
+ */
+export async function checkCredits(
+  userKey: string,
+  action: string
+): Promise<{ hasEnough: boolean; cost: number; currentBalance: number; shortfall: number }> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/check`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userKey, action }),
+    });
+    const data = await res.json();
+    return {
+      hasEnough: data.hasEnough || false,
+      cost: data.cost || 0,
+      currentBalance: data.currentBalance || 0,
+      shortfall: data.shortfall || 0,
+    };
+  } catch (e) {
+    console.error('Failed to check credits:', e);
+    return { hasEnough: false, cost: 0, currentBalance: 0, shortfall: 0 };
+  }
+}
+
+// ============================================================
+// IAP Functions
+// ============================================================
+
+/**
+ * 주문 ID 생성
+ */
+function generateOrderId(): string {
+  return `order_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+/**
+ * 서버에 구매 시작 알림
+ */
+async function notifyPurchaseStart(
+  userKey: string,
+  orderId: string,
+  sku: string,
+  amount: number
+): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/purchase/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userKey, orderId, sku, amount }),
+    });
+    return res.ok;
+  } catch (e) {
+    console.error('Failed to notify purchase start:', e);
+    return false;
+  }
+}
+
+/**
+ * 서버에 구매 완료 알림 (크레딧 지급)
+ */
+async function notifyPurchaseComplete(orderId: string): Promise<{
+  success: boolean;
+  newBalance?: number;
+  credits?: number;
+}> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/purchase/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false };
+    }
+
+    return {
+      success: true,
+      newBalance: data.newBalance,
+      credits: data.purchase?.credits,
+    };
+  } catch (e) {
+    console.error('Failed to notify purchase complete:', e);
+    return { success: false };
+  }
+}
+
+/**
+ * 인앱결제 구매 요청
+ */
+export async function purchaseCredits(
+  userKey: string,
+  product: CreditProduct
+): Promise<PurchaseResult> {
+  const orderId = generateOrderId();
+
+  // 1. 서버에 구매 시작 알림
+  const startOk = await notifyPurchaseStart(userKey, orderId, product.sku, product.price);
+  if (!startOk) {
+    return { success: false, error: 'purchase_start_failed' };
+  }
+
+  // IAP 모듈 로드 시도
+  const iap = await getIAPModule();
+
+  if (iap) {
+    // 실제 IAP SDK 사용
+    return new Promise((resolve) => {
+      let cleanup: (() => void) | undefined;
+
+      try {
+        cleanup = iap.createOneTimePurchaseOrder({
+          options: {
+            sku: product.sku,
+            processProductGrant: async ({ orderId: completedOrderId }: { orderId: string }) => {
+              console.log('processProductGrant called:', completedOrderId);
+              const result = await notifyPurchaseComplete(completedOrderId);
+              if (result.success) {
+                console.log('Credits granted:', result.credits);
+                return true;
+              } else {
+                console.error('Failed to grant credits');
+                return false;
+              }
+            },
+          },
+          onEvent: (event: { type: string; data?: { orderId?: string } }) => {
+            console.log('IAP event:', event);
+            if (event.type === 'success') {
+              cleanup?.();
+              resolve({
+                success: true,
+                orderId: event.data?.orderId || orderId,
+                credits: product.totalCredits,
+              });
+            }
+          },
+          onError: (error: unknown) => {
+            console.error('IAP error:', error);
+            cleanup?.();
+            resolve({ success: false, error: 'iap_error' });
+          },
+        });
+      } catch (e) {
+        console.error('IAP exception:', e);
+        resolve({ success: false, error: 'iap_exception' });
+      }
+    });
+  } else if (isDev) {
+    // 개발 모드: 모킹으로 즉시 결제 완료 처리
+    console.log('[DEV] Mock IAP purchase for:', product.sku);
+
+    // 사용자에게 확인 요청
+    const confirmed = window.confirm(
+      `[개발 모드] 결제를 시뮬레이션합니다.\n\n` +
+        `상품: ${product.nameKorean}\n` +
+        `크레딧: ${product.totalCredits}\n` +
+        `가격: ${product.priceFormatted}\n\n` +
+        `결제를 진행하시겠습니까?`
+    );
+
+    if (!confirmed) {
+      return { success: false, error: 'user_cancelled' };
+    }
+
+    // 서버에 구매 완료 처리
+    const result = await notifyPurchaseComplete(orderId);
+
+    if (result.success) {
+      return {
+        success: true,
+        orderId,
+        credits: product.totalCredits,
+      };
+    } else {
+      return { success: false, error: 'complete_failed' };
+    }
+  } else {
+    // 프로덕션에서 IAP 불가
+    console.error('IAP module not available in production');
+    return { success: false, error: 'iap_not_available' };
+  }
+}
+
+/**
+ * 미결 구매 복원
+ */
+export async function restorePendingPurchases(userKey: string): Promise<number> {
+  const iap = await getIAPModule();
+
+  if (iap) {
+    try {
+      const pendingOrders = await iap.getPendingOrders();
+
+      if (!pendingOrders?.orders?.length) {
+        return 0;
+      }
+
+      let restored = 0;
+
+      for (const order of pendingOrders.orders) {
+        const result = await notifyPurchaseComplete(order.orderId);
+
+        if (result.success) {
+          await iap.completeProductGrant({ orderId: order.orderId });
+          restored++;
+        }
+      }
+
+      return restored;
+    } catch (e) {
+      console.error('Failed to restore pending purchases:', e);
+      return 0;
+    }
+  } else {
+    // IAP 없으면 서버에서 pending 조회
+    try {
+      const res = await fetch(`${API_BASE}/api/credits/pending?userKey=${encodeURIComponent(userKey)}`);
+      const data = await res.json();
+
+      if (!data.pending?.length) {
+        return 0;
+      }
+
+      let restored = 0;
+
+      for (const purchase of data.pending) {
+        const result = await notifyPurchaseComplete(purchase.orderId);
+        if (result.success) {
+          restored++;
+        }
+      }
+
+      return restored;
+    } catch (e) {
+      console.error('Failed to restore from server:', e);
+      return 0;
+    }
+  }
+}
+
+/**
+ * 완료된 구매 내역 조회
+ */
+export async function getCompletedPurchases(): Promise<Array<{
+  orderId: string;
+  sku: string;
+}>> {
+  const iap = await getIAPModule();
+
+  if (iap) {
+    try {
+      const result = await iap.getCompletedOrRefundedOrders();
+      return result?.orders || [];
+    } catch (e) {
+      console.error('Failed to get completed purchases:', e);
+      return [];
+    }
+  } else {
+    // IAP 없으면 빈 배열 반환
+    return [];
+  }
+}
+
+// ============================================================
+// Credit Action Constants
+// ============================================================
+
+export const CREDIT_ACTIONS = {
+  DAILY_FORTUNE: 'daily_fortune',
+  TAROT_INTERPRET: 'tarot_interpret',
+  AI_CHAT: 'ai_chat',
+  SYNASTRY_ANALYSIS: 'synastry_analysis',
+  DETAILED_REPORT: 'detailed_report',
+} as const;
+
+export type CreditAction = (typeof CREDIT_ACTIONS)[keyof typeof CREDIT_ACTIONS];

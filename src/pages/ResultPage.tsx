@@ -18,11 +18,13 @@ import {
   hasRequiredAgreement,
   hasBirthDate,
   hasThirdPartyConsent,
+  getBirthDate,
 } from '../lib/storage';
 import { todayKey } from '../lib/seed';
 import { makeShareLink, runContactsViral, shareMessage } from '../lib/toss';
 import { buildInviteDeepLink } from '../lib/handshake';
 import { track } from '../lib/analytics';
+import { tomorrowHint } from '../utils/engine';
 
 export default function ResultPage() {
   React.useEffect(() => { track('result_view'); }, []);
@@ -40,6 +42,8 @@ export default function ResultPage() {
   const report = useMemo(() => makeTodayReport(myKey), [myKey]);
   const v = getVariant(myKey);
   const cp = copyFor(v);
+  const birthDate = getBirthDate() ?? '';
+  const hint = useMemo(() => tomorrowHint(myKey, birthDate), [myKey, birthDate]);
 
 
   const [isLocked, setIsLocked] = useState(!(adUnlocked || viralUnlocked));
@@ -211,6 +215,32 @@ export default function ResultPage() {
               </>
             )}
           </div>
+
+          {/* AI 상담 & 크레딧 섹션 (잠금 상태에서도 접근 가능) */}
+          <div style={{ height: 12 }} />
+          <div className="card" style={{
+            background: 'linear-gradient(135deg, rgba(147, 112, 219, 0.15) 0%, rgba(255, 215, 0, 0.1) 100%)',
+            border: '1px solid rgba(255, 215, 0, 0.3)',
+          }}>
+            <div className="h2 glow-text">🔮 AI 운명 상담</div>
+            <div className="small" style={{ marginTop: 4, color: 'rgba(255,255,255,0.7)' }}>
+              점성술 전문가 AI와 1:1 심층 상담
+            </div>
+            <div style={{ height: 12 }} />
+            <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/consult')}>
+              ✨ AI 상담 시작하기
+            </Button>
+            <div style={{ height: 10 }} />
+            <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/credits')}>
+              💎 크레딧 충전하기
+            </Button>
+          </div>
+
+          {/* 타로 버튼 */}
+          <div style={{ height: 12 }} />
+          <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/tarot')}>
+            🃏 타로 카드 뽑기
+          </Button>
         </>
       ) : (
         <>
@@ -223,6 +253,34 @@ export default function ResultPage() {
             <hr className="hr" />
             <div className="h2 glow-text">⚠️ 주의할 기운</div>
             <p className="p" style={{ marginTop: 8 }}>{report.caution}</p>
+          </div>
+
+          {/* 내일 운세 티저 */}
+          <div
+            className="card"
+            style={{
+              marginTop: 12,
+              border: '1px solid rgba(147, 112, 219, 0.2)',
+              background: 'linear-gradient(135deg, rgba(20,20,30,0.9), rgba(30,20,40,0.9))',
+            }}
+          >
+            <div className="h2" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              🌅 내일의 기운 미리보기
+            </div>
+            <div
+              style={{
+                filter: 'blur(6px)',
+                color: 'rgba(255,255,255,0.3)',
+                userSelect: 'none',
+                marginTop: 8,
+                fontSize: 14,
+              }}
+            >
+              {hint}
+            </div>
+            <div className="small" style={{ marginTop: 12, color: '#ffd700' }}>
+              ✨ 내일 다시 방문하면 상세 운세가 열립니다
+            </div>
           </div>
 
           <div style={{ height: 12 }} />
@@ -260,10 +318,34 @@ export default function ResultPage() {
               </>
             )}
           </div>
+
+          {/* AI 상담 & 크레딧 섹션 */}
+          <div style={{ height: 12 }} />
+          <div className="card" style={{
+            background: 'linear-gradient(135deg, rgba(147, 112, 219, 0.15) 0%, rgba(255, 215, 0, 0.1) 100%)',
+            border: '1px solid rgba(255, 215, 0, 0.3)',
+          }}>
+            <div className="h2 glow-text">🔮 AI 운명 상담</div>
+            <div className="small" style={{ marginTop: 4, color: 'rgba(255,255,255,0.7)' }}>
+              점성술 전문가 AI와 1:1 심층 상담
+            </div>
+            <div style={{ height: 12 }} />
+            <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/consult')}>
+              ✨ AI 상담 시작하기
+            </Button>
+            <div style={{ height: 10 }} />
+            <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/credits')}>
+              💎 크레딧 충전하기
+            </Button>
+          </div>
+
+          {/* 타로 버튼 */}
+          <div style={{ height: 12 }} />
+          <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/tarot')}>
+            🃏 타로 카드 뽑기
+          </Button>
         </>
       )}
-
-      <div className="footer">* 엔터테인먼트 목적의 "연출된 분석"입니다.</div>
     </div>
   );
 }

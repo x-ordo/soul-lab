@@ -1,9 +1,12 @@
+import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import { FileStore } from './store';
-import { EventLogger } from './logger';
-import { FixedWindowLimiter } from './limiter';
-import { RewardStore } from './rewardStore';
+import { FileStore } from './store.js';
+import { EventLogger } from './logger.js';
+import { FixedWindowLimiter } from './limiter.js';
+import { RewardStore } from './rewardStore.js';
+import { fortuneRoutes } from './routes/fortune.js';
+import { creditRoutes } from './routes/credits.js';
 
 const app = Fastify({ logger: true });
 
@@ -29,6 +32,12 @@ const logger = new EventLogger(DATA_DIR);
 const limiter = new FixedWindowLimiter();
 
 await app.register(cors, { origin: true, credentials: false });
+
+// Register fortune routes (astrology, tarot, AI)
+await app.register(fortuneRoutes);
+
+// Register credit routes (IAP, credits)
+await app.register(creditRoutes, { dataDir: DATA_DIR });
 
 function meta(req: any) {
   const ip = req.ip;
