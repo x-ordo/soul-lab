@@ -152,6 +152,39 @@ export interface ReferralRecord {
 }
 
 // ============================================================
+// Streak Reward Configuration
+// ============================================================
+
+export interface StreakRewardTier {
+  days: number;
+  credits: number;
+  name: string;
+}
+
+export const STREAK_REWARDS: StreakRewardTier[] = [
+  { days: 7, credits: 3, name: '7일 연속 방문' },
+  { days: 14, credits: 5, name: '14일 연속 방문' },
+  { days: 21, credits: 10, name: '21일 연속 방문' },
+  { days: 30, credits: 20, name: '30일 연속 방문' },
+];
+
+// 3일마다 보너스 크레딧
+export const STREAK_DAILY_BONUS = {
+  interval: 3, // 3일마다
+  credits: 1,  // +1 크레딧
+};
+
+export interface StreakRewardRecord {
+  id: string;
+  userKey: string;
+  dateKey: string;
+  streak: number;
+  rewardType: 'milestone' | 'daily_bonus';
+  credits: number;
+  createdAt: string;
+}
+
+// ============================================================
 // Credit Store Class
 // ============================================================
 
@@ -161,11 +194,13 @@ export class CreditStore {
   private transactionsFile: string;
   private purchasesFile: string;
   private referralsFile: string;
+  private streakRewardsFile: string;
 
   private balances: Map<string, CreditBalance> = new Map();
   private transactions: CreditTransaction[] = [];
   private purchases: Map<string, PurchaseRecord> = new Map();
   private referrals: Map<string, ReferralRecord> = new Map();
+  private streakRewards: Map<string, StreakRewardRecord> = new Map();
 
   constructor(dataDir: string) {
     this.dataDir = dataDir;
@@ -173,6 +208,7 @@ export class CreditStore {
     this.transactionsFile = join(dataDir, 'credit_transactions.json');
     this.purchasesFile = join(dataDir, 'credit_purchases.json');
     this.referralsFile = join(dataDir, 'credit_referrals.json');
+    this.streakRewardsFile = join(dataDir, 'credit_streak_rewards.json');
     this.load();
   }
 
@@ -199,6 +235,11 @@ export class CreditStore {
       if (existsSync(this.referralsFile)) {
         const data = JSON.parse(readFileSync(this.referralsFile, 'utf-8'));
         this.referrals = new Map(Object.entries(data));
+      }
+
+      if (existsSync(this.streakRewardsFile)) {
+        const data = JSON.parse(readFileSync(this.streakRewardsFile, 'utf-8'));
+        this.streakRewards = new Map(Object.entries(data));
       }
     } catch (e) {
       console.error('CreditStore load error:', e);
@@ -227,6 +268,10 @@ export class CreditStore {
       writeFileSync(
         this.referralsFile,
         JSON.stringify(Object.fromEntries(this.referrals), null, 2)
+      );
+      writeFileSync(
+        this.streakRewardsFile,
+        JSON.stringify(Object.fromEntries(this.streakRewards), null, 2)
       );
     } catch (e) {
       console.error('CreditStore save error:', e);
@@ -572,6 +617,143 @@ export class CreditStore {
 
     return { totalInvited, totalCreditsEarned };
   }
+
+  // ----------------------------------------------------------
+  // Streak Reward Operations
+  // ----------------------------------------------------------
+
+  /**
+   * 스트릭 보상 청구
+   * - 마일스톤 보상 (7, 14, 21, 30일)
+   * - 데일리 보너스 (3일마다 +1)
+   */
+  claimStreakReward(
+    userKey: string,
+    dateKey: string,
+    streak: number
+  ): {
+    success: boolean;
+    rewards: Array<{ type: 'milestone' | 'daily_bonus'; credits: number; name: string }>;
+    totalCredits: number;
+    alreadyClaimed: boolean;
+  } {
+    const rewards: Array<{ type: 'milestone' | 'daily_bonus'; credits: number; name: string }> = [];
+    let totalCredits = 0;
+
+    // 오늘 이미 보상을 받았는지 확인
+    const dailyKey = `streak_${userKey}_${dateKey}`;
+    if (this.streakRewards.has(dailyKey)) {
+      return { success: true, rewards: [], totalCredits: 0, alreadyClaimed: true };
+    }
+
+    // 마일스톤 보상 확인
+    const milestone = STREAK_REWARDS.find(r => r.days === streak);
+    if (milestone) {
+      rewards.push({
+        type: 'milestone',
+        credits: milestone.credits,
+        name: milestone.name,
+      });
+      totalCredits += milestone.credits;
+
+      // 트랜잭션 기록
+      this.addCredits(
+        userKey,
+        milestone.credits,
+        'bonus',
+        `${milestone.name} 보상 (+${milestone.credits} 크레딧)`
+      );
+    }
+
+    // 3일 간격 데일리 보너스 확인
+    if (streak >= STREAK_DAILY_BONUS.interval && streak % STREAK_DAILY_BONUS.interval === 0) {
+      // 마일스톤과 겹치지 않는 경우에만
+      if (!milestone) {
+        rewards.push({
+          type: 'daily_bonus',
+          credits: STREAK_DAILY_BONUS.credits,
+          name: `${streak}일 연속 방문 보너스`,
+        });
+        totalCredits += STREAK_DAILY_BONUS.credits;
+
+        // 트랜잭션 기록
+        this.addCredits(
+          userKey,
+          STREAK_DAILY_BONUS.credits,
+          'bonus',
+          `${streak}일 연속 방문 보너스 (+${STREAK_DAILY_BONUS.credits} 크레딧)`
+        );
+      }
+    }
+
+    // 일일 보상 청구 기록 (중복 방지)
+    if (rewards.length > 0) {
+      const dailyRecord: StreakRewardRecord = {
+        id: dailyKey,
+        userKey,
+        dateKey,
+        streak,
+        rewardType: rewards[0].type,
+        credits: totalCredits,
+        createdAt: new Date().toISOString(),
+      };
+      this.streakRewards.set(dailyKey, dailyRecord);
+      this.save();
+    }
+
+    return { success: true, rewards, totalCredits, alreadyClaimed: false };
+  }
+
+  /**
+   * 스트릭 보상 히스토리 조회
+   */
+  getStreakRewardHistory(userKey: string, limit: number = 30): StreakRewardRecord[] {
+    return Array.from(this.streakRewards.values())
+      .filter(r => r.userKey === userKey)
+      .sort((a, b) => b.dateKey.localeCompare(a.dateKey))
+      .slice(0, limit);
+  }
+
+  /**
+   * 스트릭 보상 통계 조회
+   */
+  getStreakRewardStats(userKey: string): {
+    totalCreditsEarned: number;
+    milestonesReached: number[];
+    lastRewardDate: string | null;
+  } {
+    let totalCreditsEarned = 0;
+    const milestonesReached: number[] = [];
+    let lastRewardDate: string | null = null;
+    let lastCreatedAt: string | null = null;
+
+    for (const record of this.streakRewards.values()) {
+      if (record.userKey === userKey) {
+        totalCreditsEarned += record.credits;
+        if (record.rewardType === 'milestone') {
+          milestonesReached.push(record.streak);
+        }
+        // dateKey로 최신 날짜 비교 (createdAt 대신 dateKey 직접 비교)
+        if (!lastRewardDate || record.dateKey > lastRewardDate) {
+          lastRewardDate = record.dateKey;
+        }
+      }
+    }
+
+    return {
+      totalCreditsEarned,
+      milestonesReached: [...new Set(milestonesReached)].sort((a, b) => a - b),
+      lastRewardDate,
+    };
+  }
+
+  /**
+   * 오늘 보상을 받았는지 확인
+   */
+  hasClaimedStreakRewardToday(userKey: string, dateKey: string): boolean {
+    const dailyKey = `streak_${userKey}_${dateKey}`;
+    return this.streakRewards.has(dailyKey);
+  }
 }
 
 // ============================================================
@@ -611,4 +793,17 @@ export function getAllCosts(): Record<string, CreditCost> {
  */
 export function getReferralRewards(): ReferralRewardConfig {
   return REFERRAL_REWARDS;
+}
+
+/**
+ * 스트릭 보상 설정 조회
+ */
+export function getStreakRewardConfig(): {
+  milestones: StreakRewardTier[];
+  dailyBonus: typeof STREAK_DAILY_BONUS;
+} {
+  return {
+    milestones: STREAK_REWARDS,
+    dailyBonus: STREAK_DAILY_BONUS,
+  };
 }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, Badge } from '@toss/tds-mobile';
 import Header from '../components/Header';
@@ -11,9 +11,11 @@ import { copyFor } from '../lib/copyVariants';
 import { getVariant } from '../lib/variant';
 import { getAttribution } from '../lib/attribution';
 import { track } from '../lib/analytics';
+import { claimStreakReward, StreakReward } from '../lib/iap';
+import { todayKey } from '../lib/seed';
 
 export default function LandingPage() {
-  React.useEffect(() => { track('landing_view'); }, []);
+  useEffect(() => { track('landing_view'); }, []);
 
   const nav = useNavigate();
   const loc = useLocation();
@@ -30,6 +32,36 @@ export default function LandingPage() {
   const hasFreeUnlock = qualifiesForFreeUnlock(streak);
   const graceUsed = wasGraceUsed();
   const attr = getAttribution();
+
+  // 스트릭 크레딧 보상 상태
+  const [streakCreditRewards, setStreakCreditRewards] = useState<StreakReward[]>([]);
+  const [showCreditReward, setShowCreditReward] = useState(false);
+
+  // 스트릭 크레딧 보상 청구
+  const claimStreakCredits = useCallback(async () => {
+    if (!myKey || myKey === 'anon' || streak < 1) return;
+
+    try {
+      const result = await claimStreakReward(myKey, todayKey(), streak);
+      if (result.success && !result.alreadyClaimed && result.rewards.length > 0) {
+        setStreakCreditRewards(result.rewards);
+        setShowCreditReward(true);
+        track('streak_credit_reward', {
+          streak,
+          totalCredits: result.totalCredits,
+          rewardCount: result.rewards.length,
+        });
+        // 5초 후 자동 숨김
+        setTimeout(() => setShowCreditReward(false), 5000);
+      }
+    } catch (err) {
+      console.error('Failed to claim streak credits:', err);
+    }
+  }, [myKey, streak]);
+
+  useEffect(() => {
+    claimStreakCredits();
+  }, [claimStreakCredits]);
 
   const referrerInfo = useMemo(() => {
     const sp = new URLSearchParams(loc.search);
@@ -75,6 +107,44 @@ export default function LandingPage() {
           }}
         />
       )}
+
+      {/* 스트릭 크레딧 보상 알림 */}
+      {showCreditReward && streakCreditRewards.length > 0 && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1000,
+            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.95), rgba(255, 165, 0, 0.95))',
+            padding: '16px 24px',
+            borderRadius: 16,
+            boxShadow: '0 8px 32px rgba(255, 215, 0, 0.4)',
+            animation: 'credit-reward-pop 0.4s ease-out',
+            textAlign: 'center',
+            maxWidth: '90%',
+          }}
+          onClick={() => setShowCreditReward(false)}
+        >
+          <div style={{ fontSize: 28, marginBottom: 4 }}>🎉</div>
+          <div style={{ fontWeight: 700, color: '#1a1a2e', fontSize: 16 }}>
+            스트릭 보상 획득!
+          </div>
+          {streakCreditRewards.map((r, i) => (
+            <div key={i} style={{ color: '#333', fontSize: 14, marginTop: 4 }}>
+              {r.name}: <strong>+{r.credits} 크레딧</strong>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <style>{`
+        @keyframes credit-reward-pop {
+          0% { opacity: 0; transform: translateX(-50%) scale(0.8) translateY(-20px); }
+          100% { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+        }
+      `}</style>
 
       <Header title="SOUL LAB" subtitle="오늘, 당신의 운명이 속삭입니다" />
 

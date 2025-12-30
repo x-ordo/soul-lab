@@ -14,6 +14,7 @@ import {
   getAllProducts,
   getAllCosts,
   getReferralRewards,
+  getStreakRewardConfig,
 } from '../credits/store.js';
 
 // ============================================================
@@ -59,6 +60,12 @@ interface ReferralClaimRequest {
 
 interface ReferralStatsRequest {
   userKey: string;
+}
+
+interface StreakClaimRequest {
+  userKey: string;
+  dateKey: string;
+  streak: number;
 }
 
 // ============================================================
@@ -446,6 +453,105 @@ export async function creditRoutes(
     return {
       success: true,
       stats,
+    };
+  });
+
+  // ----------------------------------------------------------
+  // Streak Reward Operations
+  // ----------------------------------------------------------
+
+  /**
+   * GET /api/credits/streak/config
+   * 스트릭 보상 설정 조회
+   */
+  app.get('/api/credits/streak/config', async () => {
+    return {
+      success: true,
+      config: getStreakRewardConfig(),
+    };
+  });
+
+  /**
+   * POST /api/credits/streak/claim
+   * 스트릭 보상 청구
+   */
+  app.post('/api/credits/streak/claim', async (req: FastifyRequest, reply: FastifyReply) => {
+    const body = req.body as StreakClaimRequest;
+
+    if (!body.userKey || !body.dateKey || typeof body.streak !== 'number') {
+      return reply.code(400).send({ error: 'userKey, dateKey, and streak required' });
+    }
+
+    if (body.streak < 1) {
+      return reply.code(400).send({ error: 'streak must be at least 1' });
+    }
+
+    const result = creditStore.claimStreakReward(body.userKey, body.dateKey, body.streak);
+
+    return {
+      success: true,
+      rewards: result.rewards,
+      totalCredits: result.totalCredits,
+      alreadyClaimed: result.alreadyClaimed,
+      newBalance: creditStore.getBalance(body.userKey).credits,
+    };
+  });
+
+  /**
+   * GET /api/credits/streak/status?userKey=xxx&dateKey=yyy
+   * 오늘 스트릭 보상 수령 여부 확인
+   */
+  app.get('/api/credits/streak/status', async (req: FastifyRequest, reply: FastifyReply) => {
+    const query = req.query as { userKey?: string; dateKey?: string };
+
+    if (!query.userKey || !query.dateKey) {
+      return reply.code(400).send({ error: 'userKey and dateKey required' });
+    }
+
+    const claimed = creditStore.hasClaimedStreakRewardToday(query.userKey, query.dateKey);
+
+    return {
+      success: true,
+      claimed,
+    };
+  });
+
+  /**
+   * GET /api/credits/streak/stats?userKey=xxx
+   * 스트릭 보상 통계 조회
+   */
+  app.get('/api/credits/streak/stats', async (req: FastifyRequest, reply: FastifyReply) => {
+    const query = req.query as { userKey?: string };
+
+    if (!query.userKey) {
+      return reply.code(400).send({ error: 'userKey required' });
+    }
+
+    const stats = creditStore.getStreakRewardStats(query.userKey);
+
+    return {
+      success: true,
+      stats,
+    };
+  });
+
+  /**
+   * GET /api/credits/streak/history?userKey=xxx&limit=30
+   * 스트릭 보상 히스토리 조회
+   */
+  app.get('/api/credits/streak/history', async (req: FastifyRequest, reply: FastifyReply) => {
+    const query = req.query as { userKey?: string; limit?: string };
+
+    if (!query.userKey) {
+      return reply.code(400).send({ error: 'userKey required' });
+    }
+
+    const limit = Math.min(parseInt(query.limit || '30', 10), 100);
+    const history = creditStore.getStreakRewardHistory(query.userKey, limit);
+
+    return {
+      success: true,
+      history,
     };
   });
 }

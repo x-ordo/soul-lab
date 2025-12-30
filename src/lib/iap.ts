@@ -503,3 +503,123 @@ export async function getReferralStats(userKey: string): Promise<ReferralStats |
     return null;
   }
 }
+
+// ============================================================
+// Streak Reward Functions
+// ============================================================
+
+export interface StreakRewardTier {
+  days: number;
+  credits: number;
+  name: string;
+}
+
+export interface StreakRewardConfig {
+  milestones: StreakRewardTier[];
+  dailyBonus: {
+    interval: number;
+    credits: number;
+  };
+}
+
+export interface StreakReward {
+  type: 'milestone' | 'daily_bonus';
+  credits: number;
+  name: string;
+}
+
+export interface StreakClaimResult {
+  success: boolean;
+  rewards: StreakReward[];
+  totalCredits: number;
+  alreadyClaimed: boolean;
+  newBalance?: number;
+}
+
+export interface StreakRewardStats {
+  totalCreditsEarned: number;
+  milestonesReached: number[];
+  lastRewardDate: string | null;
+}
+
+/**
+ * 스트릭 보상 설정 조회
+ */
+export async function getStreakRewardConfig(): Promise<StreakRewardConfig | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/streak/config`);
+    const data = await res.json();
+    return data.config || null;
+  } catch (e) {
+    console.error('Failed to get streak reward config:', e);
+    return null;
+  }
+}
+
+/**
+ * 스트릭 보상 청구
+ */
+export async function claimStreakReward(
+  userKey: string,
+  dateKey: string,
+  streak: number
+): Promise<StreakClaimResult> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/streak/claim`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userKey, dateKey, streak }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false, rewards: [], totalCredits: 0, alreadyClaimed: false };
+    }
+
+    return {
+      success: true,
+      rewards: data.rewards || [],
+      totalCredits: data.totalCredits || 0,
+      alreadyClaimed: data.alreadyClaimed || false,
+      newBalance: data.newBalance,
+    };
+  } catch (e) {
+    console.error('Failed to claim streak reward:', e);
+    return { success: false, rewards: [], totalCredits: 0, alreadyClaimed: false };
+  }
+}
+
+/**
+ * 오늘 스트릭 보상 수령 여부 확인
+ */
+export async function hasClaimedStreakToday(
+  userKey: string,
+  dateKey: string
+): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/credits/streak/status?userKey=${encodeURIComponent(userKey)}&dateKey=${encodeURIComponent(dateKey)}`
+    );
+    const data = await res.json();
+    return data.claimed || false;
+  } catch (e) {
+    console.error('Failed to check streak claim status:', e);
+    return false;
+  }
+}
+
+/**
+ * 스트릭 보상 통계 조회
+ */
+export async function getStreakRewardStats(userKey: string): Promise<StreakRewardStats | null> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/credits/streak/stats?userKey=${encodeURIComponent(userKey)}`
+    );
+    const data = await res.json();
+    return data.stats || null;
+  } catch (e) {
+    console.error('Failed to get streak reward stats:', e);
+    return null;
+  }
+}
