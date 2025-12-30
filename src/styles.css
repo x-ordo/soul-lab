@@ -34,7 +34,7 @@ a { color: inherit; text-decoration: none; }
 .container {
   max-width: 520px;
   margin: 0 auto;
-  padding: 16px 16px 24px;
+  padding: 16px 24px 24px;
   position: relative;
   z-index: 1;
 }

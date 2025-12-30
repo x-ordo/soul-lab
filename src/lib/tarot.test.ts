@@ -189,7 +189,7 @@ describe('drawDailyCard', () => {
   });
 
   it('returns different cards for different users', () => {
-    const cards = new Set<string>();
+    const cards = new Set<number>();
     for (let i = 0; i < 100; i++) {
       cards.add(drawDailyCard(`user${i}`).card.id);
     }
@@ -227,7 +227,7 @@ describe('drawDailyCard', () => {
   });
 
   it('different users get different daily cards', () => {
-    const dailyCards = new Set<string>();
+    const dailyCards = new Set<number>();
     for (let i = 0; i < 78; i++) {
       dailyCards.add(drawDailyCard(`uniqueuser${i}`).card.id);
     }

@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, AgreementV4, TextField } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import { COMPLIANCE_COPY } from '../lib/complianceCopy';
-import { getAgreement, setAgreement, getBirthDate, setBirthDate } from '../lib/storage';
+import { getAgreement, setAgreement, getBirthDate, setBirthDate, hasRequiredAgreement, hasBirthDate } from '../lib/storage';
 import { track } from '../lib/analytics';
 
 function isYYYYMMDD(v: string) {
@@ -11,9 +11,19 @@ function isYYYYMMDD(v: string) {
 }
 
 export default function AgreementPage() {
-  React.useEffect(() => { track('agreement_view'); }, []);
-
   const nav = useNavigate();
+  const [searchParams] = useSearchParams();
+  const forceEdit = searchParams.get('edit') === 'true';
+
+  // Redirect if already agreed (unless explicitly editing)
+  useEffect(() => {
+    if (!forceEdit && hasRequiredAgreement() && hasBirthDate()) {
+      nav('/result', { replace: true });
+      return;
+    }
+    track('agreement_view');
+  }, [forceEdit, nav]);
+
   const saved = useMemo(() => getAgreement(), []);
   const savedBd = useMemo(() => getBirthDate() ?? '', []);
 

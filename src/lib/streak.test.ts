@@ -105,13 +105,13 @@ describe('updateStreak', () => {
   });
 
   it('uses grace day for 2-day gap', () => {
-    vi.mocked(dateKey).mockImplementation((offset: number) => {
+    vi.mocked(dateKey).mockImplementation((offset?: number) => {
       const dates: Record<number, string> = {
         0: '20250115',
         '-1': '20250114',
         '-2': '20250113',
       };
-      return dates[offset] ?? '20250115';
+      return dates[offset ?? 0] ?? '20250115';
     });
 
     localStorage.setItem('sl_last_seen', '20250113'); // two days ago
@@ -121,13 +121,13 @@ describe('updateStreak', () => {
   });
 
   it('resets streak for gap > 2 days', () => {
-    vi.mocked(dateKey).mockImplementation((offset: number) => {
+    vi.mocked(dateKey).mockImplementation((offset?: number) => {
       const dates: Record<number, string> = {
         0: '20250115',
         '-1': '20250114',
         '-2': '20250113',
       };
-      return dates[offset] ?? '20250115';
+      return dates[offset ?? 0] ?? '20250115';
     });
 
     localStorage.setItem('sl_last_seen', '20250110'); // 5 days ago
