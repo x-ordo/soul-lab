@@ -1,12 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import compression from 'vite-plugin-compression';
 import path from 'path';
 
 // Use real Toss packages when VITE_USE_TOSS_SDK=true (in Toss WebView environment)
 const useTossSdk = process.env.VITE_USE_TOSS_SDK === 'true';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Gzip compression (most compatible)
+    compression({ algorithm: 'gzip', ext: '.gz' }),
+    // Brotli compression (better ratio, modern browsers)
+    compression({ algorithm: 'brotliCompress', ext: '.br' }),
+  ],
   server: {
     port: 5173,
   },

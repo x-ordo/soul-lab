@@ -1,18 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { BrowserRouter } from 'react-router-dom';
 
-import LandingPage from './pages/LandingPage';
-import LoadingPage from './pages/LoadingPage';
-import ResultPage from './pages/ResultPage';
-import DetailPage from './pages/DetailPage';
-import ChemistryPage from './pages/ChemistryPage';
-import AgreementPage from './pages/AgreementPage';
+// Route-based code splitting - lazy load pages for smaller initial bundle
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const LoadingPage = lazy(() => import('./pages/LoadingPage'));
+const ResultPage = lazy(() => import('./pages/ResultPage'));
+const DetailPage = lazy(() => import('./pages/DetailPage'));
+const ChemistryPage = lazy(() => import('./pages/ChemistryPage'));
+const AgreementPage = lazy(() => import('./pages/AgreementPage'));
+const TarotPage = lazy(() => import('./pages/TarotPage'));
+const CreditPage = lazy(() => import('./pages/CreditPage'));
+const ConsultPage = lazy(() => import('./pages/ConsultPage'));
+// Small pages - keep static import
 import NotFoundPage from './pages/NotFoundPage';
 import DebugPage from './pages/DebugPage';
-import TarotPage from './pages/TarotPage';
-import CreditPage from './pages/CreditPage';
-import ConsultPage from './pages/ConsultPage';
 import Balatro from './components/Balatro';
 import { ToastProvider } from './components/Toast';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -35,20 +37,37 @@ function Bootstrap() {
   }, [loc.key, loc.pathname, loc.search]);
 
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/agreement" element={<AgreementPage />} />
-      <Route path="/loading" element={<LoadingPage />} />
-      <Route path="/result" element={<ResultPage />} />
-      <Route path="/detail" element={<DetailPage />} />
-      <Route path="/chemistry" element={<ChemistryPage />} />
-      <Route path="/tarot" element={<TarotPage />} />
-      <Route path="/credits" element={<CreditPage />} />
-      <Route path="/consult" element={<ConsultPage />} />
-      <Route path="/debug" element={<DebugPage />} />
-      <Route path="/404" element={<NotFoundPage />} />
-      <Route path="*" element={<Navigate to="/404" replace />} />
-    </Routes>
+    <Suspense
+      fallback={
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            color: '#9370DB',
+            fontSize: '18px',
+          }}
+        >
+          ✨ 로딩 중...
+        </div>
+      }
+    >
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/agreement" element={<AgreementPage />} />
+        <Route path="/loading" element={<LoadingPage />} />
+        <Route path="/result" element={<ResultPage />} />
+        <Route path="/detail" element={<DetailPage />} />
+        <Route path="/chemistry" element={<ChemistryPage />} />
+        <Route path="/tarot" element={<TarotPage />} />
+        <Route path="/credits" element={<CreditPage />} />
+        <Route path="/consult" element={<ConsultPage />} />
+        <Route path="/debug" element={<DebugPage />} />
+        <Route path="/404" element={<NotFoundPage />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 
