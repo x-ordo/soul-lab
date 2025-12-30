@@ -416,3 +416,90 @@ export const CREDIT_ACTIONS = {
 } as const;
 
 export type CreditAction = (typeof CREDIT_ACTIONS)[keyof typeof CREDIT_ACTIONS];
+
+// ============================================================
+// Referral Reward Functions
+// ============================================================
+
+export interface ReferralRewardConfig {
+  inviterCredits: number;
+  inviteeCredits: number;
+}
+
+export interface ReferralClaimResult {
+  success: boolean;
+  credits?: number;
+  alreadyClaimed?: boolean;
+  newBalance?: number;
+  error?: string;
+}
+
+export interface ReferralStats {
+  totalInvited: number;
+  totalCreditsEarned: number;
+}
+
+/**
+ * 레퍼럴 보상 설정 조회
+ */
+export async function getReferralRewards(): Promise<ReferralRewardConfig | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/referral/rewards`);
+    const data = await res.json();
+    return data.rewards || null;
+  } catch (e) {
+    console.error('Failed to get referral rewards:', e);
+    return null;
+  }
+}
+
+/**
+ * 레퍼럴 보상 청구
+ * - 초대자와 피초대자 모두 호출 가능
+ * - 각자 한 번씩만 보상 받음
+ */
+export async function claimReferralReward(
+  inviterKey: string,
+  inviteeKey: string,
+  dateKey: string,
+  claimerKey: string
+): Promise<ReferralClaimResult> {
+  try {
+    const res = await fetch(`${API_BASE}/api/credits/referral/claim`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inviterKey, inviteeKey, dateKey, claimerKey }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false, error: data.error || 'claim_failed' };
+    }
+
+    return {
+      success: true,
+      credits: data.credits,
+      alreadyClaimed: data.alreadyClaimed,
+      newBalance: data.newBalance,
+    };
+  } catch (e) {
+    console.error('Failed to claim referral reward:', e);
+    return { success: false, error: 'network_error' };
+  }
+}
+
+/**
+ * 레퍼럴 통계 조회
+ */
+export async function getReferralStats(userKey: string): Promise<ReferralStats | null> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/credits/referral/stats?userKey=${encodeURIComponent(userKey)}`
+    );
+    const data = await res.json();
+    return data.stats || null;
+  } catch (e) {
+    console.error('Failed to get referral stats:', e);
+    return null;
+  }
+}

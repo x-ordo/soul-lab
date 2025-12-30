@@ -13,6 +13,7 @@ import { buildInviteDeepLink, buildResponseDeepLink, parseHandshake } from '../l
 import { track } from '../lib/analytics';
 import { toast } from '../components/Toast';
 import { incrementReferral, getLevelUpMessage } from '../lib/referralLevel';
+import { claimReferralReward } from '../lib/iap';
 
 export default function ChemistryPage() {
   React.useEffect(() => { track('chemistry_view'); }, []);
@@ -55,12 +56,35 @@ export default function ChemistryPage() {
   }, [status, myKey]);
 
   const [levelUpMsg, setLevelUpMsg] = useState<string | null>(null);
+  const [creditRewardMsg, setCreditRewardMsg] = useState<string | null>(null);
 
-  // paired 순간: 바이럴 언락 기록(오늘) + 초대자 리퍼럴 카운트 증가
+  // paired 순간: 바이럴 언락 기록(오늘) + 리퍼럴 보상 청구
   React.useEffect(() => {
     if (status.mode === 'paired') {
       setViralUnlockedDate(dk);
       track('chemistry_paired');
+
+      // 리퍼럴 크레딧 보상 청구 (초대자, 피초대자 모두)
+      const claimReward = async () => {
+        const result = await claimReferralReward(
+          status.from,
+          status.to,
+          status.dateKey,
+          myKey
+        );
+
+        if (result.success && !result.alreadyClaimed && result.credits && result.credits > 0) {
+          const isInviter = myKey === status.from;
+          const rewardType = isInviter ? '친구 초대' : '초대 수락';
+          setCreditRewardMsg(`🎁 ${rewardType} 보상으로 ${result.credits} 크레딧을 받았습니다!`);
+          track('referral_reward_claimed', {
+            credits: result.credits,
+            isInviter,
+            newBalance: result.newBalance,
+          });
+        }
+      };
+      claimReward();
 
       // 초대자(inviter)일 경우, 리퍼럴 카운트 증가 (중복 방지)
       if (status.from === myKey) {
@@ -264,6 +288,24 @@ const onMakeResponseLink = async () => {
 
       {status.mode === 'paired' && report && (
         <>
+          {/* 크레딧 보상 메시지 */}
+          {creditRewardMsg && (
+            <div
+              className="card"
+              style={{
+                marginBottom: 12,
+                background: 'linear-gradient(135deg, rgba(75, 0, 130, 0.3), rgba(147, 112, 219, 0.3))',
+                border: '1px solid rgba(147, 112, 219, 0.5)',
+                textAlign: 'center',
+              }}
+            >
+              <div className="h2 glow-text">{creditRewardMsg}</div>
+              <div className="small" style={{ marginTop: 8, color: 'rgba(255, 255, 255, 0.7)' }}>
+                크레딧으로 AI 상담을 이용해보세요!
+              </div>
+            </div>
+          )}
+
           {/* 레벨업 메시지 */}
           {levelUpMsg && (
             <div

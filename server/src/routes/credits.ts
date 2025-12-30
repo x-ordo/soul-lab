@@ -13,6 +13,7 @@ import {
   getCreditCost,
   getAllProducts,
   getAllCosts,
+  getReferralRewards,
 } from '../credits/store.js';
 
 // ============================================================
@@ -47,6 +48,17 @@ interface PurchaseHistoryRequest {
 interface TransactionHistoryRequest {
   userKey: string;
   limit?: number;
+}
+
+interface ReferralClaimRequest {
+  inviterKey: string;
+  inviteeKey: string;
+  dateKey: string;
+  claimerKey: string;
+}
+
+interface ReferralStatsRequest {
+  userKey: string;
 }
 
 // ============================================================
@@ -339,6 +351,101 @@ export async function creditRoutes(
     return {
       success: true,
       transactions,
+    };
+  });
+
+  // ----------------------------------------------------------
+  // Referral Reward Operations
+  // ----------------------------------------------------------
+
+  /**
+   * GET /api/credits/referral/rewards
+   * 레퍼럴 보상 설정 조회
+   */
+  app.get('/api/credits/referral/rewards', async () => {
+    return {
+      success: true,
+      rewards: getReferralRewards(),
+    };
+  });
+
+  /**
+   * POST /api/credits/referral/claim
+   * 레퍼럴 보상 청구
+   * - 초대자: 친구 초대 보상
+   * - 피초대자: 초대 수락 보상
+   */
+  app.post('/api/credits/referral/claim', async (req: FastifyRequest, reply: FastifyReply) => {
+    const body = req.body as ReferralClaimRequest;
+
+    if (!body.inviterKey || !body.inviteeKey || !body.dateKey || !body.claimerKey) {
+      return reply.code(400).send({ error: 'inviterKey, inviteeKey, dateKey, and claimerKey required' });
+    }
+
+    const result = creditStore.claimReferralReward(
+      body.inviterKey,
+      body.inviteeKey,
+      body.dateKey,
+      body.claimerKey
+    );
+
+    if (!result.success) {
+      return reply.code(400).send({
+        error: result.error,
+        message: result.error === 'same_user'
+          ? '자기 자신을 초대할 수 없습니다.'
+          : '보상을 받을 권한이 없습니다.',
+      });
+    }
+
+    return {
+      success: true,
+      credits: result.credits,
+      alreadyClaimed: result.alreadyClaimed,
+      transaction: result.transaction,
+      newBalance: creditStore.getBalance(body.claimerKey).credits,
+    };
+  });
+
+  /**
+   * GET /api/credits/referral/status?inviterKey=xxx&inviteeKey=yyy&dateKey=zzz
+   * 레퍼럴 보상 상태 조회
+   */
+  app.get('/api/credits/referral/status', async (req: FastifyRequest, reply: FastifyReply) => {
+    const query = req.query as { inviterKey?: string; inviteeKey?: string; dateKey?: string };
+
+    if (!query.inviterKey || !query.inviteeKey || !query.dateKey) {
+      return reply.code(400).send({ error: 'inviterKey, inviteeKey, and dateKey required' });
+    }
+
+    const status = creditStore.getReferralStatus(
+      query.inviterKey,
+      query.inviteeKey,
+      query.dateKey
+    );
+
+    return {
+      success: true,
+      status,
+    };
+  });
+
+  /**
+   * GET /api/credits/referral/stats?userKey=xxx
+   * 사용자의 레퍼럴 통계 조회
+   */
+  app.get('/api/credits/referral/stats', async (req: FastifyRequest, reply: FastifyReply) => {
+    const query = req.query as { userKey?: string };
+
+    if (!query.userKey) {
+      return reply.code(400).send({ error: 'userKey required' });
+    }
+
+    const stats = creditStore.getReferralStats(query.userKey);
+
+    return {
+      success: true,
+      stats,
     };
   });
 }

@@ -128,6 +128,30 @@ export const CREDIT_COSTS: Record<string, CreditCost> = {
 };
 
 // ============================================================
+// Referral Reward Configuration
+// ============================================================
+
+export interface ReferralRewardConfig {
+  inviterCredits: number;
+  inviteeCredits: number;
+}
+
+export const REFERRAL_REWARDS: ReferralRewardConfig = {
+  inviterCredits: 5, // 초대자 보상
+  inviteeCredits: 3, // 피초대자 보상
+};
+
+export interface ReferralRecord {
+  id: string;
+  inviterKey: string;
+  inviteeKey: string;
+  dateKey: string;
+  inviterCredited: boolean;
+  inviteeCredited: boolean;
+  createdAt: string;
+}
+
+// ============================================================
 // Credit Store Class
 // ============================================================
 
@@ -136,16 +160,19 @@ export class CreditStore {
   private balancesFile: string;
   private transactionsFile: string;
   private purchasesFile: string;
+  private referralsFile: string;
 
   private balances: Map<string, CreditBalance> = new Map();
   private transactions: CreditTransaction[] = [];
   private purchases: Map<string, PurchaseRecord> = new Map();
+  private referrals: Map<string, ReferralRecord> = new Map();
 
   constructor(dataDir: string) {
     this.dataDir = dataDir;
     this.balancesFile = join(dataDir, 'credit_balances.json');
     this.transactionsFile = join(dataDir, 'credit_transactions.json');
     this.purchasesFile = join(dataDir, 'credit_purchases.json');
+    this.referralsFile = join(dataDir, 'credit_referrals.json');
     this.load();
   }
 
@@ -167,6 +194,11 @@ export class CreditStore {
       if (existsSync(this.purchasesFile)) {
         const data = JSON.parse(readFileSync(this.purchasesFile, 'utf-8'));
         this.purchases = new Map(Object.entries(data));
+      }
+
+      if (existsSync(this.referralsFile)) {
+        const data = JSON.parse(readFileSync(this.referralsFile, 'utf-8'));
+        this.referrals = new Map(Object.entries(data));
       }
     } catch (e) {
       console.error('CreditStore load error:', e);
@@ -191,6 +223,10 @@ export class CreditStore {
       writeFileSync(
         this.purchasesFile,
         JSON.stringify(Object.fromEntries(this.purchases), null, 2)
+      );
+      writeFileSync(
+        this.referralsFile,
+        JSON.stringify(Object.fromEntries(this.referrals), null, 2)
       );
     } catch (e) {
       console.error('CreditStore save error:', e);
@@ -422,6 +458,120 @@ export class CreditStore {
       .slice(-limit)
       .reverse();
   }
+
+  // ----------------------------------------------------------
+  // Referral Reward Operations
+  // ----------------------------------------------------------
+
+  /**
+   * 레퍼럴 보상 청구
+   * - 초대자와 피초대자 모두 크레딧 보상
+   * - 같은 쌍은 하루에 한 번만 보상
+   */
+  claimReferralReward(
+    inviterKey: string,
+    inviteeKey: string,
+    dateKey: string,
+    claimerKey: string
+  ): {
+    success: boolean;
+    credits?: number;
+    alreadyClaimed?: boolean;
+    error?: string;
+    transaction?: CreditTransaction;
+  } {
+    // 동일 인물 체크
+    if (inviterKey === inviteeKey) {
+      return { success: false, error: 'same_user' };
+    }
+
+    // 청구자가 유효한지 확인 (초대자 또는 피초대자만 가능)
+    if (claimerKey !== inviterKey && claimerKey !== inviteeKey) {
+      return { success: false, error: 'unauthorized_claimer' };
+    }
+
+    const referralId = `ref_${inviterKey}_${inviteeKey}_${dateKey}`;
+    let referral = this.referrals.get(referralId);
+
+    // 새 레퍼럴 레코드 생성
+    if (!referral) {
+      referral = {
+        id: referralId,
+        inviterKey,
+        inviteeKey,
+        dateKey,
+        inviterCredited: false,
+        inviteeCredited: false,
+        createdAt: new Date().toISOString(),
+      };
+      this.referrals.set(referralId, referral);
+    }
+
+    const isInviter = claimerKey === inviterKey;
+    const alreadyClaimed = isInviter ? referral.inviterCredited : referral.inviteeCredited;
+
+    if (alreadyClaimed) {
+      return { success: true, credits: 0, alreadyClaimed: true };
+    }
+
+    // 보상 크레딧 결정
+    const credits = isInviter
+      ? REFERRAL_REWARDS.inviterCredits
+      : REFERRAL_REWARDS.inviteeCredits;
+
+    // 크레딧 지급
+    const description = isInviter
+      ? `친구 초대 보상 (+${credits} 크레딧)`
+      : `초대 수락 보상 (+${credits} 크레딧)`;
+
+    const transaction = this.addCredits(claimerKey, credits, 'bonus', description);
+
+    // 보상 완료 표시
+    if (isInviter) {
+      referral.inviterCredited = true;
+    } else {
+      referral.inviteeCredited = true;
+    }
+    this.referrals.set(referralId, referral);
+    this.save();
+
+    return { success: true, credits, alreadyClaimed: false, transaction };
+  }
+
+  /**
+   * 레퍼럴 보상 상태 조회
+   */
+  getReferralStatus(
+    inviterKey: string,
+    inviteeKey: string,
+    dateKey: string
+  ): ReferralRecord | null {
+    const referralId = `ref_${inviterKey}_${inviteeKey}_${dateKey}`;
+    return this.referrals.get(referralId) || null;
+  }
+
+  /**
+   * 사용자의 레퍼럴 통계 조회
+   */
+  getReferralStats(userKey: string): {
+    totalInvited: number;
+    totalCreditsEarned: number;
+  } {
+    let totalInvited = 0;
+    let totalCreditsEarned = 0;
+
+    for (const referral of this.referrals.values()) {
+      if (referral.inviterKey === userKey && referral.inviterCredited) {
+        totalInvited++;
+        totalCreditsEarned += REFERRAL_REWARDS.inviterCredits;
+      }
+      if (referral.inviteeKey === userKey && referral.inviteeCredited) {
+        totalCreditsEarned += REFERRAL_REWARDS.inviteeCredits;
+      }
+    }
+
+    return { totalInvited, totalCreditsEarned };
+  }
 }
 
 // ============================================================
@@ -454,4 +604,11 @@ export function getAllProducts(): CreditProduct[] {
  */
 export function getAllCosts(): Record<string, CreditCost> {
   return CREDIT_COSTS;
+}
+
+/**
+ * 레퍼럴 보상 설정 조회
+ */
+export function getReferralRewards(): ReferralRewardConfig {
+  return REFERRAL_REWARDS;
 }
