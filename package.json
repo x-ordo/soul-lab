@@ -13,7 +13,12 @@
     "format": "prettier -w .",
     "dev:server": "tsx watch server/src/index.ts",
     "start:server": "node server/dist/index.js",
-    "build:server": "tsc -p server/tsconfig.json"
+    "build:server": "tsc -p server/tsconfig.json",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:server": "vitest run --config server/vitest.config.ts",
+    "test:all": "vitest run && vitest run --config server/vitest.config.ts"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
@@ -28,18 +33,23 @@
     "toss-packages": "Toss packages (@toss/tds-mobile, @toss/tds-mobile-ait, @apps-in-toss/web-framework) are mocked in src/mocks/ for standalone deployment"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
     "@types/node": "^22.10.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^4.0.16",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
+    "jsdom": "^27.4.0",
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vite": "^6.0.6"
+    "vite": "^6.0.6",
+    "vitest": "^4.0.16"
   }
 }
