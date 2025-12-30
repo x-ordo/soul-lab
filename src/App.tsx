@@ -13,6 +13,7 @@ import DebugPage from './pages/DebugPage';
 import TarotPage from './pages/TarotPage';
 import CreditPage from './pages/CreditPage';
 import ConsultPage from './pages/ConsultPage';
+import Balatro from './components/Balatro';
 
 import { captureAttributionFromUrl } from './lib/attribution';
 import { updateStreak } from './lib/streak';
@@ -52,6 +53,19 @@ function Bootstrap() {
 export default function App() {
   return (
     <BrowserRouter>
+      <Balatro
+        isRotate={false}
+        mouseInteraction={true}
+        pixelFilter={1000}
+        color1="#2d2850"
+        color2="#3d352e"
+        color3="#06030a"
+        spinSpeed={0.5}
+        spinAmount={0.05}
+        contrast={1.4}
+        lighting={0.12}
+        spinEase={0.3}
+      />
       <Bootstrap />
     </BrowserRouter>
   );
