@@ -8,6 +8,23 @@ import { useUnlockLogic } from '../hooks/useUnlockLogic';
 import { track } from '../lib/analytics';
 import { setLocal } from '../lib/storage';
 
+function LoadingPlaceholder() {
+  return (
+    <div className="card" style={{ marginBottom: 12 }} role="status" aria-live="polite">
+      <div className="row">
+        <h2 className="h2 glow-text">오늘의 기운</h2>
+        <div className="score-display" style={{ opacity: 0.5 }} aria-hidden="true">--</div>
+      </div>
+      <div className="small" style={{ color: 'var(--accent)', opacity: 0.5 }}>
+        운세를 불러오는 중...
+      </div>
+      <div style={{ marginTop: 10 }} className="p">
+        <span style={{ opacity: 0.5 }}>별들의 메시지를 해석하고 있습니다...</span>
+      </div>
+    </div>
+  );
+}
+
 export default function ResultPage() {
   const [sp] = useSearchParams();
 
@@ -27,7 +44,7 @@ export default function ResultPage() {
   }, [referrerInfo]);
 
   const { state, actions, reportData } = useUnlockLogic();
-  const { report } = reportData;
+  const { report, isLoading } = reportData;
   const cp = reportData.copyVariant;
 
   return (
@@ -60,16 +77,20 @@ export default function ResultPage() {
         reason={state.isLocked ? cp.lockReason : cp.unlockedReason}
       />
 
-      <div className="card" style={{ marginBottom: 12 }}>
-        <div className="row">
-          <div className="h2 glow-text">오늘의 기운</div>
-          <div className="score-display">{report.score}</div>
+      {isLoading ? (
+        <LoadingPlaceholder />
+      ) : (
+        <div className="card" style={{ marginBottom: 12 }}>
+          <div className="row">
+            <h2 className="h2 glow-text">오늘의 기운</h2>
+            <div className="score-display" aria-label={`운세 점수 ${report.score}점`}>{report.score}</div>
+          </div>
+          <div className="small" style={{ color: 'var(--accent)' }}>{report.rankText}</div>
+          <div style={{ marginTop: 10 }} className="p">
+            {report.oneLiner}
+          </div>
         </div>
-        <div className="small" style={{ color: 'var(--accent)' }}>{report.rankText}</div>
-        <div style={{ marginTop: 10 }} className="p">
-          {report.oneLiner}
-        </div>
-      </div>
+      )}
 
       {state.isLocked ? (
         <LockedResultView state={state} actions={actions} reportData={reportData} />

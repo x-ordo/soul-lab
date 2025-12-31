@@ -17,6 +17,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:a11y": "vitest run src/test/accessibility.test.tsx",
     "test:server": "vitest run --config server/vitest.config.ts",
     "test:all": "vitest run && vitest run --config server/vitest.config.ts"
   },
@@ -33,6 +34,7 @@
     "toss-packages": "Toss packages (@toss/tds-mobile, @toss/tds-mobile-ait, @apps-in-toss/web-framework) are mocked in src/mocks/ for standalone deployment"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.11.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@types/node": "^22.10.0",
@@ -52,6 +54,7 @@
     "typescript": "^5.7.2",
     "vite": "^6.0.6",
     "vite-plugin-compression": "^0.5.1",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.16",
+    "vitest-axe": "^0.1.0"
   }
 }
