@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import compression from 'vite-plugin-compression';
+import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 
 // Use real Toss packages when VITE_USE_TOSS_SDK=true (in Toss WebView environment)
@@ -13,6 +14,13 @@ export default defineConfig({
     compression({ algorithm: 'gzip', ext: '.gz' }),
     // Brotli compression (better ratio, modern browsers)
     compression({ algorithm: 'brotliCompress', ext: '.br' }),
+    // Bundle analyzer - generates stats.html on build
+    visualizer({
+      filename: 'stats.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+    }),
   ],
   server: {
     port: 5173,

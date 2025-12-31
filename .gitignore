@@ -12,3 +12,4 @@ server/data/
 llms-*.txt
 toss-examples.md
 .vercel
+stats.html
