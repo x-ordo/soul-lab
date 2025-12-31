@@ -1,0 +1,65 @@
+theme: career
+copies:
+  - id: OL010
+    zodiac_group: [aries, leo, sagittarius]
+    templates:
+      one_liner: "{name}님, 오늘 커리어에 불꽃이 튀는 날입니다."
+      summary: "{zodiac_korean}의 열정이 직장에서 빛을 발합니다. 적극적으로 의견을 제시하세요."
+      lucky_time: "09:00~11:00"
+      advice: "아침 회의에서 목소리를 내세요. 당신의 아이디어가 주목받습니다."
+      helper: "팀 리더 또는 상사"
+      caution: "과도한 자신감은 피하세요."
+      money_detail: "성과에 따른 보상이 기대됩니다."
+      love_detail: "직장 내 좋은 인상을 남길 수 있습니다."
+      condition_detail: "에너지가 넘치지만 점심 후 휴식이 필요합니다."
+
+  - id: OL011
+    zodiac_group: [taurus, virgo, capricorn]
+    templates:
+      one_liner: "꾸준한 노력이 결실을 맺는 시기입니다."
+      summary: "{zodiac_korean}의 안정적인 에너지가 {name}님의 커리어를 뒷받침합니다."
+      lucky_time: "14:00~16:00"
+      advice: "서류 작업과 계획 수립에 집중하세요."
+      helper: "같은 부서 동료"
+      caution: "너무 완벽을 추구하다 지치지 마세요."
+      money_detail: "안정적인 수입의 흐름이 예상됩니다."
+      love_detail: "업무에 집중하되 주변 사람도 챙기세요."
+      condition_detail: "규칙적인 생활이 성과로 이어집니다."
+
+  - id: OL012
+    zodiac_group: [gemini, libra, aquarius]
+    templates:
+      one_liner: "{name}님의 커뮤니케이션 능력이 빛나는 날입니다."
+      summary: "대화와 협상에서 유리한 위치를 점할 수 있습니다. 말의 힘을 믿으세요."
+      lucky_time: "11:00~13:00"
+      advice: "프레젠테이션이나 미팅에 적극 참여하세요."
+      helper: "다른 부서 사람"
+      caution: "말보다 행동으로 보여줘야 할 때도 있습니다."
+      money_detail: "네트워킹이 새로운 기회로 연결됩니다."
+      love_detail: "업무 파트너와의 케미가 좋습니다."
+      condition_detail: "목 관리에 신경 쓰세요."
+
+  - id: OL013
+    zodiac_group: [cancer, scorpio, pisces]
+    templates:
+      one_liner: "직감이 커리어의 방향을 알려줍니다."
+      summary: "{zodiac_korean}의 예리한 감각을 믿으세요. 숨겨진 기회를 포착할 수 있습니다."
+      lucky_time: "15:00~17:00"
+      advice: "데이터보다 느낌을 따라가 보세요."
+      helper: "오래 알고 지낸 선배"
+      caution: "감정에 휘둘려 중요한 결정을 내리지 마세요."
+      money_detail: "예상치 못한 프로젝트가 수익으로 연결될 수 있습니다."
+      love_detail: "일과 사랑의 균형을 유지하세요."
+      condition_detail: "스트레스 관리가 필요한 시기입니다."
+
+  - id: OL014
+    templates:
+      one_liner: "오늘은 새로운 도전을 시작하기 좋은 날입니다."
+      summary: "두려움을 내려놓고 한 발 앞으로 나아가세요. 기회는 준비된 자에게 옵니다."
+      lucky_time: "10:00~12:00"
+      advice: "새로운 프로젝트나 역할에 손을 들어보세요."
+      helper: "멘토 역할을 하는 사람"
+      caution: "급하게 서두르지 말고 차근차근 준비하세요."
+      money_detail: "투자한 시간과 노력이 돌아올 것입니다."
+      love_detail: "자신감 있는 모습이 매력적으로 보입니다."
+      condition_detail: "충분한 수면이 내일의 성과를 좌우합니다."

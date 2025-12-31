@@ -1,0 +1,44 @@
+rules:
+  # Fire signs - Career/Action oriented
+  - id: R020
+    name: 불의 별자리 커리어 성향
+    conditions:
+      zodiac:
+        any_of: [aries, leo, sagittarius]
+    effects:
+      themes:
+        career: 2
+    priority: 40
+
+  # Earth signs - Money/Stability oriented
+  - id: R021
+    name: 땅의 별자리 재물 성향
+    conditions:
+      zodiac:
+        any_of: [taurus, virgo, capricorn]
+    effects:
+      themes:
+        money: 2
+    priority: 40
+
+  # Air signs - Relationship/Communication oriented
+  - id: R022
+    name: 바람의 별자리 관계 성향
+    conditions:
+      zodiac:
+        any_of: [gemini, libra, aquarius]
+    effects:
+      themes:
+        relationship: 2
+    priority: 40
+
+  # Water signs - Love/Emotion oriented
+  - id: R023
+    name: 물의 별자리 연애 성향
+    conditions:
+      zodiac:
+        any_of: [cancer, scorpio, pisces]
+    effects:
+      themes:
+        love: 2
+    priority: 40

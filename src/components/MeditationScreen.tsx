@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface MeditationScreenProps {
   onComplete: () => void;
@@ -14,6 +14,7 @@ const MEDITATION_MESSAGES = [
 export default function MeditationScreen({ onComplete, duration = 5 }: MeditationScreenProps) {
   const [phase, setPhase] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
+  const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const phaseInterval = duration * 1000 / MEDITATION_MESSAGES.length;
@@ -30,12 +31,15 @@ export default function MeditationScreen({ onComplete, duration = 5 }: Meditatio
 
     const completeTimer = setTimeout(() => {
       setFadeOut(true);
-      setTimeout(onComplete, 500);
+      fadeOutTimerRef.current = setTimeout(onComplete, 500);
     }, duration * 1000);
 
     return () => {
       clearInterval(timer);
       clearTimeout(completeTimer);
+      if (fadeOutTimerRef.current) {
+        clearTimeout(fadeOutTimerRef.current);
+      }
     };
   }, [duration, onComplete]);
 

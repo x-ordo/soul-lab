@@ -1,6 +1,10 @@
 import { todayKey } from './seed';
 import { pickTemplate, dailyScore, chemistryScore, hash32 } from '../utils/engine';
-import { getBirthDate } from './storage';
+import { getBirthDate, getUserName } from './storage';
+import { getDailyFortune, fortuneToLegacyReport, QuestionTag } from './fortune-api';
+
+// Feature flag for new engine (can be disabled via env for rollback)
+const USE_NEW_ENGINE = import.meta.env.VITE_USE_NEW_ENGINE !== 'false';
 
 function rankText(score: number) {
   if (score >= 96) return '✨ 축복받은 운명 (상위 1%)';
@@ -10,7 +14,36 @@ function rankText(score: number) {
   return '☁️ 잠재된 기운 (상위 30%)';
 }
 
-export function makeTodayReport(userKey: string) {
+// Legacy sync report type
+export interface TodayReport {
+  templateId: string;
+  subtitle: string;
+  score: number;
+  rankText: string;
+  oneLiner: string;
+  luckyTime?: string;
+  helper?: string;
+  caution?: string;
+  moneyDetail?: string;
+  loveDetail?: string;
+  conditionDetail?: string;
+  theme?: string;
+  tomorrowHint?: string;
+}
+
+export interface DetailReport {
+  templateId: string;
+  subtitle: string;
+  summary: string;
+  money?: string;
+  love?: string;
+  condition?: string;
+}
+
+/**
+ * Sync fallback using old local engine
+ */
+export function makeTodayReportSync(userKey: string): TodayReport {
   const bd = getBirthDate() ?? '19990101';
   const dk = todayKey();
   const tpl = pickTemplate(userKey, bd, dk);
@@ -27,7 +60,10 @@ export function makeTodayReport(userKey: string) {
   };
 }
 
-export function makeDetailReport(userKey: string) {
+/**
+ * Sync fallback for detail report
+ */
+export function makeDetailReportSync(userKey: string): DetailReport {
   const bd = getBirthDate() ?? '19990101';
   const dk = todayKey();
   const tpl = pickTemplate(userKey, bd, dk);
@@ -40,6 +76,84 @@ export function makeDetailReport(userKey: string) {
     love: tpl.locked.loveDetail,
     condition: tpl.locked.conditionDetail,
   };
+}
+
+/**
+ * Async report from new YAML rule engine API
+ * Falls back to sync engine on error or if disabled
+ */
+export async function makeTodayReportAsync(
+  userKey: string,
+  questionTags?: QuestionTag[]
+): Promise<TodayReport> {
+  if (!USE_NEW_ENGINE) {
+    return makeTodayReportSync(userKey);
+  }
+
+  try {
+    const bd = getBirthDate() ?? '1999-01-01';
+    const name = getUserName() ?? '운명의 별';
+    // Convert YYYYMMDD to YYYY-MM-DD if needed
+    const birthDate = bd.includes('-') ? bd : `${bd.slice(0, 4)}-${bd.slice(4, 6)}-${bd.slice(6, 8)}`;
+
+    const fortune = await getDailyFortune(userKey, name, birthDate, questionTags);
+    const legacy = fortuneToLegacyReport(fortune);
+
+    return {
+      templateId: legacy.templateId,
+      subtitle: legacy.subtitle,
+      score: legacy.score,
+      rankText: legacy.rankText,
+      oneLiner: legacy.oneLiner,
+      luckyTime: legacy.luckyTime,
+      helper: legacy.helper,
+      caution: legacy.caution,
+      moneyDetail: legacy.moneyDetail,
+      loveDetail: legacy.loveDetail,
+      conditionDetail: legacy.conditionDetail,
+      theme: legacy.theme,
+      tomorrowHint: legacy.tomorrowHint,
+    };
+  } catch (err) {
+    console.warn('[report] API failed, falling back to sync engine:', err);
+    return makeTodayReportSync(userKey);
+  }
+}
+
+/**
+ * Async detail report from new engine
+ */
+export async function makeDetailReportAsync(userKey: string): Promise<DetailReport> {
+  if (!USE_NEW_ENGINE) {
+    return makeDetailReportSync(userKey);
+  }
+
+  try {
+    const report = await makeTodayReportAsync(userKey);
+    return {
+      templateId: report.templateId,
+      subtitle: `${report.oneLiner} (총점 ${report.score}점)`,
+      summary: report.subtitle,
+      money: report.moneyDetail,
+      love: report.loveDetail,
+      condition: report.conditionDetail,
+    };
+  } catch (err) {
+    console.warn('[report] Detail API failed, falling back:', err);
+    return makeDetailReportSync(userKey);
+  }
+}
+
+/**
+ * Default exports - sync for backward compatibility
+ * Components should migrate to async versions for new engine
+ */
+export function makeTodayReport(userKey: string): TodayReport {
+  return makeTodayReportSync(userKey);
+}
+
+export function makeDetailReport(userKey: string): DetailReport {
+  return makeDetailReportSync(userKey);
 }
 
 export function makeChemistryReport(aKey: string, bKey: string) {

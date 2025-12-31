@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, Badge } from '@toss/tds-mobile';
 import Header from '../components/Header';
@@ -36,6 +36,7 @@ export default function LandingPage() {
   // 스트릭 크레딧 보상 상태
   const [streakCreditRewards, setStreakCreditRewards] = useState<StreakReward[]>([]);
   const [showCreditReward, setShowCreditReward] = useState(false);
+  const creditRewardTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 스트릭 크레딧 보상 청구
   const claimStreakCredits = useCallback(async () => {
@@ -52,7 +53,7 @@ export default function LandingPage() {
           rewardCount: result.rewards.length,
         });
         // 5초 후 자동 숨김
-        setTimeout(() => setShowCreditReward(false), 5000);
+        creditRewardTimerRef.current = setTimeout(() => setShowCreditReward(false), 5000);
       }
     } catch (err) {
       console.error('Failed to claim streak credits:', err);
@@ -62,6 +63,15 @@ export default function LandingPage() {
   useEffect(() => {
     claimStreakCredits();
   }, [claimStreakCredits]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (creditRewardTimerRef.current) {
+        clearTimeout(creditRewardTimerRef.current);
+      }
+    };
+  }, []);
 
   const referrerInfo = useMemo(() => {
     const sp = new URLSearchParams(loc.search);

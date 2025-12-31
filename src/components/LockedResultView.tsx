@@ -15,7 +15,8 @@ interface LockedResultViewProps {
 }
 
 // Extract preview (first N characters) from a string
-function getPreview(text: string, maxLen = 12): string {
+function getPreview(text: string | undefined, maxLen = 12): string {
+  if (!text) return '???';
   if (text.length <= maxLen) return text;
   return text.slice(0, maxLen);
 }

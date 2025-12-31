@@ -28,13 +28,62 @@ export default defineConfig({
   build: {
     sourcemap: false,
     minify: 'esbuild',
+    target: 'es2022',
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
+        manualChunks(id) {
+          // Vendor chunk: React ecosystem
+          if (id.includes('node_modules')) {
+            if (
+              id.includes('react') ||
+              id.includes('react-dom') ||
+              id.includes('react-router')
+            ) {
+              return 'vendor';
+            }
+          }
+
+          // Fortune data chunk: templates and copy variants
+          if (
+            id.includes('src/data/fortuneTemplates') ||
+            id.includes('src/lib/copyVariants')
+          ) {
+            return 'fortune-data';
+          }
+
+          // Tarot data chunk: cards and tarot engine
+          if (
+            id.includes('src/data/tarotCards') ||
+            id.includes('src/lib/tarot')
+          ) {
+            return 'tarot-data';
+          }
+
+          // Core utils chunk: seed, attribution, analytics
+          if (
+            id.includes('src/lib/seed') ||
+            id.includes('src/lib/attribution') ||
+            id.includes('src/lib/analytics')
+          ) {
+            return 'core-utils';
+          }
+
+          // Reward utils chunk: reward, streak, streakBonus
+          if (
+            id.includes('src/lib/reward') ||
+            id.includes('src/lib/streak') ||
+            id.includes('src/lib/streakBonus')
+          ) {
+            return 'reward-utils';
+          }
         },
       },
     },
+  },
+  esbuild: {
+    drop: ['debugger'],
+    charset: 'utf8',
+    legalComments: 'none',
   },
   resolve: {
     alias: useTossSdk

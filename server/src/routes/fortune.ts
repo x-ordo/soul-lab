@@ -32,6 +32,20 @@ import {
   type FortuneContext,
 } from '../ai/provider.js';
 import { getSystemPrompt, type ConsultationType } from '../ai/prompts.js';
+import {
+  initFortuneEngine,
+  getFortuneEngine,
+  type UserProfile,
+  type QuestionTag,
+} from '../fortune-engine/index.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Initialize fortune engine with data directory
+const fortuneDataDir = path.join(__dirname, '../fortune-engine/data');
 
 // ============================================================
 // Types
@@ -635,6 +649,103 @@ export async function fortuneRoutes(app: FastifyInstance): Promise<void> {
       const message = error instanceof Error ? error.message : 'Unknown error';
       console.error('AI chat error:', error);
       return reply.code(500).send({ error: 'chat_failed', message });
+    }
+  });
+
+  // ============================================================
+  // YAML Rule Engine - Daily Fortune
+  // ============================================================
+
+  // Initialize the fortune engine on first request
+  let engineInitialized = false;
+
+  app.post('/api/fortune/daily', async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+      // Lazy initialization of fortune engine
+      if (!engineInitialized) {
+        try {
+          initFortuneEngine(fortuneDataDir);
+          engineInitialized = true;
+        } catch (initError) {
+          console.error('Fortune engine initialization error:', initError);
+          return reply.code(503).send({
+            error: 'engine_not_ready',
+            message: 'Fortune engine is not available',
+          });
+        }
+      }
+
+      const body = req.body as {
+        user_id: string;
+        name: string;
+        birth_date: string;
+        birth_time?: string;
+        gender?: string;
+        question_tags?: string[];
+        date?: string;
+      };
+
+      // Validate required fields
+      if (!body.user_id || !body.name || !body.birth_date) {
+        return reply.code(400).send({
+          error: 'validation_error',
+          message: 'user_id, name, and birth_date are required',
+        });
+      }
+
+      // Build user profile
+      const profile: UserProfile = {
+        user_id: body.user_id,
+        name: body.name,
+        birth_date: body.birth_date,
+        birth_time: body.birth_time,
+        gender: body.gender as 'male' | 'female' | 'other' | undefined,
+        question_tags: body.question_tags as QuestionTag[] | undefined,
+      };
+
+      // Parse target date
+      const targetDate = body.date ? new Date(body.date) : new Date();
+
+      // Generate fortune
+      const engine = getFortuneEngine();
+      const fortune = engine.generateFortune(profile, targetDate);
+      const tomorrowHint = engine.getTomorrowHint(profile);
+
+      return {
+        success: true,
+        fortune: {
+          ...fortune,
+          tomorrow_hint: tomorrowHint,
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Fortune daily error:', error);
+      return reply.code(500).send({ error: 'fortune_generation_failed', message });
+    }
+  });
+
+  // Get rule engine statistics (admin/debug)
+  app.get('/api/fortune/stats', async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+      if (!engineInitialized) {
+        return reply.code(503).send({
+          error: 'engine_not_ready',
+          message: 'Fortune engine is not initialized',
+        });
+      }
+
+      const engine = getFortuneEngine();
+      const stats = engine.getRuleStats();
+
+      return {
+        success: true,
+        stats,
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Fortune stats error:', error);
+      return reply.code(500).send({ error: 'stats_failed', message });
     }
   });
 }

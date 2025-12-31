@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 
 type ToastType = 'info' | 'success' | 'error' | 'warning';
 
@@ -32,15 +32,18 @@ export function toast(message: string, type: ToastType = 'info') {
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const timerMapRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
   const showToast = useCallback((message: string, type: ToastType = 'info') => {
     const id = ++toastId;
     setToasts((prev) => [...prev, { id, message, type }]);
 
     // Auto dismiss after 3 seconds
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
+      timerMapRef.current.delete(id);
     }, 3000);
+    timerMapRef.current.set(id, timer);
   }, []);
 
   // Register global toast function
@@ -50,6 +53,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       globalShowToast = null;
     };
   }, [showToast]);
+
+  // Cleanup all timers on unmount
+  useEffect(() => {
+    return () => {
+      timerMapRef.current.forEach((timer) => clearTimeout(timer));
+      timerMapRef.current.clear();
+    };
+  }, []);
 
   const dismissToast = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));

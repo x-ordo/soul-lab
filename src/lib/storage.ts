@@ -1,11 +1,11 @@
 const K_BIRTHDATE = 'sl_birthdate_yyyymmdd';
 const K_AGREEMENT = 'sl_agreement_v1';
 const K_VIRAL_UNLOCKED_DATE = 'sl_viral_unlocked_date';
+const K_USER_NAME = 'sl_user_name';
 
 const KEY = {
   userSeed: 'soul_lab:user_seed',
   unlockedToday: 'soul_lab:unlocked_today',
-  lastReportDate: 'soul_lab:last_report_date',
   publicKey: 'soul_lab:public_key',
 };
 
@@ -53,14 +53,6 @@ export function getUnlockedDate(): string | null {
 
 export function setUnlockedDate(date: string) {
   setLocal(KEY.unlockedToday, date);
-}
-
-export function getLastReportDate(): string | null {
-  return getLocal<string>(KEY.lastReportDate);
-}
-
-export function setLastReportDate(date: string) {
-  setLocal(KEY.lastReportDate, date);
 }
 
 /**
@@ -123,4 +115,27 @@ export function hasThirdPartyConsent() {
 export function hasBirthDate() {
   const bd = getBirthDate();
   return !!(bd && /^\d{8}$/.test(bd));
+}
+
+export function getUserName(): string | null {
+  return localStorage.getItem(K_USER_NAME);
+}
+
+export function setUserName(name: string) {
+  localStorage.setItem(K_USER_NAME, name);
+}
+
+// Admin session
+const K_ADMIN_TOKEN = 'soul_admin_token';
+
+export function getAdminToken(): string | null {
+  return localStorage.getItem(K_ADMIN_TOKEN);
+}
+
+export function setAdminToken(token: string): void {
+  localStorage.setItem(K_ADMIN_TOKEN, token);
+}
+
+export function clearAdminToken(): void {
+  localStorage.removeItem(K_ADMIN_TOKEN);
 }

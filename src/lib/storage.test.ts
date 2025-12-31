@@ -7,8 +7,6 @@ import {
   getOrCreateUserSeed,
   getUnlockedDate,
   setUnlockedDate,
-  getLastReportDate,
-  setLastReportDate,
   getPublicKey,
   setPublicKey,
   getEffectiveUserKey,
@@ -115,21 +113,6 @@ describe('unlockedDate', () => {
   it('setUnlockedDate stores and getUnlockedDate retrieves', () => {
     setUnlockedDate('20250115');
     expect(getUnlockedDate()).toBe('20250115');
-  });
-});
-
-describe('lastReportDate', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  it('getLastReportDate returns null when not set', () => {
-    expect(getLastReportDate()).toBeNull();
-  });
-
-  it('setLastReportDate stores and getLastReportDate retrieves', () => {
-    setLastReportDate('20250115');
-    expect(getLastReportDate()).toBe('20250115');
   });
 });
 

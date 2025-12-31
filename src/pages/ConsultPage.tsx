@@ -35,6 +35,7 @@ export default function ConsultPage() {
   const [showInsufficientModal, setShowInsufficientModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Focus trap for insufficient credits modal (WCAG SC 2.4.3)
   useFocusTrap(showInsufficientModal, modalRef, {
@@ -76,8 +77,19 @@ export default function ConsultPage() {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
+  // Cleanup: abort streaming request on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   const sendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return;
+
+    // Cancel any previous ongoing request
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
 
     // 크레딧 확인
     const creditCheck = await checkCredits(userKey, CREDIT_ACTIONS.AI_CHAT);
@@ -136,6 +148,7 @@ export default function ConsultPage() {
             content: m.content,
           })),
         }),
+        signal: abortControllerRef.current?.signal,
       });
 
       if (!response.ok) {
@@ -200,6 +213,11 @@ export default function ConsultPage() {
       await loadBalance();
       track('consult_response_received', { streaming: true });
     } catch (e) {
+      // Ignore AbortError (user navigated away or sent new message)
+      if (e instanceof Error && e.name === 'AbortError') {
+        return;
+      }
+
       console.error('Chat error:', e);
 
       const errorMessage: ChatMessage = {

@@ -12,6 +12,7 @@ const AgreementPage = lazy(() => import('./pages/AgreementPage'));
 const TarotPage = lazy(() => import('./pages/TarotPage'));
 const CreditPage = lazy(() => import('./pages/CreditPage'));
 const ConsultPage = lazy(() => import('./pages/ConsultPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
 // Small pages - keep static import
 import NotFoundPage from './pages/NotFoundPage';
 import DebugPage from './pages/DebugPage';
@@ -25,8 +26,53 @@ import { getAttribution } from './lib/attribution';
 import { track } from './lib/analytics';
 
 
+/**
+ * Prefetch next likely pages based on current route.
+ * This reduces navigation delay by preloading chunks during idle time.
+ */
+function usePrefetch() {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Use requestIdleCallback for non-blocking prefetch
+    const prefetch = () => {
+      switch (location.pathname) {
+        case '/':
+          // Landing → Agreement is the next step
+          import('./pages/AgreementPage');
+          break;
+        case '/agreement':
+          // Agreement → Loading after submit
+          import('./pages/LoadingPage');
+          break;
+        case '/loading':
+          // Loading → Result is always next
+          import('./pages/ResultPage');
+          break;
+        case '/result':
+          // Result → Detail or Chemistry are likely
+          import('./pages/DetailPage');
+          import('./pages/ChemistryPage');
+          break;
+      }
+    };
+
+    // Use requestIdleCallback if available, otherwise setTimeout
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(prefetch, { timeout: 2000 });
+      return () => cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(prefetch, 100);
+      return () => clearTimeout(id);
+    }
+  }, [location.pathname]);
+}
+
 function Bootstrap() {
   const loc = useLocation();
+
+  // Prefetch next likely pages
+  usePrefetch();
 
   useEffect(() => {
     // attribution & retention: on every navigation, but cheap
@@ -73,6 +119,7 @@ function Bootstrap() {
             <Route path="/tarot" element={<TarotPage />} />
             <Route path="/credits" element={<CreditPage />} />
             <Route path="/consult" element={<ConsultPage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="/debug" element={<DebugPage />} />
             <Route path="/404" element={<NotFoundPage />} />
             <Route path="*" element={<Navigate to="/404" replace />} />

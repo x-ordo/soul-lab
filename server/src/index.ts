@@ -1,29 +1,40 @@
 import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import fs from 'fs';
+import path from 'path';
 import { FileStore } from './store.js';
 import { EventLogger } from './logger.js';
 import { FixedWindowLimiter } from './limiter.js';
 import { RewardStore } from './rewardStore.js';
 import { fortuneRoutes } from './routes/fortune.js';
 import { creditRoutes } from './routes/credits.js';
+import { adminRoutes } from './routes/admin.js';
+import { loadConfig } from './config/index.js';
+import { logger as pinoLogger } from './lib/logger.js';
+import { requestContextPlugin } from './middleware/requestContext.js';
+import { errorHandlerPlugin } from './middleware/errorHandler.js';
 
-const app = Fastify({ logger: true });
+const config = loadConfig();
 
-const PORT = Number(process.env.PORT ?? '8787');
-const DATA_DIR = process.env.DATA_DIR ?? 'server/data';
+const app = Fastify({
+  logger: false, // Using custom pino logger instead
+});
+
+const PORT = config.PORT;
+const DATA_DIR = config.DATA_DIR;
 
 // Invite TTL: 24h
 const INVITE_TTL_MS = 24 * 60 * 60 * 1000;
 
 // Rate limit (fixed-window)
 const INVITE_WINDOW_MS = 60 * 60 * 1000; // 1h
-const INVITE_LIMIT_PER_IP = Number(process.env.INVITE_LIMIT_PER_IP ?? '40');
-const INVITE_LIMIT_PER_USER = Number(process.env.INVITE_LIMIT_PER_USER ?? '20');
+const INVITE_LIMIT_PER_IP = config.INVITE_LIMIT_PER_IP;
+const INVITE_LIMIT_PER_USER = config.INVITE_LIMIT_PER_USER;
 
 const REWARD_WINDOW_MS = 10 * 60 * 1000; // 10m (spam 방지)
-const REWARD_LIMIT_PER_IP = Number(process.env.REWARD_LIMIT_PER_IP ?? '60');
-const REWARD_LIMIT_PER_USER = Number(process.env.REWARD_LIMIT_PER_USER ?? '20');
+const REWARD_LIMIT_PER_IP = config.REWARD_LIMIT_PER_IP;
+const REWARD_LIMIT_PER_USER = config.REWARD_LIMIT_PER_USER;
 
 const store = new FileStore(DATA_DIR);
 const rewards = new RewardStore(DATA_DIR);
@@ -33,11 +44,18 @@ const limiter = new FixedWindowLimiter();
 
 await app.register(cors, { origin: true, credentials: false });
 
+// Register middleware plugins
+await app.register(requestContextPlugin);
+await app.register(errorHandlerPlugin);
+
 // Register fortune routes (astrology, tarot, AI)
 await app.register(fortuneRoutes);
 
 // Register credit routes (IAP, credits)
 await app.register(creditRoutes, { dataDir: DATA_DIR });
+
+// Register admin routes (dashboard)
+await app.register(adminRoutes, { dataDir: DATA_DIR, store, rewards });
 
 function meta(req: any) {
   const ip = req.ip;
@@ -50,6 +68,35 @@ function rateKey(prefix: string, v: string) {
 }
 
 app.get('/health', async () => ({ ok: true }));
+
+app.get('/ready', async (req, reply) => {
+  const checks: Record<string, boolean> = {
+    dataDir: false,
+    aiProvider: false,
+  };
+
+  // Check data directory is writable
+  try {
+    const testFile = path.join(DATA_DIR, '.ready-check');
+    fs.writeFileSync(testFile, 'ok');
+    fs.unlinkSync(testFile);
+    checks.dataDir = true;
+  } catch {
+    checks.dataDir = false;
+  }
+
+  // Check if at least one AI provider is configured
+  checks.aiProvider = !!(config.OPENAI_API_KEY || config.ANTHROPIC_API_KEY);
+
+  const ready = checks.dataDir; // AI provider is optional
+
+  if (!ready) {
+    pinoLogger.warn({ checks }, 'readiness_check_failed');
+    return reply.code(503).send({ ok: false, checks });
+  }
+
+  return { ok: true, checks };
+});
 
 app.post('/api/invites', async (req, reply) => {
   store.cleanup();
@@ -219,4 +266,9 @@ app.post('/api/rewards/earn', async (req, reply) => {
   return { ok: true, already: out.already };
 });
 
-app.listen({ port: PORT, host: '0.0.0.0' });
+app.listen({ port: PORT, host: '0.0.0.0' }).then(() => {
+  pinoLogger.info({ port: PORT, dataDir: DATA_DIR, env: config.NODE_ENV }, 'server_started');
+}).catch((err) => {
+  pinoLogger.fatal({ err }, 'server_startup_failed');
+  process.exit(1);
+});

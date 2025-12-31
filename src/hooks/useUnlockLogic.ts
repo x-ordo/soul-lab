@@ -17,7 +17,7 @@ import { buildInviteDeepLink } from '../lib/handshake';
 import { ogImageUrl } from '../lib/og';
 import { copyFor } from '../lib/copyVariants';
 import { getVariant } from '../lib/variant';
-import { makeTodayReport } from '../lib/report';
+import { makeTodayReport, makeTodayReportAsync, TodayReport } from '../lib/report';
 import { tomorrowHint } from '../utils/engine';
 import { track } from '../lib/analytics';
 import { toast } from '../components/Toast';
@@ -40,9 +40,11 @@ export interface UnlockActions {
 }
 
 export interface ReportData {
-  report: ReturnType<typeof makeTodayReport>;
+  report: TodayReport;
   hint: string;
   copyVariant: ReturnType<typeof copyFor>;
+  isLoading: boolean;
+  error: string | null;
 }
 
 export function useUnlockLogic() {
@@ -57,11 +59,40 @@ export function useUnlockLogic() {
 
   const [isLocked, setIsLocked] = useState(!(adUnlocked || viralUnlocked));
 
-  const report = useMemo(() => makeTodayReport(myKey), [myKey]);
+  // Async report state
+  const [report, setReport] = useState<TodayReport>(() => makeTodayReport(myKey));
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const v = getVariant(myKey);
   const cp = copyFor(v);
   const birthDate = getBirthDate() ?? '';
-  const hint = useMemo(() => tomorrowHint(myKey, birthDate), [myKey, birthDate]);
+  const hint = useMemo(() => report.tomorrowHint ?? tomorrowHint(myKey, birthDate), [report.tomorrowHint, myKey, birthDate]);
+
+  // Fetch async report on mount
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    setError(null);
+
+    makeTodayReportAsync(myKey)
+      .then((asyncReport) => {
+        if (!cancelled) {
+          setReport(asyncReport);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error('[useUnlockLogic] Failed to fetch async report:', err);
+          setError('운세를 불러오는 중 문제가 발생했습니다.');
+          setIsLoading(false);
+          // Keep sync fallback report
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, [myKey]);
 
   useEffect(() => {
     if (!hasRequiredAgreement() || !hasBirthDate()) {
@@ -119,7 +150,9 @@ export function useUnlockLogic() {
       const { shareLink, qs } = await makeInviteLink();
       try {
         await navigator.clipboard.writeText(shareLink);
-      } catch {}
+      } catch (err) {
+        console.warn('[Clipboard] Copy failed:', err);
+      }
 
       runContactsViral(
         moduleId,
@@ -150,7 +183,9 @@ export function useUnlockLogic() {
       if (!ok) {
         try {
           await navigator.clipboard.writeText(shareLink);
-        } catch {}
+        } catch (err) {
+          console.warn('[Clipboard] Copy failed:', err);
+        }
         toast('공유 실패 → 링크를 복사했습니다.', 'warning');
       }
       toast('상대가 링크로 접속하면 궁합이 열립니다.', 'success');
@@ -182,6 +217,8 @@ export function useUnlockLogic() {
     report,
     hint,
     copyVariant: cp,
+    isLoading,
+    error,
   };
 
   return { state, actions, reportData };

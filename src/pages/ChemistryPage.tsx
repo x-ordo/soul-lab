@@ -84,7 +84,10 @@ export default function ChemistryPage() {
           });
         }
       };
-      claimReward();
+      claimReward().catch((err) => {
+        console.error('[ChemistryPage] claimReward failed:', err);
+        toast('보상 청구에 실패했습니다', 'error');
+      });
 
       // 초대자(inviter)일 경우, 리퍼럴 카운트 증가 (중복 방지)
       if (status.from === myKey) {
@@ -111,7 +114,9 @@ export default function ChemistryPage() {
       const shareLink = await makeShareLink(deepLink);
       try {
         await navigator.clipboard.writeText(shareLink);
-      } catch {}
+      } catch (err) {
+        console.warn('[Clipboard] Copy failed:', err);
+      }
       await shareMessage(`초대 링크를 복사했습니다.
 ${shareLink}`);
     } catch (e) {
@@ -130,7 +135,9 @@ const onMakeResponseLink = async () => {
 
       try {
         await navigator.clipboard.writeText(shareLink);
-      } catch {}
+      } catch (err) {
+        console.warn('[Clipboard] Copy failed:', err);
+      }
 
       await shareMessage(`응답 링크를 보냈습니다! (링크는 이미 복사됨)\n${shareLink}`);
 
@@ -148,7 +155,11 @@ const onMakeResponseLink = async () => {
     try {
       const deepLink = buildResponseDeepLink(status.from, status.to, status.dateKey);
       const shareLink = await makeShareLink(deepLink);
-      await navigator.clipboard.writeText(shareLink).catch(() => {});
+      try {
+        await navigator.clipboard.writeText(shareLink);
+      } catch (err) {
+        console.warn('[Clipboard] Copy failed:', err);
+      }
       await shareMessage(`우리 케미 결과 링크: ${shareLink}`);
     } catch (e) {
       console.error(e);

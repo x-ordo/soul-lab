@@ -6,10 +6,7 @@ import BirthDatePicker from '../components/BirthDatePicker';
 import { COMPLIANCE_COPY } from '../lib/complianceCopy';
 import { getAgreement, setAgreement, getBirthDate, setBirthDate, hasRequiredAgreement, hasBirthDate } from '../lib/storage';
 import { track } from '../lib/analytics';
-
-function isYYYYMMDD(v: string) {
-  return /^\d{8}$/.test(v);
-}
+import { isYYYYMMDD } from '../lib/seed';
 
 export default function AgreementPage() {
   const nav = useNavigate();

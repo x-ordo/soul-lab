@@ -1,0 +1,49 @@
+theme: relationship
+copies:
+  - id: OL050
+    templates:
+      one_liner: "{name}님, 오늘 인간관계에서 좋은 일이 생길 수 있습니다."
+      summary: "주변 사람들과의 관계가 더욱 깊어지는 날입니다. 마음을 열어보세요."
+      lucky_time: "12:00~14:00"
+      advice: "오랫동안 연락하지 못한 사람에게 먼저 연락해 보세요."
+      helper: "오래된 친구"
+      caution: "오해가 생기지 않도록 말을 신중하게 하세요."
+      money_detail: "친구와 함께하는 활동에 투자하면 좋습니다."
+      love_detail: "좋은 친구가 좋은 연인을 소개해줄 수 있어요."
+      condition_detail: "사람들과 함께할 때 에너지가 충전됩니다."
+
+  - id: OL051
+    templates:
+      one_liner: "가족과의 시간이 특별한 의미를 갖는 날입니다."
+      summary: "가장 가까운 사람들에게 감사를 표현해 보세요. 작은 관심이 큰 기쁨이 됩니다."
+      lucky_time: "18:00~20:00"
+      advice: "저녁 식사를 함께 하거나 안부 전화를 해보세요."
+      helper: "가족 중 한 명"
+      caution: "과거의 상처를 다시 꺼내지 마세요."
+      money_detail: "가족을 위한 작은 선물이 기쁨을 줍니다."
+      love_detail: "가족의 지지가 사랑에도 힘이 됩니다."
+      condition_detail: "가족과 함께할 때 마음이 편안해집니다."
+
+  - id: OL052
+    templates:
+      one_liner: "새로운 인연이 다가오고 있습니다."
+      summary: "평소와 다른 모임이나 장소에서 좋은 사람을 만날 수 있어요."
+      lucky_time: "14:00~16:00"
+      advice: "새로운 그룹 활동이나 동아리에 참여해 보세요."
+      helper: "처음 만나는 사람"
+      caution: "첫 만남에서 너무 많은 것을 기대하지 마세요."
+      money_detail: "네트워킹이 미래의 기회로 연결됩니다."
+      love_detail: "새 친구를 통해 좋은 인연이 올 수 있어요."
+      condition_detail: "사회적 활동이 활력을 줍니다."
+
+  - id: OL053
+    templates:
+      one_liner: "관계의 회복이 필요한 시기입니다."
+      summary: "서먹해진 관계가 있다면 먼저 손을 내밀어 보세요. 화해의 시간이 될 수 있습니다."
+      lucky_time: "19:00~21:00"
+      advice: "진심 어린 사과나 솔직한 대화를 시도해 보세요."
+      helper: "중재자 역할을 할 수 있는 사람"
+      caution: "자존심을 내세우면 기회를 놓칠 수 있어요."
+      money_detail: "관계 회복을 위한 작은 투자가 가치 있습니다."
+      love_detail: "화해는 사랑을 더 깊게 만듭니다."
+      condition_detail: "마음의 짐을 내려놓으면 몸도 편해집니다."

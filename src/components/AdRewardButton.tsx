@@ -51,7 +51,9 @@ export default function AdRewardButton({
     const onReward = () => {
       try {
         markRewardEarned(todayKey(), scope || 'detail');
-      } catch {}
+      } catch (err) {
+        console.warn('[AdRewardButton] markRewardEarned failed:', err);
+      }
       setLoading(false);
       onUnlocked();
     };

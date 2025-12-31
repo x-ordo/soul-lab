@@ -599,3 +599,89 @@ ANALYZE=true npm run build
 - name: Check for unused code (strict)
   run: npx knip
 ```
+
+---
+
+## 7. Soul Lab Bundle Analysis
+
+### Current Chunk Structure
+
+Soul Lab uses Vite with custom chunk splitting for optimized loading:
+
+```
+Bundle Structure:
+├── vendor.js          # React ecosystem (react, react-dom, react-router)
+├── core-utils.js      # seed, attribution, analytics
+├── fortune-data.js    # Fortune templates, copy variants
+├── tarot-data.js      # Tarot cards, engine
+├── reward-utils.js    # Reward, streak logic
+├── index.js           # App entry + shared components
+└── [page].js          # 9 lazy-loaded page chunks
+```
+
+### Bundle Size Targets
+
+| Metric | Target | Monitoring |
+|--------|--------|------------|
+| Initial JS (brotli) | < 60KB | stats.html |
+| Vendor chunk | < 50KB | CI check |
+| Largest page chunk | < 30KB | stats.html |
+| Total JS | < 250KB | Build output |
+
+### Analysis Commands
+
+```bash
+# Generate bundle analysis
+pnpm build:web
+# Opens stats.html automatically
+
+# Check specific chunk sizes
+ls -la dist/assets/*.js | awk '{print $5, $9}' | sort -n
+
+# Verify compression
+ls -la dist/assets/*.js.br | awk '{print $5, $9}'
+```
+
+### Chunk Rationale
+
+**vendor** (React ecosystem):
+- Rarely changes, long cache lifetime
+- Shared across all pages
+
+**core-utils** (seed, analytics):
+- Used on every page view
+- Critical path dependencies
+
+**fortune-data** (templates):
+- Only needed for Result/Detail pages
+- Deferred loading reduces initial bundle
+
+**tarot-data** (cards):
+- Only needed for Tarot page
+- Large data set (~3KB cards JSON)
+
+**reward-utils** (streak):
+- Only needed after unlock
+- Not critical path
+
+### Prefetch Strategy
+
+```typescript
+// App.tsx - Route-based prefetching
+usePrefetch() {
+  // Landing → Agreement
+  // Agreement → Loading
+  // Loading → Result
+  // Result → Detail, Chemistry
+}
+```
+
+Uses `requestIdleCallback` for non-blocking prefetch during browser idle time.
+
+### Monitoring Checklist
+
+- [ ] `pnpm build:web` completes without errors
+- [ ] `stats.html` shows expected chunk structure
+- [ ] No unexpected large chunks (> 50KB uncompressed)
+- [ ] Compression ratios > 70% for all JS chunks
+- [ ] Lazy chunks load correctly on navigation

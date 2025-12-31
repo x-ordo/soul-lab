@@ -87,6 +87,9 @@ async function getIAPModule(): Promise<IAPModule | null> {
 export async function getProducts(): Promise<CreditProduct[]> {
   try {
     const res = await fetch(`${API_BASE}/api/credits/products`);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
     const data = await res.json();
     return data.products || [];
   } catch (e) {
@@ -101,6 +104,9 @@ export async function getProducts(): Promise<CreditProduct[]> {
 export async function getBalance(userKey: string): Promise<CreditBalance | null> {
   try {
     const res = await fetch(`${API_BASE}/api/credits/balance?userKey=${encodeURIComponent(userKey)}`);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
     const data = await res.json();
     return data.balance || null;
   } catch (e) {
@@ -149,6 +155,9 @@ export async function checkCredits(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userKey, action }),
     });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
     const data = await res.json();
     return {
       hasEnough: data.hasEnough || false,

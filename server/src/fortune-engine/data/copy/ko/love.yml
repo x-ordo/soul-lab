@@ -1,0 +1,65 @@
+theme: love
+copies:
+  - id: OL020
+    zodiac_group: [aries, leo, sagittarius]
+    templates:
+      one_liner: "{name}님, 오늘 사랑에 열정이 불타오릅니다."
+      summary: "적극적인 표현이 마음을 전달합니다. {zodiac_korean}의 따뜻한 에너지를 발산하세요."
+      lucky_time: "19:00~21:00"
+      advice: "먼저 연락하고 먼저 다가가세요."
+      helper: "활발한 성격의 친구"
+      caution: "너무 급하게 진행하면 상대가 부담스러워할 수 있어요."
+      money_detail: "연인을 위한 작은 선물이 좋은 반응을 얻습니다."
+      love_detail: "용기 있는 고백이 성공할 확률이 높습니다."
+      condition_detail: "설레는 마음에 수면이 부족할 수 있어요."
+
+  - id: OL021
+    zodiac_group: [taurus, virgo, capricorn]
+    templates:
+      one_liner: "진정성 있는 마음이 사랑을 키웁니다."
+      summary: "화려한 말보다 진심 어린 행동이 상대의 마음을 움직입니다."
+      lucky_time: "18:00~20:00"
+      advice: "정성이 담긴 작은 행동을 실천해 보세요."
+      helper: "믿을 수 있는 친구"
+      caution: "현실적인 고민이 로맨스를 방해하지 않게 하세요."
+      money_detail: "검소하지만 의미 있는 데이트가 좋습니다."
+      love_detail: "꾸준한 관심이 신뢰를 쌓아갑니다."
+      condition_detail: "편안한 분위기에서 좋은 대화가 오갑니다."
+
+  - id: OL022
+    zodiac_group: [gemini, libra, aquarius]
+    templates:
+      one_liner: "대화가 사랑의 문을 엽니다."
+      summary: "말 한마디가 관계를 변화시킬 수 있습니다. 솔직하게 마음을 표현해 보세요."
+      lucky_time: "20:00~22:00"
+      advice: "상대의 이야기를 경청하고 공감해 주세요."
+      helper: "재치 있는 친구"
+      caution: "말로만 하지 말고 행동으로도 보여주세요."
+      money_detail: "함께하는 활동에 투자하면 좋습니다."
+      love_detail: "재미있는 대화가 좋은 인상을 남깁니다."
+      condition_detail: "밤늦은 수다가 즐겁지만 건강도 챙기세요."
+
+  - id: OL023
+    zodiac_group: [cancer, scorpio, pisces]
+    templates:
+      one_liner: "{name}님, 감정의 깊이가 사랑을 완성합니다."
+      summary: "깊은 감정의 교류가 특별한 순간을 만듭니다. 마음을 열어보세요."
+      lucky_time: "21:00~23:00"
+      advice: "상대의 감정에 공감하고 함께 느껴보세요."
+      helper: "감성적인 친구"
+      caution: "지나친 감정 이입은 에너지를 소모시킵니다."
+      money_detail: "분위기 있는 장소에서 좋은 시간을 보내세요."
+      love_detail: "눈빛과 작은 터치가 마음을 전합니다."
+      condition_detail: "감정의 파도에 지치지 않게 자기 관리를 하세요."
+
+  - id: OL024
+    templates:
+      one_liner: "오늘 운명적인 만남이 기다리고 있을지도 모릅니다."
+      summary: "평소와 다른 장소, 다른 시간에 기회가 숨어있습니다. 열린 마음으로 하루를 보내세요."
+      lucky_time: "17:00~19:00"
+      advice: "새로운 곳에 가보거나 새로운 사람과 대화해 보세요."
+      helper: "처음 보는 사람"
+      caution: "첫인상에 모든 것을 걸지 마세요."
+      money_detail: "사랑을 위한 투자는 아끼지 마세요."
+      love_detail: "예상치 못한 곳에서 인연이 기다립니다."
+      condition_detail: "외출 전 자신을 꾸미면 기분이 좋아집니다."

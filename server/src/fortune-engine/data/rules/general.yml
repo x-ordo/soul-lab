@@ -1,0 +1,89 @@
+rules:
+  # Career rules
+  - id: R001
+    name: 커리어 질문 기본
+    conditions:
+      question_tags:
+        any_of: [career]
+    effects:
+      themes:
+        career: 5
+    priority: 100
+
+  - id: R002
+    name: 돈 질문 기본
+    conditions:
+      question_tags:
+        any_of: [money]
+    effects:
+      themes:
+        money: 5
+    priority: 100
+
+  - id: R003
+    name: 연애 질문 기본
+    conditions:
+      question_tags:
+        any_of: [love]
+    effects:
+      themes:
+        love: 5
+    priority: 100
+
+  - id: R004
+    name: 건강 질문 기본
+    conditions:
+      question_tags:
+        any_of: [health]
+    effects:
+      themes:
+        health: 5
+    priority: 100
+
+  - id: R005
+    name: 인간관계 질문 기본
+    conditions:
+      question_tags:
+        any_of: [relationship]
+    effects:
+      themes:
+        relationship: 5
+    priority: 100
+
+  # Day of week rules
+  - id: R010
+    name: 월요일 커리어 부스트
+    conditions:
+      day_of_week: [1]
+    effects:
+      themes:
+        career: 2
+    priority: 50
+
+  - id: R011
+    name: 금요일 연애 부스트
+    conditions:
+      day_of_week: [5]
+    effects:
+      themes:
+        love: 2
+    priority: 50
+
+  - id: R012
+    name: 주말 건강/관계 부스트
+    conditions:
+      day_of_week: [0, 6]
+    effects:
+      themes:
+        health: 1
+        relationship: 2
+    priority: 50
+
+  # Default fallback (always matches)
+  - id: R099
+    name: 기본 종합 운세
+    conditions: {}
+    effects:
+      themes:
+        general: 1
+    priority: 1

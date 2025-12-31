@@ -1,0 +1,79 @@
+version: 1
+
+themes:
+  - name: career
+    base_weight: 1.0
+    display_name_ko: 커리어
+    priority: 1
+
+  - name: love
+    base_weight: 1.0
+    display_name_ko: 연애
+    priority: 2
+
+  - name: money
+    base_weight: 1.0
+    display_name_ko: 재물
+    priority: 3
+
+  - name: health
+    base_weight: 1.0
+    display_name_ko: 건강
+    priority: 4
+
+  - name: relationship
+    base_weight: 1.0
+    display_name_ko: 인간관계
+    priority: 5
+
+  - name: general
+    base_weight: 1.0
+    display_name_ko: 종합
+    priority: 6
+
+date_modifiers:
+  - period:
+      start: "01-01"
+      end: "01-07"
+    theme: career
+    multiplier: 1.5
+    reason: 새해 커리어 시즌
+
+  - period:
+      month: 2
+      day: 14
+    theme: love
+    multiplier: 2.0
+    reason: 발렌타인데이
+
+  - period:
+      start: "03-01"
+      end: "03-14"
+    theme: love
+    multiplier: 1.3
+    reason: 화이트데이 시즌
+
+  - period:
+      start: "05-01"
+      end: "05-15"
+    theme: relationship
+    multiplier: 1.3
+    reason: 가정의 달
+
+  - period:
+      start: "11-11"
+      end: "11-11"
+    theme: love
+    multiplier: 1.5
+    reason: 빼빼로데이
+
+  - period:
+      start: "12-20"
+      end: "12-31"
+    theme: love
+    multiplier: 1.3
+    reason: 연말 연인 시즌
+
+fallback:
+  theme: general
+  copy_pool: general
