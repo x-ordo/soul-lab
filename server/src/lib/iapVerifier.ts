@@ -8,8 +8,11 @@
  * - Uses Payment Confirm API to verify transaction
  * - Checks amount, status, and orderId match
  */
+import fs from 'node:fs';
+import path from 'node:path';
 import { getConfig } from '../config/index.js';
 import { logger } from './logger.js';
+import { writeFileAtomic } from './atomicWrite.js';
 
 export interface PaymentVerificationResult {
   verified: boolean;
@@ -168,22 +171,65 @@ export async function verifyTossPayment(
 
 /**
  * Idempotency check - ensure same payment isn't processed twice
- * Uses a simple in-memory cache with TTL
+ * Uses file-based persistence to survive server restarts.
  */
-const processedPayments = new Map<string, { processedAt: number }>();
+type ProcessedPaymentsDB = Record<string, { processedAt: number; orderId?: string }>;
+
 const IDEMPOTENCY_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-export function markPaymentProcessed(paymentKey: string): void {
-  processedPayments.set(paymentKey, { processedAt: Date.now() });
+let processedPayments: ProcessedPaymentsDB = {};
+let filePath: string | null = null;
+let initialized = false;
+
+/**
+ * Initialize the processed payments store with a data directory.
+ * Must be called before using markPaymentProcessed/isPaymentProcessed.
+ */
+export function initProcessedPaymentsStore(dataDir: string): void {
+  if (initialized) return;
+
+  fs.mkdirSync(dataDir, { recursive: true });
+  filePath = path.join(dataDir, 'processed_payments.json');
+
+  // Load existing data
+  try {
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, 'utf-8');
+      processedPayments = JSON.parse(raw) as ProcessedPaymentsDB;
+      logger.info({ count: Object.keys(processedPayments).length }, 'iap_idempotency_loaded');
+    }
+  } catch (err) {
+    logger.warn({ err }, 'iap_idempotency_load_failed');
+    processedPayments = {};
+  }
+
+  // Cleanup old records on startup
+  cleanupIdempotencyRecords();
+  initialized = true;
+}
+
+function saveProcessedPayments(): void {
+  if (!filePath) return;
+  try {
+    writeFileAtomic(filePath, JSON.stringify(processedPayments, null, 2));
+  } catch (err) {
+    logger.error({ err }, 'iap_idempotency_save_failed');
+  }
+}
+
+export function markPaymentProcessed(paymentKey: string, orderId?: string): void {
+  processedPayments[paymentKey] = { processedAt: Date.now(), orderId };
+  saveProcessedPayments();
 }
 
 export function isPaymentProcessed(paymentKey: string): boolean {
-  const record = processedPayments.get(paymentKey);
+  const record = processedPayments[paymentKey];
   if (!record) return false;
 
   // Check TTL
   if (Date.now() - record.processedAt > IDEMPOTENCY_TTL_MS) {
-    processedPayments.delete(paymentKey);
+    delete processedPayments[paymentKey];
+    saveProcessedPayments();
     return false;
   }
 
@@ -195,9 +241,17 @@ export function isPaymentProcessed(paymentKey: string): boolean {
  */
 export function cleanupIdempotencyRecords(): void {
   const now = Date.now();
-  for (const [key, record] of processedPayments) {
-    if (now - record.processedAt > IDEMPOTENCY_TTL_MS) {
-      processedPayments.delete(key);
+  let cleaned = 0;
+
+  for (const key of Object.keys(processedPayments)) {
+    if (now - processedPayments[key].processedAt > IDEMPOTENCY_TTL_MS) {
+      delete processedPayments[key];
+      cleaned++;
     }
+  }
+
+  if (cleaned > 0) {
+    saveProcessedPayments();
+    logger.info({ cleaned }, 'iap_idempotency_cleanup');
   }
 }

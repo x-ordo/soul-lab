@@ -327,8 +327,8 @@ export async function creditRoutes(
       });
     }
 
-    // 4. 결제 처리 완료 마킹 (중복 방지)
-    markPaymentProcessed(paymentKey);
+    // 4. 결제 처리 완료 마킹 (중복 방지, 파일 영속화)
+    markPaymentProcessed(paymentKey, orderId);
 
     // 5. 크레딧 지급
     const result = creditStore.completePurchase(orderId);

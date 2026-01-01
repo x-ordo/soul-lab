@@ -16,6 +16,7 @@ import { requestContextPlugin } from './middleware/requestContext.js';
 import { errorHandlerPlugin } from './middleware/errorHandler.js';
 import { userAuthPlugin } from './middleware/userAuth.js';
 import { isRedisHealthy, closeRedis } from './lib/redis.js';
+import { initProcessedPaymentsStore } from './lib/iapVerifier.js';
 
 const config = loadConfig();
 
@@ -45,6 +46,9 @@ const rewardStore = createRewardStore();
 // File-based stores (still using local filesystem)
 const profiles = new ProfileStore(DATA_DIR);
 const logger = new EventLogger(DATA_DIR);
+
+// Initialize IAP idempotency cache (survives server restarts)
+initProcessedPaymentsStore(DATA_DIR);
 
 const limiter = new FixedWindowLimiter();
 
