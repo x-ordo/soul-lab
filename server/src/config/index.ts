@@ -36,6 +36,9 @@ const envSchema = z.object({
   // Profile Encryption
   PROFILE_ENCRYPTION_KEY: z.string().length(64).optional(), // 32-byte hex key for birthdate encryption
 
+  // Data Encryption (for credit/transaction files)
+  DATA_ENCRYPTION_KEY: z.string().length(64).optional(), // 32-byte hex key for sensitive data files
+
   // Web URLs (for OG tags and sharing)
   WEB_BASE_URL: z.string().url().optional(), // e.g., https://soul-lab.vercel.app
   OG_BASE_URL: z.string().url().optional(), // e.g., https://cdn.soul-lab.com (for OG images)

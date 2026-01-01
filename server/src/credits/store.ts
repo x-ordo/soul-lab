@@ -7,11 +7,15 @@
  * to prevent race conditions and data corruption.
  */
 
-import { existsSync, readFileSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import * as mutex from '../lib/mutex.js';
-import { writeJsonAtomic } from '../lib/atomicWrite.js';
 import { generateTransactionId } from '../lib/secureId.js';
+import {
+  readEncryptedJson,
+  writeEncryptedJson,
+  isDataEncryptionConfigured,
+} from '../lib/encryptedStorage.js';
 
 // ============================================================
 // Types
@@ -224,29 +228,35 @@ export class CreditStore {
         mkdirSync(this.dataDir, { recursive: true });
       }
 
-      if (existsSync(this.balancesFile)) {
-        const data = JSON.parse(readFileSync(this.balancesFile, 'utf-8'));
-        this.balances = new Map(Object.entries(data));
-      }
+      // Load with encrypted storage support (handles both encrypted and plaintext files)
+      const balancesData = readEncryptedJson<Record<string, CreditBalance>>(
+        this.balancesFile,
+        {}
+      );
+      this.balances = new Map(Object.entries(balancesData));
 
-      if (existsSync(this.transactionsFile)) {
-        this.transactions = JSON.parse(readFileSync(this.transactionsFile, 'utf-8'));
-      }
+      this.transactions = readEncryptedJson<CreditTransaction[]>(
+        this.transactionsFile,
+        []
+      );
 
-      if (existsSync(this.purchasesFile)) {
-        const data = JSON.parse(readFileSync(this.purchasesFile, 'utf-8'));
-        this.purchases = new Map(Object.entries(data));
-      }
+      const purchasesData = readEncryptedJson<Record<string, PurchaseRecord>>(
+        this.purchasesFile,
+        {}
+      );
+      this.purchases = new Map(Object.entries(purchasesData));
 
-      if (existsSync(this.referralsFile)) {
-        const data = JSON.parse(readFileSync(this.referralsFile, 'utf-8'));
-        this.referrals = new Map(Object.entries(data));
-      }
+      const referralsData = readEncryptedJson<Record<string, ReferralRecord>>(
+        this.referralsFile,
+        {}
+      );
+      this.referrals = new Map(Object.entries(referralsData));
 
-      if (existsSync(this.streakRewardsFile)) {
-        const data = JSON.parse(readFileSync(this.streakRewardsFile, 'utf-8'));
-        this.streakRewards = new Map(Object.entries(data));
-      }
+      const streakData = readEncryptedJson<Record<string, StreakRewardRecord>>(
+        this.streakRewardsFile,
+        {}
+      );
+      this.streakRewards = new Map(Object.entries(streakData));
     } catch (e) {
       console.error('CreditStore load error:', e);
     }
@@ -259,24 +269,25 @@ export class CreditStore {
         mkdirSync(dir, { recursive: true });
       }
 
-      // Use atomic writes to prevent corruption on crash
-      writeJsonAtomic(
+      // Use encrypted storage for sensitive financial data
+      // Automatically encrypts if DATA_ENCRYPTION_KEY is configured
+      writeEncryptedJson(
         this.balancesFile,
         Object.fromEntries(this.balances)
       );
-      writeJsonAtomic(
+      writeEncryptedJson(
         this.transactionsFile,
         this.transactions.slice(-10000) // 최근 10000건만 유지
       );
-      writeJsonAtomic(
+      writeEncryptedJson(
         this.purchasesFile,
         Object.fromEntries(this.purchases)
       );
-      writeJsonAtomic(
+      writeEncryptedJson(
         this.referralsFile,
         Object.fromEntries(this.referrals)
       );
-      writeJsonAtomic(
+      writeEncryptedJson(
         this.streakRewardsFile,
         Object.fromEntries(this.streakRewards)
       );

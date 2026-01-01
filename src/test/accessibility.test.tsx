@@ -2,11 +2,14 @@
  * Accessibility Tests for Soul Lab
  * WCAG 2.2 Level AA compliance testing using vitest-axe
  */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { BrowserRouter } from 'react-router';
 import React from 'react';
+
+// Timeout for axe tests (axe-core can be slow)
+const AXE_TIMEOUT = 15000;
 
 // Components
 import Header from '../components/Header';
@@ -52,7 +55,12 @@ beforeEach(() => {
   cleanup();
 });
 
-describe('Accessibility: Core Components', () => {
+afterEach(() => {
+  cleanup();
+});
+
+// Use sequential to prevent axe "already running" conflicts
+describe.sequential('Accessibility: Core Components', () => {
   describe('Header', () => {
     it('should have no accessibility violations', async () => {
       const { container } = render(
@@ -63,7 +71,7 @@ describe('Accessibility: Core Components', () => {
 
       const results = await checkA11y(container);
       expectNoViolations(results);
-    });
+    }, AXE_TIMEOUT);
 
     it('should use semantic header element', () => {
       const { container } = render(
@@ -100,7 +108,7 @@ describe('Accessibility: Core Components', () => {
 
       const results = await checkA11y(container);
       expectNoViolations(results);
-    });
+    }, AXE_TIMEOUT);
 
     it('should have accessible labels for all select fields', () => {
       const { container } = render(
@@ -212,7 +220,7 @@ describe('Accessibility: Semantic HTML', () => {
   });
 });
 
-describe('Accessibility: Color Contrast', () => {
+describe.sequential('Accessibility: Color Contrast', () => {
   it('should pass color contrast checks', async () => {
     const { container } = render(
       <TestWrapper>
@@ -234,7 +242,7 @@ describe('Accessibility: Color Contrast', () => {
     // This test ensures we're actively checking contrast
     const contrastViolations = results.violations.filter((v) => v.id === 'color-contrast');
     expect(contrastViolations.length).toBeLessThanOrEqual(0);
-  });
+  }, AXE_TIMEOUT);
 });
 
 describe('Accessibility: Screen Reader Support', () => {
