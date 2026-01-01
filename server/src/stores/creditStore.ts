@@ -55,17 +55,6 @@ function generateTxId(): string {
 }
 
 /**
- * Execute a Redis pipeline and return results
- */
-async function runPipeline(
-  pipeline: ReturnType<ReturnType<typeof getRedis>['pipeline']>
-): Promise<Array<[Error | null, unknown]>> {
-  // Note: Using array method to avoid 'exec' keyword that triggers security hook
-  const results = await pipeline['exec']();
-  return results || [];
-}
-
-/**
  * Redis-based credit store implementation
  */
 export class RedisCreditStore implements ICreditStore {

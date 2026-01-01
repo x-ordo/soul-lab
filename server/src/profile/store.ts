@@ -8,6 +8,7 @@ import { encrypt, decrypt, hash, isEncryptionConfigured } from '../lib/crypto.js
 import { writeFileAtomic } from '../lib/atomicWrite.js';
 import * as mutex from '../lib/mutex.js';
 import { logger } from '../lib/logger.js';
+import { isSafeObjectKey } from '../lib/validation.js';
 
 // ============================================================
 // Types
@@ -62,6 +63,16 @@ function ensureDir(p: string) {
   fs.mkdirSync(p, { recursive: true });
 }
 
+/**
+ * Validate userKey to prevent prototype pollution.
+ * Throws if key is dangerous.
+ */
+function assertSafeKey(key: string): void {
+  if (!isSafeObjectKey(key)) {
+    throw new Error(`Invalid key: ${key}`);
+  }
+}
+
 export class ProfileStore {
   private filePath: string;
   private db: DB;
@@ -92,12 +103,16 @@ export class ProfileStore {
    * Create or update user profile (internal, no mutex).
    */
   private createOrUpdateInternal(input: CreateProfileInput): UserProfile {
+    assertSafeKey(input.userKey);
+
     if (!isEncryptionConfigured()) {
       throw new Error('Encryption not configured. Set PROFILE_ENCRYPTION_KEY.');
     }
 
     const now = new Date().toISOString();
-    const existing = this.db.profiles[input.userKey];
+    const existing = Object.hasOwn(this.db.profiles, input.userKey)
+      ? this.db.profiles[input.userKey]
+      : undefined;
 
     const profile: UserProfile = {
       userKey: input.userKey,
@@ -138,8 +153,9 @@ export class ProfileStore {
    * Get profile by userKey (read-only, no side effects).
    */
   get(userKey: string): ProfileResponse | null {
+    assertSafeKey(userKey);
+    if (!Object.hasOwn(this.db.profiles, userKey)) return null;
     const profile = this.db.profiles[userKey];
-    if (!profile) return null;
 
     try {
       return {
@@ -158,8 +174,9 @@ export class ProfileStore {
    * Update last active timestamp (call separately when needed).
    */
   updateLastActive(userKey: string): void {
+    assertSafeKey(userKey);
+    if (!Object.hasOwn(this.db.profiles, userKey)) return;
     const profile = this.db.profiles[userKey];
-    if (!profile) return;
 
     profile.lastActiveAt = new Date().toISOString();
     this.save();
@@ -169,21 +186,25 @@ export class ProfileStore {
    * Get raw profile (without decryption).
    */
   getRaw(userKey: string): UserProfile | null {
-    return this.db.profiles[userKey] || null;
+    assertSafeKey(userKey);
+    if (!Object.hasOwn(this.db.profiles, userKey)) return null;
+    return this.db.profiles[userKey];
   }
 
   /**
    * Check if profile exists.
    */
   exists(userKey: string): boolean {
-    return !!this.db.profiles[userKey];
+    assertSafeKey(userKey);
+    return Object.hasOwn(this.db.profiles, userKey);
   }
 
   /**
    * Delete profile (GDPR compliance).
    */
   delete(userKey: string): boolean {
-    if (!this.db.profiles[userKey]) return false;
+    assertSafeKey(userKey);
+    if (!Object.hasOwn(this.db.profiles, userKey)) return false;
     delete this.db.profiles[userKey];
     this.save();
     return true;
@@ -194,8 +215,11 @@ export class ProfileStore {
    * Enables cross-device profile recovery.
    */
   linkTossKey(deviceUserKey: string, tossPublicKey: string): boolean {
+    assertSafeKey(deviceUserKey);
+    assertSafeKey(tossPublicKey);
+
+    if (!Object.hasOwn(this.db.profiles, deviceUserKey)) return false;
     const profile = this.db.profiles[deviceUserKey];
-    if (!profile) return false;
 
     profile.tossPublicKey = tossPublicKey;
     profile.linkedKeys = profile.linkedKeys || [];
@@ -204,7 +228,7 @@ export class ProfileStore {
     }
 
     // Also index by Toss key for lookup
-    if (!this.db.profiles[tossPublicKey]) {
+    if (!Object.hasOwn(this.db.profiles, tossPublicKey)) {
       this.db.profiles[tossPublicKey] = profile;
     }
 
@@ -216,9 +240,12 @@ export class ProfileStore {
    * Get profile by Toss publicKey.
    */
   getByTossKey(tossPublicKey: string): ProfileResponse | null {
+    assertSafeKey(tossPublicKey);
+
     // First check direct lookup
-    const direct = this.db.profiles[tossPublicKey];
-    if (direct) return this.get(tossPublicKey);
+    if (Object.hasOwn(this.db.profiles, tossPublicKey)) {
+      return this.get(tossPublicKey);
+    }
 
     // Search linked keys
     for (const profile of Object.values(this.db.profiles)) {

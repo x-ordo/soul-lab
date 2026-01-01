@@ -43,7 +43,6 @@ import {
   getFallbackTarotInterpretation,
   getFallbackSynastryAnalysis,
   getFallbackChatResponse,
-  getFallbackConsultResponse,
 } from '../ai/fallback.js';
 import { logger } from '../lib/logger.js';
 import path from 'path';

@@ -11,11 +11,38 @@ import { z } from 'zod';
 // Common Patterns
 // ============================================================
 
+// Dangerous object keys that could cause prototype pollution
+const DANGEROUS_KEYS = new Set([
+  '__proto__',
+  'constructor',
+  'prototype',
+  '__defineGetter__',
+  '__defineSetter__',
+  '__lookupGetter__',
+  '__lookupSetter__',
+  'hasOwnProperty',
+  'isPrototypeOf',
+  'propertyIsEnumerable',
+  'toLocaleString',
+  'toString',
+  'valueOf',
+]);
+
+/**
+ * Check if a string is safe to use as an object key.
+ * Prevents prototype pollution attacks.
+ */
+export function isSafeObjectKey(key: string): boolean {
+  return !DANGEROUS_KEYS.has(key) && !key.startsWith('__');
+}
+
 // User key: alphanumeric + hyphen/underscore, 8-64 chars
+// Also rejects prototype pollution vectors
 const userKeySchema = z.string()
   .min(8, 'userKey must be at least 8 characters')
   .max(64, 'userKey must be at most 64 characters')
-  .regex(/^[a-zA-Z0-9_-]+$/, 'userKey must be alphanumeric with hyphens/underscores only');
+  .regex(/^[a-zA-Z0-9_-]+$/, 'userKey must be alphanumeric with hyphens/underscores only')
+  .refine(isSafeObjectKey, 'userKey contains invalid characters');
 
 // Date key: YYYY-MM-DD format
 const dateKeySchema = z.string()

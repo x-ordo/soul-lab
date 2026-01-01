@@ -9,7 +9,7 @@
  */
 
 import Redis from 'ioredis';
-import { getConfig, isDevelopment } from '../config/index.js';
+import { isDevelopment } from '../config/index.js';
 
 let _redis: Redis | null = null;
 

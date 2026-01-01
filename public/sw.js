@@ -7,7 +7,8 @@
  * - Background sync (optional)
  */
 
-const CACHE_NAME = 'soul-lab-v1';
+// Reserved for future asset caching
+const _CACHE_NAME = 'soul-lab-v1';
 
 // ============================================
 // Install Event
