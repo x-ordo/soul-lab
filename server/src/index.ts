@@ -2,14 +2,17 @@ import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { EventLogger } from './logger.js';
-import { FixedWindowLimiter } from './limiter.js';
+import { createRateLimiter } from './lib/rateLimiter.js';
 import { createInviteStore } from './stores/inviteStore.js';
 import { createRewardStore } from './stores/rewardStore.js';
 import { ProfileStore } from './profile/store.js';
 import { fortuneRoutes } from './routes/fortune.js';
 import { creditRoutes } from './routes/credits.js';
 import { adminRoutes } from './routes/admin.js';
+import { authRoutes } from './routes/auth.js';
 import profileRoutes from './routes/profile.js';
+import { pushRoutes } from './routes/push.js';
+import { leaderboardRoutes } from './routes/leaderboard.js';
 import { loadConfig } from './config/index.js';
 import { logger as pinoLogger } from './lib/logger.js';
 import { requestContextPlugin } from './middleware/requestContext.js';
@@ -30,7 +33,7 @@ const DATA_DIR = config.DATA_DIR;
 // Invite TTL: 24h
 const INVITE_TTL_MS = 24 * 60 * 60 * 1000;
 
-// Rate limit (fixed-window)
+// Rate limit (Redis sliding-window)
 const INVITE_WINDOW_MS = 60 * 60 * 1000; // 1h
 const INVITE_LIMIT_PER_IP = config.INVITE_LIMIT_PER_IP;
 const INVITE_LIMIT_PER_USER = config.INVITE_LIMIT_PER_USER;
@@ -50,7 +53,7 @@ const logger = new EventLogger(DATA_DIR);
 // Initialize IAP idempotency cache (survives server restarts)
 initProcessedPaymentsStore(DATA_DIR);
 
-const limiter = new FixedWindowLimiter();
+const limiter = createRateLimiter();
 
 // CORS configuration - use whitelist in production
 const corsOrigin = (() => {
@@ -70,13 +73,16 @@ await app.register(cors, {
   origin: corsOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Correlation-Id', 'X-User-Key', 'X-Timestamp', 'X-Signature'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Correlation-Id', 'X-User-Key', 'X-Timestamp', 'X-Signature', 'X-Session-Token'],
 });
 
 // Register middleware plugins
 await app.register(requestContextPlugin);
 await app.register(errorHandlerPlugin);
 await app.register(userAuthPlugin);
+
+// Register auth routes (session tokens)
+await app.register(authRoutes);
 
 // Register fortune routes (astrology, tarot, AI)
 await app.register(fortuneRoutes);
@@ -89,6 +95,12 @@ await app.register(adminRoutes, { dataDir: DATA_DIR, store: inviteStore, rewards
 
 // Register profile routes (user data sync)
 await app.register(profileRoutes, { profileStore: profiles });
+
+// Register push notification routes
+await app.register(pushRoutes);
+
+// Register leaderboard routes
+await app.register(leaderboardRoutes);
 
 function meta(req: any) {
   const ip = req.ip;
@@ -129,22 +141,19 @@ app.get('/ready', async (req, reply) => {
 });
 
 app.post('/api/invites', async (req, reply) => {
-  // Redis TTL handles cleanup automatically
-  limiter.sweep(INVITE_WINDOW_MS);
-
   const body = (req.body ?? {}) as any;
   const inviterKey = String(body.inviterKey ?? '').trim();
   if (!inviterKey) return reply.code(400).send({ error: 'inviterKey_required' });
 
   const { ip, ua } = meta(req);
 
-  const ipRate = limiter.allow(rateKey('invite_ip', ip), INVITE_LIMIT_PER_IP, INVITE_WINDOW_MS);
+  const ipRate = await limiter.allow(rateKey('invite_ip', ip), INVITE_LIMIT_PER_IP, INVITE_WINDOW_MS);
   if (!ipRate.ok) {
     logger.log({ ts: Date.now(), type: 'invite_create_rate_limited', ip, ua, inviterKey, resetAt: ipRate.resetAt });
     return reply.code(429).send({ error: 'rate_limited', resetAt: ipRate.resetAt });
   }
 
-  const userRate = limiter.allow(rateKey('invite_user', inviterKey), INVITE_LIMIT_PER_USER, INVITE_WINDOW_MS);
+  const userRate = await limiter.allow(rateKey('invite_user', inviterKey), INVITE_LIMIT_PER_USER, INVITE_WINDOW_MS);
   if (!userRate.ok) {
     logger.log({ ts: Date.now(), type: 'invite_create_rate_limited', ip, ua, inviterKey, resetAt: userRate.resetAt });
     return reply.code(429).send({ error: 'rate_limited', resetAt: userRate.resetAt });
@@ -257,8 +266,6 @@ app.post('/api/invites/:id/reissue', async (req, reply) => {
 
 // 보상형 광고 "1일 1회" 서버 기록 (완벽한 검증은 불가하지만, 다중 기기/리플레이 방어에 도움)
 app.post('/api/rewards/earn', async (req, reply) => {
-  limiter.sweep(REWARD_WINDOW_MS);
-
   const body = (req.body ?? {}) as any;
   const userKey = String(body.userKey ?? '').trim();
   const dateKey = String(body.dateKey ?? '').trim(); // e.g. 2025-12-26
@@ -269,8 +276,8 @@ app.post('/api/rewards/earn', async (req, reply) => {
 
   const { ip, ua } = meta(req);
 
-  const ipRate = limiter.allow(rateKey('reward_ip', ip), REWARD_LIMIT_PER_IP, REWARD_WINDOW_MS);
-  const userRate = limiter.allow(rateKey('reward_user', userKey), REWARD_LIMIT_PER_USER, REWARD_WINDOW_MS);
+  const ipRate = await limiter.allow(rateKey('reward_ip', ip), REWARD_LIMIT_PER_IP, REWARD_WINDOW_MS);
+  const userRate = await limiter.allow(rateKey('reward_user', userKey), REWARD_LIMIT_PER_USER, REWARD_WINDOW_MS);
   if (!ipRate.ok || !userRate.ok) {
     logger.log({ ts: Date.now(), type: 'reward_rate_limited', ip, ua, userKey, dateKey, scope });
     return reply.code(429).send({ error: 'rate_limited' });

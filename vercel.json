@@ -3,14 +3,44 @@
   "buildCommand": "pnpm build:web",
   "outputDirectory": "dist",
   "framework": "vite",
+  "functions": {
+    "api/og.ts": {
+      "runtime": "@vercel/node@3.0.0"
+    }
+  },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/share/chemistry",
+      "destination": "/api/og?type=chemistry"
+    },
+    {
+      "source": "/share/result",
+      "destination": "/api/og?type=result"
+    },
+    {
+      "source": "/share/tarot",
+      "destination": "/api/og?type=tarot"
+    },
+    {
+      "source": "/share/daily",
+      "destination": "/api/og?type=daily"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ],
   "headers": [
     {
       "source": "/assets/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/og-(.*).png",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     }
   ]

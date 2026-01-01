@@ -206,3 +206,97 @@ export function parseSignatureHeaders(headers: {
 
   return { userKey, timestamp, signature };
 }
+
+// ============================================================
+// Session Token Verification
+// ============================================================
+
+const SESSION_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+export interface SessionToken {
+  token: string;
+  userKey: string;
+  expiresAt: number;
+}
+
+/**
+ * Generate a session token for authenticated API requests
+ */
+export function generateSessionToken(userKey: string): SessionToken {
+  const config = getConfig();
+  const secret = config.SIGNING_SECRET;
+
+  if (!secret) {
+    throw new Error('SIGNING_SECRET not configured');
+  }
+
+  const expiresAt = Date.now() + SESSION_TOKEN_TTL_MS;
+  const message = `session:${userKey}:${expiresAt}`;
+  const signature = crypto.createHmac('sha256', secret).update(message).digest('hex');
+
+  // Token format: base64(userKey):expiresAt:signature
+  const token = `${Buffer.from(userKey).toString('base64')}:${expiresAt}:${signature}`;
+
+  return {
+    token,
+    userKey,
+    expiresAt,
+  };
+}
+
+/**
+ * Verify a session token
+ */
+export function verifySessionToken(token: string): {
+  valid: boolean;
+  userKey?: string;
+  error?: 'missing_secret' | 'invalid_format' | 'invalid_expiry' | 'expired' | 'invalid_signature' | 'parse_error';
+} {
+  const config = getConfig();
+  const secret = config.SIGNING_SECRET;
+
+  if (!secret) {
+    return { valid: false, error: 'missing_secret' };
+  }
+
+  try {
+    const parts = token.split(':');
+    if (parts.length !== 3) {
+      return { valid: false, error: 'invalid_format' };
+    }
+
+    const [userKeyB64, expiresAtStr, signature] = parts;
+    const userKey = Buffer.from(userKeyB64, 'base64').toString('utf8');
+    const expiresAt = parseInt(expiresAtStr, 10);
+
+    if (isNaN(expiresAt)) {
+      return { valid: false, error: 'invalid_expiry' };
+    }
+
+    // Check expiration
+    if (Date.now() > expiresAt) {
+      return { valid: false, error: 'expired' };
+    }
+
+    // Verify signature
+    const message = `session:${userKey}:${expiresAt}`;
+    const expectedSignature = crypto.createHmac('sha256', secret).update(message).digest('hex');
+
+    const signatureBuffer = Buffer.from(signature, 'hex');
+    const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+
+    if (signatureBuffer.length !== expectedBuffer.length) {
+      return { valid: false, error: 'invalid_signature' };
+    }
+
+    if (!crypto.timingSafeEqual(signatureBuffer, expectedBuffer)) {
+      return { valid: false, error: 'invalid_signature' };
+    }
+
+    return { valid: true, userKey };
+  } catch {
+    return { valid: false, error: 'parse_error' };
+  }
+}
+
+export const SESSION_TOKEN_TTL = SESSION_TOKEN_TTL_MS;

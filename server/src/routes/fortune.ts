@@ -38,6 +38,14 @@ import {
   type UserProfile,
   type QuestionTag,
 } from '../fortune-engine/index.js';
+import {
+  getFallbackDailyFortune,
+  getFallbackTarotInterpretation,
+  getFallbackSynastryAnalysis,
+  getFallbackChatResponse,
+  getFallbackConsultResponse,
+} from '../ai/fallback.js';
+import { logger } from '../lib/logger.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -321,14 +329,27 @@ export async function fortuneRoutes(app: FastifyInstance): Promise<void> {
       }
 
       const tier = body.tier || 'mini';
-      const response = await generateTarotReading(body.reading, body.question, tier);
 
-      return {
-        success: true,
-        interpretation: response.text,
-        tokensUsed: response.tokensUsed,
-        model: response.model,
-      };
+      try {
+        const response = await generateTarotReading(body.reading, body.question, tier);
+        return {
+          success: true,
+          interpretation: response.text,
+          tokensUsed: response.tokensUsed,
+          model: response.model,
+        };
+      } catch (aiError) {
+        // AI failed - use fallback
+        logger.warn({ err: aiError }, 'tarot_interpret_ai_fallback');
+        const fallbackText = getFallbackTarotInterpretation(body.reading);
+        return {
+          success: true,
+          interpretation: fallbackText,
+          tokensUsed: 0,
+          model: 'fallback',
+          fallback: true,
+        };
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       return reply.code(500).send({ error: 'interpret_failed', message });
@@ -427,10 +448,12 @@ export async function fortuneRoutes(app: FastifyInstance): Promise<void> {
       const dateKey = new Date().toISOString().split('T')[0];
 
       // Build context
+      const zodiacSign = getZodiacSign(new Date(body.birthDate)).signKorean;
+      const dailyCard = getDailyCard(body.userKey, dateKey);
       const context: FortuneContext = {
-        zodiacSign: getZodiacSign(new Date(body.birthDate)).signKorean,
+        zodiacSign,
         birthDate: body.birthDate,
-        dailyCard: getDailyCard(body.userKey, dateKey),
+        dailyCard,
         transit: calculateTransit(),
       };
 
@@ -444,18 +467,31 @@ export async function fortuneRoutes(app: FastifyInstance): Promise<void> {
         );
       }
 
-      const response = await generateDailyFortune(context, tier);
-
-      return {
-        success: true,
-        fortune: response.text,
-        dailyCard: context.dailyCard,
-        tokensUsed: response.tokensUsed,
-        model: response.model,
-      };
+      try {
+        const response = await generateDailyFortune(context, tier);
+        return {
+          success: true,
+          fortune: response.text,
+          dailyCard,
+          tokensUsed: response.tokensUsed,
+          model: response.model,
+        };
+      } catch (aiError) {
+        // AI failed - use fallback
+        logger.warn({ err: aiError }, 'daily_fortune_ai_fallback');
+        const fallbackText = getFallbackDailyFortune(zodiacSign);
+        return {
+          success: true,
+          fortune: fallbackText,
+          dailyCard,
+          tokensUsed: 0,
+          model: 'fallback',
+          fallback: true,
+        };
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Daily fortune error:', error);
+      logger.error({ err: error }, 'daily_fortune_error');
       return reply.code(500).send({ error: 'daily_failed', message });
     }
   });
@@ -489,18 +525,34 @@ export async function fortuneRoutes(app: FastifyInstance): Promise<void> {
       );
 
       const synastry = calculateSynastry(chart1, chart2);
-      const response = await generateSynastryAnalysis(chart1, chart2, synastry, tier);
+      const zodiac1 = chart1.sun.sign;
+      const zodiac2 = chart2.sun.sign;
 
-      return {
-        success: true,
-        synastry,
-        analysis: response.text,
-        tokensUsed: response.tokensUsed,
-        model: response.model,
-      };
+      try {
+        const response = await generateSynastryAnalysis(chart1, chart2, synastry, tier);
+        return {
+          success: true,
+          synastry,
+          analysis: response.text,
+          tokensUsed: response.tokensUsed,
+          model: response.model,
+        };
+      } catch (aiError) {
+        // AI failed - use fallback
+        logger.warn({ err: aiError }, 'synastry_ai_fallback');
+        const fallbackText = getFallbackSynastryAnalysis(zodiac1, zodiac2, synastry.overallScore);
+        return {
+          success: true,
+          synastry,
+          analysis: fallbackText,
+          tokensUsed: 0,
+          model: 'fallback',
+          fallback: true,
+        };
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Synastry analysis error:', error);
+      logger.error({ err: error }, 'synastry_error');
       return reply.code(500).send({ error: 'synastry_failed', message });
     }
   });
@@ -610,6 +662,7 @@ export async function fortuneRoutes(app: FastifyInstance): Promise<void> {
       };
 
       // 생년월일이 있으면 별자리 추가
+      let zodiacSign: string | undefined;
       if (body.birthdate) {
         // birthdate is YYYYMMDD format
         const year = body.birthdate.slice(0, 4);
@@ -618,7 +671,8 @@ export async function fortuneRoutes(app: FastifyInstance): Promise<void> {
         const birthDate = new Date(`${year}-${month}-${day}`);
 
         if (!isNaN(birthDate.getTime())) {
-          context.zodiacSign = getZodiacSign(birthDate).signKorean;
+          zodiacSign = getZodiacSign(birthDate).signKorean;
+          context.zodiacSign = zodiacSign;
           context.birthDate = birthDate.toISOString().split('T')[0];
         }
       }
@@ -636,18 +690,31 @@ export async function fortuneRoutes(app: FastifyInstance): Promise<void> {
         context.question = `이전 대화:\n${previousContext}\n\n현재 질문: ${lastUserMessage.content}`;
       }
 
-      const response = await chat(context, tier);
-
-      return {
-        success: true,
-        response: response.text,
-        tokensUsed: response.tokensUsed,
-        model: response.model,
-        provider: response.provider,
-      };
+      try {
+        const response = await chat(context, tier);
+        return {
+          success: true,
+          response: response.text,
+          tokensUsed: response.tokensUsed,
+          model: response.model,
+          provider: response.provider,
+        };
+      } catch (aiError) {
+        // AI failed - use fallback
+        logger.warn({ err: aiError }, 'chat_ai_fallback');
+        const fallbackText = getFallbackChatResponse(lastUserMessage.content, zodiacSign);
+        return {
+          success: true,
+          response: fallbackText,
+          tokensUsed: 0,
+          model: 'fallback',
+          provider: 'fallback',
+          fallback: true,
+        };
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error('AI chat error:', error);
+      logger.error({ err: error }, 'chat_error');
       return reply.code(500).send({ error: 'chat_failed', message });
     }
   });

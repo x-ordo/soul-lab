@@ -14,7 +14,11 @@
  */
 import type { FastifyRequest, FastifyReply, FastifyPluginAsync } from 'fastify';
 import { logger } from '../lib/logger.js';
-import { parseSignatureHeaders, verifyUserSignature } from '../lib/auth.js';
+import {
+  parseSignatureHeaders,
+  verifyUserSignature,
+  verifySessionToken,
+} from '../lib/auth.js';
 import { isDevelopment } from '../config/index.js';
 
 // Endpoints that require user authorization
@@ -63,7 +67,49 @@ export const userAuthPlugin: FastifyPluginAsync = async (app) => {
       return;
     }
 
-    // Parse signature headers
+    // Method 1: Check for session token (preferred for frontend)
+    const sessionToken = request.headers['x-session-token'] as string | undefined;
+    if (sessionToken) {
+      const tokenResult = verifySessionToken(sessionToken);
+
+      if (tokenResult.valid && tokenResult.userKey) {
+        // Verify the authenticated userKey matches the requested userKey
+        const requestedUserKey = extractUserKeyFromRequest(request);
+        if (requestedUserKey && tokenResult.userKey !== requestedUserKey) {
+          logger.warn(
+            { ip: request.ip, authUserKey: tokenResult.userKey, requestedUserKey },
+            'user_auth_token_mismatch'
+          );
+          return reply.code(403).send({
+            error: 'forbidden',
+            message: 'Cannot access another user\'s data',
+          });
+        }
+
+        (request as any).verifiedUserKey = tokenResult.userKey;
+        return;
+      }
+
+      // Token provided but invalid
+      logger.warn(
+        { ip: request.ip, error: tokenResult.error },
+        'user_auth_token_invalid'
+      );
+
+      if (tokenResult.error === 'expired') {
+        return reply.code(401).send({
+          error: 'token_expired',
+          message: 'Session token has expired. Please request a new token.',
+        });
+      }
+
+      return reply.code(401).send({
+        error: 'invalid_token',
+        message: 'Invalid session token',
+      });
+    }
+
+    // Method 2: Check for HMAC signature headers
     const signatureData = parseSignatureHeaders({
       'x-user-key': request.headers['x-user-key'] as string | undefined,
       'x-timestamp': request.headers['x-timestamp'] as string | undefined,
@@ -103,10 +149,10 @@ export const userAuthPlugin: FastifyPluginAsync = async (app) => {
         return;
       }
 
-      logger.warn({ ip: request.ip, url: request.url }, 'user_auth_missing_signature');
+      logger.warn({ ip: request.ip, url: request.url }, 'user_auth_missing_auth');
       return reply.code(401).send({
         error: 'unauthorized',
-        message: 'Authentication headers required (X-User-Key, X-Timestamp, X-Signature)',
+        message: 'Authentication required (X-Session-Token or X-User-Key/X-Timestamp/X-Signature)',
       });
     }
 
