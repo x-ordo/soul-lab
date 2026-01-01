@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@toss/tds-mobile';
 import LockedBlur from './LockedBlur';
 import AdRewardButton from './AdRewardButton';
@@ -8,6 +7,7 @@ import { getStreak } from '../lib/streak';
 import { qualifiesForFreeUnlock, getFreeUnlockMessage } from '../lib/streakBonus';
 import { getDaysSinceFirstVisit } from '../lib/storage';
 import { track } from '../lib/analytics';
+import { QuickLinksBar, QuickLinkAIConsult, QuickLinkTarot } from './QuickLinksBar';
 
 // 광고 노출 시작일 (첫 방문 후 N일차부터)
 const AD_DELAY_DAYS = 3;
@@ -26,7 +26,6 @@ function getPreview(text: string | undefined, maxLen = 12): string {
 }
 
 export default function LockedResultView({ state, actions, reportData }: LockedResultViewProps) {
-  const nav = useNavigate();
   const adGroupId = (import.meta.env.VITE_REWARDED_AD_GROUP_ID as string) || 'ait-ad-test-rewarded-id';
   const { report } = reportData;
 
@@ -88,8 +87,8 @@ export default function LockedResultView({ state, actions, reportData }: LockedR
         </div>
       )}
 
-      {/* 광고는 3일차부터 노출 */}
-      {showAds ? (
+      {/* Primary: 광고 해제 (3일차부터) */}
+      {showAds && !hasFreeUnlock && (
         <>
           <div style={{ height: 12 }} />
           <AdRewardButton
@@ -99,118 +98,41 @@ export default function LockedResultView({ state, actions, reportData }: LockedR
             onUnlocked={actions.unlock}
           />
         </>
-      ) : (
-        <div style={{ height: 12 }}>
-          <div
-            className="card"
-            style={{
-              background: 'linear-gradient(135deg, rgba(147, 112, 219, 0.1), rgba(75, 0, 130, 0.2))',
-              border: '1px solid rgba(147, 112, 219, 0.3)',
-              textAlign: 'center',
-            }}
-          >
-            <div className="small" style={{ color: 'rgba(255,255,255,0.7)' }}>
-              🌙 {AD_DELAY_DAYS - daysSinceFirstVisit}일 후 추가 해제 방법이 열립니다
-            </div>
-          </div>
+      )}
+
+      {/* Secondary Actions - 가로 그룹 */}
+      <div className="action-row">
+        <Button size="medium" color="primary" variant="weak" onClick={actions.onInviteChemistryContacts}>
+          💕 친구 초대
+        </Button>
+        <Button size="medium" color="dark" variant="weak" onClick={actions.onShareResult}>
+          📤 공유하기
+        </Button>
+      </div>
+
+      {/* 광고 미노출 시 안내 */}
+      {!showAds && !hasFreeUnlock && (
+        <div
+          style={{
+            marginTop: 12,
+            padding: '10px 16px',
+            background: 'rgba(147, 112, 219, 0.1)',
+            borderRadius: 10,
+            textAlign: 'center',
+          }}
+        >
+          <span className="small" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            🌙 {AD_DELAY_DAYS - daysSinceFirstVisit}일 후 추가 해제 방법 오픈
+          </span>
         </div>
       )}
 
-      <div style={{ height: 12 }} />
-      <Button size="large" color="dark" variant="weak" display="full" onClick={actions.onShareResult}>
-        오늘의 운명 공유하기
-      </Button>
-
-      <div style={{ height: 12 }} />
-      <ChemistryInviteCard
-        thirdPartyConsent={state.thirdPartyConsent}
-        title="인연의 실로 봉인 해제"
-        subtitle="둘의 기운이 만나면 봉인이 풀립니다."
-        onInviteContacts={actions.onInviteChemistryContacts}
-        onInviteLink={actions.onInviteChemistryLink}
-      />
-
-      <div style={{ height: 12 }} />
-      <AIConsultCard />
-
-      <div style={{ height: 12 }} />
-      <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/tarot')}>
-        🃏 타로 카드 뽑기
-      </Button>
+      {/* Tertiary - QuickLinksBar */}
+      <QuickLinksBar>
+        <QuickLinkAIConsult />
+        <QuickLinkTarot />
+      </QuickLinksBar>
     </>
   );
 }
 
-interface ChemistryInviteCardProps {
-  thirdPartyConsent: boolean;
-  title: string;
-  subtitle: string;
-  onInviteContacts: () => void;
-  onInviteLink: () => void;
-}
-
-function ChemistryInviteCard({
-  thirdPartyConsent,
-  title,
-  subtitle,
-  onInviteContacts,
-  onInviteLink,
-}: ChemistryInviteCardProps) {
-  const nav = useNavigate();
-
-  return (
-    <div className="card" style={{ border: '1px solid rgba(147, 112, 219, 0.3)' }}>
-      <div className="h2 mystical-title">{title}</div>
-      {!thirdPartyConsent ? (
-        <>
-          <div className="small">인연을 맺으려면 동의가 필요합니다.</div>
-          <div style={{ height: 10 }} />
-          <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/agreement')}>
-            동의하고 인연 맺기
-          </Button>
-        </>
-      ) : (
-        <>
-          <div className="small">{subtitle}</div>
-          <div style={{ height: 10 }} />
-          <Button size="large" color="primary" variant="fill" display="full" onClick={onInviteContacts}>
-            ✨ 인연 초대하기
-          </Button>
-          <div style={{ height: 10 }} />
-          <Button size="large" color="dark" variant="weak" display="full" onClick={onInviteLink}>
-            초대 링크 보내기
-          </Button>
-        </>
-      )}
-    </div>
-  );
-}
-
-function AIConsultCard() {
-  const nav = useNavigate();
-
-  return (
-    <div
-      className="card"
-      style={{
-        background: 'linear-gradient(135deg, rgba(147, 112, 219, 0.15) 0%, rgba(255, 215, 0, 0.1) 100%)',
-        border: '1px solid rgba(255, 215, 0, 0.3)',
-      }}
-    >
-      <div className="h2 glow-text">🔮 AI 운명 상담</div>
-      <div className="small" style={{ marginTop: 4, color: 'rgba(255,255,255,0.7)' }}>
-        점성술 전문가 AI와 1:1 심층 상담
-      </div>
-      <div style={{ height: 12 }} />
-      <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/consult')}>
-        ✨ AI 상담 시작하기
-      </Button>
-      <div style={{ height: 10 }} />
-      <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/credits')}>
-        💎 크레딧 충전하기
-      </Button>
-    </div>
-  );
-}
-
-export { ChemistryInviteCard, AIConsultCard };

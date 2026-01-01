@@ -2,8 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@toss/tds-mobile';
 import { ReportData, UnlockActions, UnlockState } from '../hooks/useUnlockLogic';
-import { ChemistryInviteCard, AIConsultCard } from './LockedResultView';
 import QuickAIInterpretation from './QuickAIInterpretation';
+import { QuickLinksBar, QuickLinkAIConsult, QuickLinkTarot, QuickLinkCredits } from './QuickLinksBar';
 
 interface UnlockedResultViewProps {
   state: UnlockState;
@@ -42,32 +42,28 @@ export default function UnlockedResultView({ state, actions, reportData }: Unloc
 
       <TomorrowPreview hint={hint} />
 
-      <div style={{ height: 12 }} />
+      {/* Primary CTA - 단 1개 */}
+      <div style={{ height: 16 }} />
       <Button size="large" color="primary" variant="fill" display="full" onClick={() => nav('/detail')}>
-        더 깊은 운명 보기
+        ✨ 더 깊은 운명 보기
       </Button>
 
-      <div style={{ height: 12 }} />
-      <Button size="large" color="dark" variant="weak" display="full" onClick={actions.onShareResult}>
-        오늘의 운명 공유하기
-      </Button>
+      {/* Secondary Actions - 가로 그룹 */}
+      <div className="action-row">
+        <Button size="medium" color="primary" variant="weak" onClick={actions.onInviteChemistryContacts}>
+          💕 친구 궁합
+        </Button>
+        <Button size="medium" color="dark" variant="weak" onClick={actions.onShareResult}>
+          📤 공유하기
+        </Button>
+      </div>
 
-      <div style={{ height: 12 }} />
-      <ChemistryInviteCard
-        thirdPartyConsent={state.thirdPartyConsent}
-        title="✨ 인연의 궁합 보기"
-        subtitle="둘의 기운이 만나야 운명이 드러납니다."
-        onInviteContacts={actions.onInviteChemistryContacts}
-        onInviteLink={actions.onInviteChemistryLink}
-      />
-
-      <div style={{ height: 12 }} />
-      <AIConsultCard />
-
-      <div style={{ height: 12 }} />
-      <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/tarot')}>
-        🃏 타로 카드 뽑기
-      </Button>
+      {/* Tertiary - QuickLinksBar */}
+      <QuickLinksBar>
+        <QuickLinkAIConsult />
+        <QuickLinkTarot />
+        <QuickLinkCredits />
+      </QuickLinksBar>
     </>
   );
 }
