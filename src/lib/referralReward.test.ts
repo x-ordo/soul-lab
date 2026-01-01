@@ -200,7 +200,10 @@ describe('Referral Reward Functions', () => {
         totalCreditsEarned: 40,
       });
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/credits/referral/stats?userKey=user-key')
+        expect.stringContaining('/api/credits/referral/stats?userKey=user-key'),
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'X-User-Key': 'user-key' }),
+        })
       );
     });
 

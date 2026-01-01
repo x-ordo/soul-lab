@@ -7,6 +7,9 @@ const envSchema = z.object({
   DATA_DIR: z.string().default('server/data'),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 
+  // Redis
+  REDIS_URL: z.string().optional(), // e.g., redis://localhost:6379 or rediss://user:pass@host:port
+
   // Rate Limits - Invites
   INVITE_LIMIT_PER_IP: z.coerce.number().default(40),
   INVITE_LIMIT_PER_USER: z.coerce.number().default(20),
@@ -22,6 +25,20 @@ const envSchema = z.object({
 
   // Admin
   ADMIN_PASSWORD: z.string().min(8).optional(),
+  JWT_SECRET: z.string().min(32).optional(),
+
+  // User Authentication
+  SIGNING_SECRET: z.string().min(32).optional(), // HMAC signing secret for user requests
+
+  // CORS
+  CORS_ORIGINS: z.string().optional(), // Comma-separated list of allowed origins
+
+  // Profile Encryption
+  PROFILE_ENCRYPTION_KEY: z.string().length(64).optional(), // 32-byte hex key for birthdate encryption
+
+  // Web URLs (for OG tags and sharing)
+  WEB_BASE_URL: z.string().url().optional(), // e.g., https://soul-lab.vercel.app
+  OG_BASE_URL: z.string().url().optional(), // e.g., https://cdn.soul-lab.com (for OG images)
 });
 
 export type Config = z.infer<typeof envSchema>;

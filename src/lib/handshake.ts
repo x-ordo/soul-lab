@@ -1,4 +1,5 @@
 import { hash32 } from '../utils/engine';
+import { buildWebUrl } from './url';
 
 /**
  * Server-less 2-step handshake
@@ -49,4 +50,45 @@ export function parseHandshake(search: URLSearchParams): HandshakeParams {
 
   const kind: HandshakeParams['kind'] = to ? 'paired' : 'invite';
   return { from, to, d, sig: s, kind, sigValid };
+}
+
+// ============================================
+// Web URL Builders (for external sharing)
+// ============================================
+
+/**
+ * Build a web-shareable chemistry invite URL.
+ * For external sharing (KakaoTalk, SMS, etc.)
+ */
+export function buildInviteWebUrl(fromKey: string, dateKey: string): string {
+  const s = sig(fromKey, null, dateKey);
+  return buildWebUrl('/chemistry', {
+    from: fromKey,
+    d: dateKey,
+    sig: s,
+  });
+}
+
+/**
+ * Build a web-shareable chemistry response URL.
+ * For external sharing after pairing.
+ */
+export function buildResponseWebUrl(fromKey: string, toKey: string, dateKey: string): string {
+  const s = sig(fromKey, toKey, dateKey);
+  return buildWebUrl('/chemistry', {
+    from: fromKey,
+    to: toKey,
+    d: dateKey,
+    sig: s,
+  });
+}
+
+/**
+ * Build a web-shareable result URL with referrer.
+ */
+export function buildResultWebUrl(referrerId: string): string {
+  return buildWebUrl('/result', {
+    type: 'solo',
+    referrer_id: referrerId,
+  });
 }

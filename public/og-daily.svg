@@ -1,0 +1,18 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#9370db"/>
+      <stop offset="100%" style="stop-color:#ba55d3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="600" y="250" text-anchor="middle" fill="#fff" font-family="system-ui, sans-serif" font-size="72" font-weight="bold">✨ Soul Lab</text>
+  <text x="600" y="340" text-anchor="middle" fill="url(#accent)" font-family="system-ui, sans-serif" font-size="48">오늘의 운세</text>
+  <text x="600" y="420" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="system-ui, sans-serif" font-size="28">별이 전하는 오늘의 메시지를 확인하세요</text>
+  <rect x="400" y="500" width="400" height="60" rx="30" fill="url(#accent)"/>
+  <text x="600" y="540" text-anchor="middle" fill="#fff" font-family="system-ui, sans-serif" font-size="24" font-weight="600">운세 확인하기</text>
+</svg>

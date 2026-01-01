@@ -4,9 +4,10 @@ import { Button, AgreementV4 } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import BirthDatePicker from '../components/BirthDatePicker';
 import { COMPLIANCE_COPY } from '../lib/complianceCopy';
-import { getAgreement, setAgreement, getBirthDate, setBirthDate, hasRequiredAgreement, hasBirthDate } from '../lib/storage';
+import { getAgreement, setAgreement, getBirthDate, setBirthDate, hasRequiredAgreement, hasBirthDate, getEffectiveUserKey, getPublicKey } from '../lib/storage';
 import { track } from '../lib/analytics';
 import { isYYYYMMDD } from '../lib/seed';
+import { syncProfileToServer } from '../lib/profileSync';
 
 export default function AgreementPage() {
   const nav = useNavigate();
@@ -46,9 +47,28 @@ export default function AgreementPage() {
       setErr('약관 동의는 필수입니다.');
       return;
     }
+
+    // Save locally first
     setBirthDate(birth);
     setAgreement({ terms, thirdParty, marketing });
     track('agreement_saved', { thirdParty, marketing });
+
+    // Sync to server (non-blocking, fire-and-forget)
+    const userKey = getEffectiveUserKey();
+    syncProfileToServer({
+      userKey,
+      birthdate: birth,
+      consents: { terms, thirdParty, marketing },
+      consentedAt: new Date().toISOString(),
+      tossPublicKey: getPublicKey() || undefined,
+    }).then((result) => {
+      if (result.success) {
+        track('profile_synced', { userKey });
+      } else {
+        track('profile_sync_failed', { error: result.error });
+      }
+    }).catch(console.error);
+
     nav('/loading', { replace: true });
   };
 

@@ -1,17 +1,26 @@
 /**
  * Admin Routes - 관리자 대시보드 API
+ * Security: JWT authentication with rate limiting
  */
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
+import { timingSafeEqual } from 'crypto';
 import { getConfig } from '../config/index.js';
-import type { FileStore } from '../store.js';
-import type { RewardStore } from '../rewardStore.js';
+import type { IInviteStore, IRewardStore } from '../stores/interface.js';
+import {
+  generateAdminToken,
+  verifyAdminToken,
+  checkLoginRateLimit,
+  resetLoginAttempts,
+  cleanupLoginAttempts,
+} from '../lib/auth.js';
+import { logger } from '../lib/logger.js';
 
 interface AdminRoutesOptions {
   dataDir: string;
-  store: FileStore;
-  rewards: RewardStore;
+  store: IInviteStore;
+  rewards: IRewardStore;
 }
 
 // Helper: 날짜 키 생성 (YYYY-MM-DD)
@@ -48,32 +57,55 @@ function readJsonFile<T>(filePath: string, defaultValue: T): T {
 export const adminRoutes: FastifyPluginAsync<AdminRoutesOptions> = async (app, opts) => {
   const { dataDir, store, rewards } = opts;
 
-  // Auth middleware for admin routes
-  app.addHook('preHandler', async (request, reply) => {
+  // Cleanup old rate limit records periodically
+  const cleanupInterval = setInterval(() => cleanupLoginAttempts(), 60 * 1000);
+  app.addHook('onClose', () => clearInterval(cleanupInterval));
+
+  // Auth middleware for admin routes (JWT verification)
+  app.addHook('preHandler', async (request: FastifyRequest, reply: FastifyReply) => {
     // Skip auth for login endpoint
     if (request.url === '/api/admin/login') return;
 
     const config = getConfig();
-    if (!config.ADMIN_PASSWORD) {
+    if (!config.ADMIN_PASSWORD || !config.JWT_SECRET) {
       return reply.code(503).send({ error: 'admin_not_configured' });
     }
 
     const authHeader = request.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
-      return reply.code(401).send({ error: 'unauthorized' });
+      return reply.code(401).send({ error: 'unauthorized', message: 'Bearer token required' });
     }
 
     const token = authHeader.slice(7);
-    if (token !== config.ADMIN_PASSWORD) {
-      return reply.code(401).send({ error: 'invalid_token' });
+    const payload = verifyAdminToken(token);
+
+    if (!payload) {
+      logger.warn({ ip: request.ip }, 'admin_invalid_token');
+      return reply.code(401).send({ error: 'invalid_token', message: 'Token expired or invalid' });
     }
+
+    // Token is valid, proceed
   });
 
-  // POST /api/admin/login - 로그인
-  app.post('/api/admin/login', async (request, reply) => {
+  // POST /api/admin/login - 로그인 (with rate limiting)
+  app.post('/api/admin/login', async (request: FastifyRequest, reply: FastifyReply) => {
     const config = getConfig();
-    if (!config.ADMIN_PASSWORD) {
+    if (!config.ADMIN_PASSWORD || !config.JWT_SECRET) {
       return reply.code(503).send({ error: 'admin_not_configured' });
+    }
+
+    const ip = request.ip;
+
+    // Rate limit check
+    const rateLimit = checkLoginRateLimit(ip);
+    if (!rateLimit.allowed) {
+      logger.warn({ ip }, 'admin_login_rate_limited');
+      reply.header('Retry-After', String(rateLimit.retryAfter));
+      return reply.code(429).send({
+        error: 'too_many_attempts',
+        message: `Too many login attempts. Try again in ${rateLimit.retryAfter} seconds.`,
+        retryAfter: rateLimit.retryAfter,
+      });
     }
 
     const body = request.body as { password?: string };
@@ -81,11 +113,28 @@ export const adminRoutes: FastifyPluginAsync<AdminRoutesOptions> = async (app, o
       return reply.code(400).send({ error: 'password_required' });
     }
 
-    if (body.password !== config.ADMIN_PASSWORD) {
+    // Constant-time comparison to prevent timing attacks
+    const inputBuffer = Buffer.from(body.password);
+    const expectedBuffer = Buffer.from(config.ADMIN_PASSWORD || '');
+    const passwordMatch =
+      inputBuffer.length === expectedBuffer.length &&
+      timingSafeEqual(inputBuffer, expectedBuffer);
+
+    if (!passwordMatch) {
+      logger.warn({ ip }, 'admin_login_failed');
       return reply.code(401).send({ error: 'invalid_password' });
     }
 
-    return { success: true, token: config.ADMIN_PASSWORD };
+    // Success - reset rate limit and generate JWT
+    resetLoginAttempts(ip);
+    const token = generateAdminToken();
+
+    logger.info({ ip }, 'admin_login_success');
+    return {
+      success: true,
+      token,
+      expiresIn: '24h',
+    };
   });
 
   // GET /api/admin/metrics/overview - 전체 요약

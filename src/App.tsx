@@ -13,6 +13,7 @@ const TarotPage = lazy(() => import('./pages/TarotPage'));
 const CreditPage = lazy(() => import('./pages/CreditPage'));
 const ConsultPage = lazy(() => import('./pages/ConsultPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
+const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 // Small pages - keep static import
 import NotFoundPage from './pages/NotFoundPage';
 import DebugPage from './pages/DebugPage';
@@ -120,6 +121,7 @@ function Bootstrap() {
             <Route path="/credits" element={<CreditPage />} />
             <Route path="/consult" element={<ConsultPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/debug" element={<DebugPage />} />
             <Route path="/404" element={<NotFoundPage />} />
             <Route path="*" element={<Navigate to="/404" replace />} />

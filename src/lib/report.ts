@@ -2,6 +2,7 @@ import { todayKey } from './seed';
 import { pickTemplate, dailyScore, chemistryScore, hash32 } from '../utils/engine';
 import { getBirthDate, getUserName } from './storage';
 import { getDailyFortune, fortuneToLegacyReport, QuestionTag } from './fortune-api';
+import { enhanceFortuneSummary, getValidationStatement } from './coldReading';
 
 // Feature flag for new engine (can be disabled via env for rollback)
 const USE_NEW_ENGINE = import.meta.env.VITE_USE_NEW_ENGINE !== 'false';
@@ -42,36 +43,47 @@ export interface DetailReport {
 
 /**
  * Sync fallback using old local engine
+ * Enhanced with Cold Reading techniques for personalization
  */
 export function makeTodayReportSync(userKey: string): TodayReport {
   const bd = getBirthDate() ?? '19990101';
   const dk = todayKey();
   const tpl = pickTemplate(userKey, bd, dk);
   const score = dailyScore(userKey, bd, dk);
+
+  // Enhance summary with Cold Reading prefix
+  const enhancedSummary = enhanceFortuneSummary(tpl.open.summary, userKey, bd, dk);
+  const validation = getValidationStatement(userKey, dk);
+
   return {
     templateId: tpl.id,
-    subtitle: tpl.open.summary,
+    subtitle: enhancedSummary,
     score,
     rankText: rankText(score),
     oneLiner: tpl.open.oneLiner,
     luckyTime: tpl.locked.luckyTime,
     helper: tpl.locked.helper,
-    caution: tpl.locked.caution,
+    caution: `${tpl.locked.caution} ${validation}`,
   };
 }
 
 /**
  * Sync fallback for detail report
+ * Enhanced with Cold Reading techniques
  */
 export function makeDetailReportSync(userKey: string): DetailReport {
   const bd = getBirthDate() ?? '19990101';
   const dk = todayKey();
   const tpl = pickTemplate(userKey, bd, dk);
   const score = dailyScore(userKey, bd, dk);
+
+  // Enhance summary with Cold Reading prefix
+  const enhancedSummary = enhanceFortuneSummary(tpl.open.summary, userKey, bd, dk);
+
   return {
     templateId: tpl.id,
     subtitle: `${tpl.open.oneLiner} (총점 ${score}점)`,
-    summary: tpl.open.summary,
+    summary: enhancedSummary,
     money: tpl.locked.moneyDetail,
     love: tpl.locked.loveDetail,
     condition: tpl.locked.conditionDetail,
@@ -183,4 +195,24 @@ export function makeChemistryReport(aKey: string, bKey: string) {
       : '🌙 짧지만 자주 연결하세요. 잦은 교류가 파장을 맞춰갑니다.';
 
   return { score, label, summary, friction, booster };
+}
+
+/**
+ * Partial chemistry report for preview before pairing
+ * Shows score + label only, hiding detailed insights
+ */
+export interface PartialChemistryReport {
+  score: number;
+  label: string;
+}
+
+export function makePartialChemistryReport(aKey: string, bKey: string): PartialChemistryReport {
+  const dk = todayKey();
+  const score = chemistryScore(aKey, bKey, dk);
+
+  const h = hash32(`${[aKey, bKey].sort().join('|')}|${dk}|chem_text`);
+  const labels = ['🔥 운명적 불꽃', '💫 강렬한 인연', '🌙 안정된 조화', '🌀 미묘한 기류', '⚡ 도전적 관계'];
+  const label = labels[h % labels.length];
+
+  return { score, label };
 }
