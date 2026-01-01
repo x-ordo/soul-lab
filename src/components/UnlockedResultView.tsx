@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button } from '@toss/tds-mobile';
 import { ReportData, UnlockActions, UnlockState } from '../hooks/useUnlockLogic';
 import QuickAIInterpretation from './QuickAIInterpretation';

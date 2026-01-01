@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Button } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import LockedBlur from '../components/LockedBlur';

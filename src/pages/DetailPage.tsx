@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import { getPublicKey, getUserSeed, hasThirdPartyConsent, getUnlockedDate, getViralUnlockedDate } from '../lib/storage';

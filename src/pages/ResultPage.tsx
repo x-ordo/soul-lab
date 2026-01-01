@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import Header from '../components/Header';
 import UnlockStatus from '../components/UnlockStatus';
 import LockedResultView from '../components/LockedResultView';

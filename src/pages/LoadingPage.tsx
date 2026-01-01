@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import Header from '../components/Header';
 import { preloadRewardedAd } from '../lib/toss';
 import { hasRequiredAgreement, hasBirthDate, getBirthDate, getLocal } from '../lib/storage';

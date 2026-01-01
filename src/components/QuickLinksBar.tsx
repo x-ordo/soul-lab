@@ -5,7 +5,7 @@
  * Used for low-priority actions that don't warrant full buttons.
  */
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { track } from '../lib/analytics';
 
 interface QuickLinkProps {

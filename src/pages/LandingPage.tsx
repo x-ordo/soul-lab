@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { Button, Badge } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import ViralHookModal from '../components/ViralHookModal';

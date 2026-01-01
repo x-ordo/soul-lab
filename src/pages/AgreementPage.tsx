@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Button, AgreementV4 } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import BirthDatePicker from '../components/BirthDatePicker';

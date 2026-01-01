@@ -5,7 +5,7 @@
  * Gamifies viral sharing with anonymous display names.
  */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { getEffectiveUserKey } from '../lib/storage';
 import { track } from '../lib/analytics';
 import './LeaderboardPage.css';

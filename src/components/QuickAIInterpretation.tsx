@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button } from '@toss/tds-mobile';
 import { getEffectiveUserKey, getBirthDate } from '../lib/storage';
 import { getBalance, useCredits, checkCredits, CREDIT_ACTIONS } from '../lib/iap';

@@ -1,6 +1,5 @@
 import React, { useEffect, lazy, Suspense } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, BrowserRouter } from 'react-router';
 
 // Route-based code splitting - lazy load pages for smaller initial bundle
 const LandingPage = lazy(() => import('./pages/LandingPage'));
