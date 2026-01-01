@@ -4,7 +4,19 @@ import { Button, AgreementV4 } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import BirthDatePicker from '../components/BirthDatePicker';
 import { COMPLIANCE_COPY } from '../lib/complianceCopy';
-import { getAgreement, setAgreement, getBirthDate, setBirthDate, hasRequiredAgreement, hasBirthDate, getEffectiveUserKey, getPublicKey } from '../lib/storage';
+import {
+  getAgreement,
+  setAgreement,
+  getBirthInfo,
+  setBirthInfo,
+  hasRequiredAgreement,
+  hasBirthDate,
+  getEffectiveUserKey,
+  getPublicKey,
+  getUserQuestion,
+  setUserQuestion,
+  type BirthInfo,
+} from '../lib/storage';
 import { track } from '../lib/analytics';
 import { isYYYYMMDD } from '../lib/seed';
 import { syncProfileToServer } from '../lib/profileSync';
@@ -24,20 +36,25 @@ export default function AgreementPage() {
   }, [forceEdit, nav]);
 
   const saved = useMemo(() => getAgreement(), []);
-  const savedBd = useMemo(() => getBirthDate() ?? '', []);
+  const savedBirthInfo = useMemo(
+    () => getBirthInfo() ?? { yyyymmdd: '', calendar: 'solar' as const, leapMonth: false },
+    []
+  );
+  const savedQuestion = useMemo(() => getUserQuestion() ?? '', []);
 
   const [terms, setTerms] = useState(!!saved?.terms);
   const [thirdParty, setThirdParty] = useState(!!saved?.thirdParty);
   const [marketing, setMarketing] = useState(!!saved?.marketing);
-  const [birth, setBirth] = useState(savedBd);
+  const [birthInfo, setBirthInfoState] = useState<BirthInfo>(savedBirthInfo);
+  const [question, setQuestion] = useState(savedQuestion);
   const [err, setErr] = useState<string | null>(null);
 
-  const canGo = terms && isYYYYMMDD(birth);
+  const canGo = terms && isYYYYMMDD(birthInfo.yyyymmdd);
 
   const onContinue = () => {
-    track('agreement_continue', { thirdParty, marketing });
+    track('agreement_continue', { thirdParty, marketing, calendar: birthInfo.calendar });
     setErr(null);
-    if (!isYYYYMMDD(birth)) {
+    if (!isYYYYMMDD(birthInfo.yyyymmdd)) {
       track('agreement_error', { reason: 'birth_invalid' });
       setErr('생년월일을 모두 선택해주세요.');
       return;
@@ -49,15 +66,18 @@ export default function AgreementPage() {
     }
 
     // Save locally first
-    setBirthDate(birth);
+    setBirthInfo(birthInfo);
     setAgreement({ terms, thirdParty, marketing });
-    track('agreement_saved', { thirdParty, marketing });
+    if (question.trim()) {
+      setUserQuestion(question.trim());
+    }
+    track('agreement_saved', { thirdParty, marketing, hasQuestion: !!question.trim() });
 
     // Sync to server (non-blocking, fire-and-forget)
     const userKey = getEffectiveUserKey();
     syncProfileToServer({
       userKey,
-      birthdate: birth,
+      birthdate: birthInfo.yyyymmdd,
       consents: { terms, thirdParty, marketing },
       consentedAt: new Date().toISOString(),
       tossPublicKey: getPublicKey() || undefined,
@@ -70,6 +90,19 @@ export default function AgreementPage() {
     }).catch(console.error);
 
     nav('/loading', { replace: true });
+  };
+
+  const textareaStyle: React.CSSProperties = {
+    width: '100%',
+    minHeight: 80,
+    padding: 12,
+    fontSize: 15,
+    background: 'rgba(26, 15, 46, 0.9)',
+    border: '1px solid rgba(147, 112, 219, 0.3)',
+    borderRadius: 8,
+    color: 'rgba(255, 255, 255, 0.95)',
+    resize: 'vertical',
+    fontFamily: 'inherit',
   };
 
   return (
@@ -125,11 +158,28 @@ export default function AgreementPage() {
         <div className="small" style={{ marginBottom: 8 }}>{COMPLIANCE_COPY.birthHint}</div>
 
         <BirthDatePicker
-          value={birth}
-          onChange={setBirth}
+          value={birthInfo}
+          onChange={setBirthInfoState}
           error={!!err}
           errorMessage={err ?? undefined}
         />
+
+        <hr className="hr" />
+        <div className="h2 glow-text">💭 오늘 궁금한 것</div>
+        <div className="small" style={{ marginBottom: 8 }}>
+          연애, 돈, 커리어... 지금 마음에 걸리는 주제가 있다면 적어보세요 (선택)
+        </div>
+        <textarea
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="예: 이직 타이밍이 맞는지 모르겠어요"
+          style={textareaStyle}
+          maxLength={200}
+          aria-label="오늘 궁금한 질문"
+        />
+        <div className="small" style={{ textAlign: 'right', marginTop: 4, color: 'rgba(255,255,255,0.5)' }}>
+          {question.length}/200
+        </div>
       </div>
 
       <Button

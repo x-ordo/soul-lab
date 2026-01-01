@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '@toss/tds-mobile';
 import Header from '../components/Header';
 import { drawThreeCardSpread, drawDailyCard, DrawnCard, TarotReading } from '../lib/tarot';
 import { getEffectiveUserKey } from '../lib/storage';
+import { applyEmpathyOverlay } from '../lib/report';
 
 type ViewMode = 'selection' | 'daily' | 'spread';
 
@@ -131,6 +132,16 @@ export default function TarotPage() {
     );
   }
 
+  // Apply empathy overlay to spread reading when all cards are revealed
+  const empathyResult = useMemo(() => {
+    if (!spreadReading || revealedCards.length < 3) return null;
+
+    return applyEmpathyOverlay(spreadReading.summary, {
+      cards: spreadReading.cards.map((c) => c.card.name),
+      baseReading: spreadReading.summary,
+    });
+  }, [spreadReading, revealedCards.length]);
+
   if (viewMode === 'spread' && spreadReading) {
     const allRevealed = revealedCards.length === 3;
 
@@ -175,9 +186,9 @@ export default function TarotPage() {
               <div className="h2" style={{ marginBottom: 12, textAlign: 'center' }}>
                 ✨ 리딩 해석
               </div>
-              <p className="p" style={{ textAlign: 'center', marginBottom: 16 }}>
-                {spreadReading.summary}
-              </p>
+              <div className="p" style={{ marginBottom: 16, whiteSpace: 'pre-wrap' }}>
+                {empathyResult?.text || spreadReading.summary}
+              </div>
 
               {spreadReading.cards.map((drawnCard, idx) => (
                 <div key={idx} style={{ marginTop: 16 }}>

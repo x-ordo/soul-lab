@@ -1,8 +1,19 @@
 const K_BIRTHDATE = 'sl_birthdate_yyyymmdd';
+const K_BIRTHINFO = 'sl_birthinfo_v2';
 const K_AGREEMENT = 'sl_agreement_v1';
 const K_VIRAL_UNLOCKED_DATE = 'sl_viral_unlocked_date';
 const K_USER_NAME = 'sl_user_name';
+const K_USER_QUESTION = 'sl_user_question';
 const K_FIRST_VISIT = 'sl_first_visit_date';
+
+// Birth info with lunar calendar support
+export type CalendarType = 'solar' | 'lunar';
+
+export interface BirthInfo {
+  yyyymmdd: string;
+  calendar: CalendarType;
+  leapMonth: boolean;
+}
 
 const KEY = {
   userSeed: 'soul_lab:user_seed',
@@ -79,6 +90,47 @@ export function getBirthDate() {
 
 export function setBirthDate(v: string) {
   localStorage.setItem(K_BIRTHDATE, v);
+}
+
+/**
+ * Get extended birth info with calendar type.
+ * Falls back to legacy YYYYMMDD format (assumed solar).
+ */
+export function getBirthInfo(): BirthInfo | null {
+  // Try new format first
+  const newFormat = getLocal<BirthInfo>(K_BIRTHINFO);
+  if (newFormat) return newFormat;
+
+  // Fallback: migrate from old YYYYMMDD format
+  const oldBd = getBirthDate();
+  if (oldBd && /^\d{8}$/.test(oldBd)) {
+    return { yyyymmdd: oldBd, calendar: 'solar', leapMonth: false };
+  }
+  return null;
+}
+
+/**
+ * Set extended birth info with calendar type.
+ * Also maintains backward compatibility with legacy key.
+ */
+export function setBirthInfo(info: BirthInfo): void {
+  setLocal(K_BIRTHINFO, info);
+  // Also maintain backward compatibility with old key
+  setBirthDate(info.yyyymmdd);
+}
+
+/**
+ * Get user's fortune question.
+ */
+export function getUserQuestion(): string | null {
+  return localStorage.getItem(K_USER_QUESTION);
+}
+
+/**
+ * Set user's fortune question.
+ */
+export function setUserQuestion(question: string): void {
+  localStorage.setItem(K_USER_QUESTION, question);
 }
 
 export function getAgreement() {

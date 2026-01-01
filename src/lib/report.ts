@@ -1,11 +1,61 @@
 import { todayKey } from './seed';
 import { pickTemplate, dailyScore, chemistryScore, hash32 } from '../utils/engine';
-import { getBirthDate, getUserName } from './storage';
+import { getBirthDate, getUserName, getBirthInfo, getUserQuestion, getEffectiveUserKey } from './storage';
 import { getDailyFortune, fortuneToLegacyReport, QuestionTag } from './fortune-api';
 import { enhanceFortuneSummary, getValidationStatement } from './coldReading';
+import { buildEmpathicAnswer, type EmpathyInput, type EmpathyMeta } from '../utils/empathyEngine';
 
 // Feature flag for new engine (can be disabled via env for rollback)
 const USE_NEW_ENGINE = import.meta.env.VITE_USE_NEW_ENGINE !== 'false';
+
+// Feature flag for empathy overlay (can be disabled via env for rollback)
+const USE_EMPATHY = import.meta.env.VITE_USE_EMPATHY !== 'false';
+
+/**
+ * Apply empathy overlay to base reading text.
+ * Uses user's birth info, question, and tarot cards for personalization.
+ */
+export function applyEmpathyOverlay(
+  baseText: string,
+  options?: { cards?: string[]; baseReading?: string }
+): { text: string; meta: EmpathyMeta | null } {
+  if (!USE_EMPATHY) {
+    return { text: baseText, meta: null };
+  }
+
+  const birthInfo = getBirthInfo();
+  if (!birthInfo) {
+    return { text: baseText, meta: null };
+  }
+
+  const input: EmpathyInput = {
+    name: getUserName() ?? undefined,
+    birth: {
+      year: parseInt(birthInfo.yyyymmdd.slice(0, 4)),
+      month: parseInt(birthInfo.yyyymmdd.slice(4, 6)),
+      day: parseInt(birthInfo.yyyymmdd.slice(6, 8)),
+      calendar: birthInfo.calendar,
+      leapMonth: birthInfo.leapMonth,
+    },
+    question: getUserQuestion() ?? undefined,
+    cards: options?.cards,
+    baseReading: options?.baseReading ?? baseText,
+    env: { timestamp: Date.now() },
+    seedKey: `${getEffectiveUserKey()}|${todayKey()}`,
+  };
+
+  try {
+    const result = buildEmpathicAnswer(input);
+    // Log belief violations in development
+    if (result.meta && !result.meta.belief_ok) {
+      console.warn('[empathy] Belief violations detected:', result.meta.belief_violations);
+    }
+    return result;
+  } catch (err) {
+    console.error('[empathy] Engine error, falling back to base text:', err);
+    return { text: baseText, meta: null };
+  }
+}
 
 function rankText(score: number) {
   if (score >= 96) return '✨ 축복받은 운명 (상위 1%)';
@@ -43,7 +93,7 @@ export interface DetailReport {
 
 /**
  * Sync fallback using old local engine
- * Enhanced with Cold Reading techniques for personalization
+ * Enhanced with Cold Reading techniques and Empathy overlay for personalization
  */
 export function makeTodayReportSync(userKey: string): TodayReport {
   const bd = getBirthDate() ?? '19990101';
@@ -55,12 +105,17 @@ export function makeTodayReportSync(userKey: string): TodayReport {
   const enhancedSummary = enhanceFortuneSummary(tpl.open.summary, userKey, bd, dk);
   const validation = getValidationStatement(userKey, dk);
 
+  // Apply empathy overlay to the one-liner
+  const empathy = applyEmpathyOverlay(tpl.open.oneLiner, {
+    baseReading: enhancedSummary,
+  });
+
   return {
     templateId: tpl.id,
     subtitle: enhancedSummary,
     score,
     rankText: rankText(score),
-    oneLiner: tpl.open.oneLiner,
+    oneLiner: empathy.text,
     luckyTime: tpl.locked.luckyTime,
     helper: tpl.locked.helper,
     caution: `${tpl.locked.caution} ${validation}`,

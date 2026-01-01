@@ -8,6 +8,10 @@ vi.mock('./seed', () => ({
 
 vi.mock('./storage', () => ({
   getBirthDate: vi.fn(() => '19950315'),
+  getBirthInfo: vi.fn(() => ({ yyyymmdd: '19950315', calendar: 'solar', leapMonth: false })),
+  getUserName: vi.fn(() => '테스트'),
+  getUserQuestion: vi.fn(() => null),
+  getEffectiveUserKey: vi.fn(() => 'test-user-key'),
 }));
 
 describe('makeTodayReport', () => {
