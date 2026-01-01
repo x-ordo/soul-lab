@@ -2,12 +2,12 @@ import React from 'react';
 import { Button } from '@toss/tds-mobile';
 import LockedBlur from './LockedBlur';
 import AdRewardButton from './AdRewardButton';
+import MoreActionsSection from './MoreActionsSection';
 import { UnlockActions, UnlockState, ReportData } from '../hooks/useUnlockLogic';
 import { getStreak } from '../lib/streak';
 import { qualifiesForFreeUnlock, getFreeUnlockMessage } from '../lib/streakBonus';
 import { getDaysSinceFirstVisit } from '../lib/storage';
 import { track } from '../lib/analytics';
-import { QuickLinksBar, QuickLinkAIConsult, QuickLinkTarot } from './QuickLinksBar';
 
 // 광고 노출 시작일 (첫 방문 후 N일차부터)
 const AD_DELAY_DAYS = 3;
@@ -100,16 +100,6 @@ export default function LockedResultView({ state, actions, reportData }: LockedR
         </>
       )}
 
-      {/* Secondary Actions - 가로 그룹 */}
-      <div className="action-row">
-        <Button size="medium" color="primary" variant="weak" onClick={actions.onInviteChemistryContacts}>
-          💕 친구 초대
-        </Button>
-        <Button size="medium" color="dark" variant="weak" onClick={actions.onShareResult}>
-          📤 공유하기
-        </Button>
-      </div>
-
       {/* 광고 미노출 시 안내 */}
       {!showAds && !hasFreeUnlock && (
         <div
@@ -127,11 +117,12 @@ export default function LockedResultView({ state, actions, reportData }: LockedR
         </div>
       )}
 
-      {/* Tertiary - QuickLinksBar */}
-      <QuickLinksBar>
-        <QuickLinkAIConsult />
-        <QuickLinkTarot />
-      </QuickLinksBar>
+      {/* 스크롤 하단: 더보기 영역 */}
+      <MoreActionsSection
+        onChemistry={actions.onInviteChemistryContacts}
+        onShare={actions.onShareResult}
+        chemistryLabel="💕 친구 초대"
+      />
     </>
   );
 }

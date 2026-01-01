@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { Button } from '@toss/tds-mobile';
 import { ReportData, UnlockActions, UnlockState } from '../hooks/useUnlockLogic';
 import QuickAIInterpretation from './QuickAIInterpretation';
-import { QuickLinksBar, QuickLinkAIConsult, QuickLinkTarot, QuickLinkCredits } from './QuickLinksBar';
+import MoreActionsSection from './MoreActionsSection';
 
 interface UnlockedResultViewProps {
   state: UnlockState;
@@ -48,22 +48,12 @@ export default function UnlockedResultView({ state, actions, reportData }: Unloc
         ✨ 더 깊은 운명 보기
       </Button>
 
-      {/* Secondary Actions - 가로 그룹 */}
-      <div className="action-row">
-        <Button size="medium" color="primary" variant="weak" onClick={actions.onInviteChemistryContacts}>
-          💕 친구 궁합
-        </Button>
-        <Button size="medium" color="dark" variant="weak" onClick={actions.onShareResult}>
-          📤 공유하기
-        </Button>
-      </div>
-
-      {/* Tertiary - QuickLinksBar */}
-      <QuickLinksBar>
-        <QuickLinkAIConsult />
-        <QuickLinkTarot />
-        <QuickLinkCredits />
-      </QuickLinksBar>
+      {/* 스크롤 하단: 더보기 영역 */}
+      <MoreActionsSection
+        onChemistry={actions.onInviteChemistryContacts}
+        onShare={actions.onShareResult}
+        showCredits
+      />
     </>
   );
 }
