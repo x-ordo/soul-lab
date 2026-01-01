@@ -308,7 +308,7 @@ export function validate<T>(
     return { success: true, data: result.data };
   }
   // Format first error for response
-  const firstError = result.error.errors[0];
+  const firstError = result.error.issues[0];
   const path = firstError.path.length > 0 ? `${firstError.path.join('.')}: ` : '';
   return { success: false, error: `${path}${firstError.message}` };
 }

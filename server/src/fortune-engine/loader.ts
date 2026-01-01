@@ -40,7 +40,7 @@ function loadRules(rulesDir: string): Rule[] {
     const result = RulesFileSchema.safeParse(data);
 
     if (!result.success) {
-      throw new Error(`Invalid rules file ${file}: ${JSON.stringify(result.error.errors)}`);
+      throw new Error(`Invalid rules file ${file}: ${JSON.stringify(result.error.issues)}`);
     }
 
     for (const rule of result.data.rules) {
@@ -78,7 +78,7 @@ function loadCopies(copyDir: string): Map<Theme, CopyTemplate[]> {
     const result = CopyFileSchema.safeParse(data);
 
     if (!result.success) {
-      throw new Error(`Invalid copy file ${file}: ${JSON.stringify(result.error.errors)}`);
+      throw new Error(`Invalid copy file ${file}: ${JSON.stringify(result.error.issues)}`);
     }
 
     const copyFile = result.data as CopyFile;
@@ -111,7 +111,7 @@ function loadWeights(weightsPath: string): WeightsConfig {
   const result = WeightsConfigSchema.safeParse(data);
 
   if (!result.success) {
-    throw new Error(`Invalid weights file: ${JSON.stringify(result.error.errors)}`);
+    throw new Error(`Invalid weights file: ${JSON.stringify(result.error.issues)}`);
   }
 
   return result.data as WeightsConfig;
