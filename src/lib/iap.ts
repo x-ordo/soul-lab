@@ -5,6 +5,8 @@
  * 개발 환경에서는 모킹으로 동작
  */
 
+import { getAuthHeaders } from './api-signing.js';
+
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8787';
 
 // 개발 모드 체크
@@ -103,7 +105,10 @@ export async function getProducts(): Promise<CreditProduct[]> {
  */
 export async function getBalance(userKey: string): Promise<CreditBalance | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/credits/balance?userKey=${encodeURIComponent(userKey)}`);
+    const authHeaders = await getAuthHeaders(userKey);
+    const res = await fetch(`${API_BASE}/api/credits/balance?userKey=${encodeURIComponent(userKey)}`, {
+      headers: authHeaders,
+    });
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}: ${res.statusText}`);
     }
@@ -124,9 +129,10 @@ export async function useCredits(
   description?: string
 ): Promise<{ success: boolean; remainingCredits?: number; error?: string }> {
   try {
+    const authHeaders = await getAuthHeaders(userKey);
     const res = await fetch(`${API_BASE}/api/credits/use`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
       body: JSON.stringify({ userKey, action, description }),
     });
     const data = await res.json();
@@ -150,9 +156,10 @@ export async function checkCredits(
   action: string
 ): Promise<{ hasEnough: boolean; cost: number; currentBalance: number; shortfall: number }> {
   try {
+    const authHeaders = await getAuthHeaders(userKey);
     const res = await fetch(`${API_BASE}/api/credits/check`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
       body: JSON.stringify({ userKey, action }),
     });
     if (!res.ok) {
@@ -192,9 +199,10 @@ async function notifyPurchaseStart(
   amount: number
 ): Promise<boolean> {
   try {
+    const authHeaders = await getAuthHeaders(userKey);
     const res = await fetch(`${API_BASE}/api/credits/purchase/start`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
       body: JSON.stringify({ userKey, orderId, sku, amount }),
     });
     return res.ok;
@@ -474,9 +482,10 @@ export async function claimReferralReward(
   claimerKey: string
 ): Promise<ReferralClaimResult> {
   try {
+    const authHeaders = await getAuthHeaders(claimerKey);
     const res = await fetch(`${API_BASE}/api/credits/referral/claim`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
       body: JSON.stringify({ inviterKey, inviteeKey, dateKey, claimerKey }),
     });
     const data = await res.json();
@@ -502,8 +511,10 @@ export async function claimReferralReward(
  */
 export async function getReferralStats(userKey: string): Promise<ReferralStats | null> {
   try {
+    const authHeaders = await getAuthHeaders(userKey);
     const res = await fetch(
-      `${API_BASE}/api/credits/referral/stats?userKey=${encodeURIComponent(userKey)}`
+      `${API_BASE}/api/credits/referral/stats?userKey=${encodeURIComponent(userKey)}`,
+      { headers: authHeaders }
     );
     const data = await res.json();
     return data.stats || null;
@@ -574,9 +585,10 @@ export async function claimStreakReward(
   streak: number
 ): Promise<StreakClaimResult> {
   try {
+    const authHeaders = await getAuthHeaders(userKey);
     const res = await fetch(`${API_BASE}/api/credits/streak/claim`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
       body: JSON.stringify({ userKey, dateKey, streak }),
     });
     const data = await res.json();
@@ -622,8 +634,10 @@ export async function hasClaimedStreakToday(
  */
 export async function getStreakRewardStats(userKey: string): Promise<StreakRewardStats | null> {
   try {
+    const authHeaders = await getAuthHeaders(userKey);
     const res = await fetch(
-      `${API_BASE}/api/credits/streak/stats?userKey=${encodeURIComponent(userKey)}`
+      `${API_BASE}/api/credits/streak/stats?userKey=${encodeURIComponent(userKey)}`,
+      { headers: authHeaders }
     );
     const data = await res.json();
     return data.stats || null;

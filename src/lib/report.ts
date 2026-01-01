@@ -184,3 +184,23 @@ export function makeChemistryReport(aKey: string, bKey: string) {
 
   return { score, label, summary, friction, booster };
 }
+
+/**
+ * Partial chemistry report for preview before pairing
+ * Shows score + label only, hiding detailed insights
+ */
+export interface PartialChemistryReport {
+  score: number;
+  label: string;
+}
+
+export function makePartialChemistryReport(aKey: string, bKey: string): PartialChemistryReport {
+  const dk = todayKey();
+  const score = chemistryScore(aKey, bKey, dk);
+
+  const h = hash32(`${[aKey, bKey].sort().join('|')}|${dk}|chem_text`);
+  const labels = ['🔥 운명적 불꽃', '💫 강렬한 인연', '🌙 안정된 조화', '🌀 미묘한 기류', '⚡ 도전적 관계'];
+  const label = labels[h % labels.length];
+
+  return { score, label };
+}

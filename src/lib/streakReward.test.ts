@@ -227,7 +227,10 @@ describe('Streak Reward Functions', () => {
         lastRewardDate: '20250115',
       });
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/credits/streak/stats?userKey=user-key')
+        expect.stringContaining('/api/credits/streak/stats?userKey=user-key'),
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'X-User-Key': 'user-key' }),
+        })
       );
     });
 

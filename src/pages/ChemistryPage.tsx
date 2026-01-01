@@ -6,7 +6,8 @@ import LockedBlur from '../components/LockedBlur';
 import AdRewardButton from '../components/AdRewardButton';
 import ViralHookModal from '../components/ViralHookModal';
 import { getEffectiveUserKey, getUnlockedDate, setUnlockedDate, setViralUnlockedDate } from '../lib/storage';
-import { makeChemistryReport } from '../lib/report';
+import { makeChemistryReport, makePartialChemistryReport } from '../lib/report';
+import PartialChemistryCard from '../components/PartialChemistryCard';
 import { todayKey } from '../lib/seed';
 import { makeShareLink, shareMessage } from '../lib/toss';
 import { buildInviteDeepLink, buildResponseDeepLink, parseHandshake } from '../lib/handshake';
@@ -17,6 +18,9 @@ import { claimReferralReward } from '../lib/iap';
 
 export default function ChemistryPage() {
   React.useEffect(() => { track('chemistry_view'); }, []);
+
+  // Track partial chemistry view when modal is closed and partial report is shown
+  const [hasTrackedPartial, setHasTrackedPartial] = React.useState(false);
 
   const nav = useNavigate();
   const [sp] = useSearchParams();
@@ -54,6 +58,28 @@ export default function ChemistryPage() {
     if (status.mode !== 'paired') return null;
     return makeChemistryReport(myKey, status.partnerKey);
   }, [status, myKey]);
+
+  // Partial report for preview before pairing is complete
+  const partialReport = React.useMemo(() => {
+    if (status.mode === 'needResponse') {
+      return makePartialChemistryReport(myKey, status.inviterKey);
+    }
+    return null;
+  }, [status, myKey]);
+
+  // Track partial chemistry view when modal is dismissed (needResponse)
+  // or when selfInvite shows the energy teaser
+  React.useEffect(() => {
+    if (!hasTrackedPartial) {
+      if (!showModal && partialReport) {
+        track('partial_chemistry_view', { mode: 'needResponse', score: partialReport.score });
+        setHasTrackedPartial(true);
+      } else if (status.mode === 'selfInvite') {
+        track('partial_chemistry_view', { mode: 'selfInvite' });
+        setHasTrackedPartial(true);
+      }
+    }
+  }, [showModal, partialReport, hasTrackedPartial, status.mode]);
 
   const [levelUpMsg, setLevelUpMsg] = useState<string | null>(null);
   const [creditRewardMsg, setCreditRewardMsg] = useState<string | null>(null);
@@ -207,65 +233,89 @@ const onMakeResponseLink = async () => {
       )}
 
       {status.mode === 'selfInvite' && (
-        <div className="card" style={{ textAlign: 'center' }}>
-          {/* Waiting animation */}
-          <div style={{
-            width: 80,
-            height: 80,
-            margin: '0 auto 16px',
-            position: 'relative',
-          }}>
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              border: '3px solid rgba(147, 112, 219, 0.2)',
-            }} />
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              border: '3px solid transparent',
-              borderTopColor: '#9370db',
-              animation: 'waiting-spin 1.5s linear infinite',
-            }} />
-            <div style={{
-              position: 'absolute',
-              inset: 15,
-              borderRadius: '50%',
-              background: 'radial-gradient(circle at 30% 30%, rgba(147, 112, 219, 0.4), rgba(75, 0, 130, 0.6))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 24,
-            }}>
-              💫
+        <>
+          {/* Your energy teaser card */}
+          <div className="card" style={{ marginBottom: 12, textAlign: 'center' }}>
+            <div className="h2 glow-text">당신의 우주적 기운</div>
+            <div
+              className="score-display"
+              style={{
+                opacity: 0.6,
+                animation: 'pulse-glow 2s ease-in-out infinite',
+                margin: '12px auto',
+              }}
+            >
+              ?
             </div>
+            <p className="p" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              우주가 당신의 운명을 계산하고 있습니다...
+            </p>
           </div>
 
-          <div className="h2 glow-text">인연의 실 대기 중...</div>
-          <p className="p" style={{ marginTop: 8 }}>
-            친구가 링크를 열면 둘의 궁합이 드러납니다
-          </p>
+          <div className="card" style={{ textAlign: 'center' }}>
+            {/* Waiting animation */}
+            <div style={{
+              width: 80,
+              height: 80,
+              margin: '0 auto 16px',
+              position: 'relative',
+            }}>
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                border: '3px solid rgba(147, 112, 219, 0.2)',
+              }} />
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                border: '3px solid transparent',
+                borderTopColor: '#9370db',
+                animation: 'waiting-spin 1.5s linear infinite',
+              }} />
+              <div style={{
+                position: 'absolute',
+                inset: 15,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle at 30% 30%, rgba(147, 112, 219, 0.4), rgba(75, 0, 130, 0.6))',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 24,
+              }}>
+                💫
+              </div>
+            </div>
 
-          <div style={{ marginTop: 16 }}>
-            <Button size="large" color="primary" variant="fill" display="full" onClick={onCopyInviteLink}>
-              📋 초대 링크 다시 보내기
-            </Button>
-          </div>
-          <div style={{ marginTop: 8 }}>
-            <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/')}>
-              운명의 문으로
-            </Button>
-          </div>
+            <div className="h2 glow-text">인연의 실 대기 중...</div>
+            <p className="p" style={{ marginTop: 8 }}>
+              친구가 링크를 열면 둘의 궁합이 드러납니다
+            </p>
 
-          <style>{`
-            @keyframes waiting-spin {
-              from { transform: rotate(0deg); }
-              to { transform: rotate(360deg); }
-            }
-          `}</style>
-        </div>
+            <div style={{ marginTop: 16 }}>
+              <Button size="large" color="primary" variant="fill" display="full" onClick={onCopyInviteLink}>
+                📋 초대 링크 다시 보내기
+              </Button>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              <Button size="large" color="dark" variant="weak" display="full" onClick={() => nav('/')}>
+                운명의 문으로
+              </Button>
+            </div>
+
+            <style>{`
+              @keyframes waiting-spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+              }
+              @keyframes pulse-glow {
+                0%, 100% { opacity: 0.4; transform: scale(1); }
+                50% { opacity: 0.8; transform: scale(1.05); }
+              }
+            `}</style>
+          </div>
+        </>
       )}
 
       {status.mode === 'needResponse' && (
@@ -283,17 +333,29 @@ const onMakeResponseLink = async () => {
               }}
             />
           )}
-          <div className="card" style={{ border: '1px solid rgba(147, 112, 219, 0.4)' }}>
-            <div className="h2 mystical-title">✨ 인연의 부름</div>
-            <p className="p" style={{ marginTop: 8 }}>
-              누군가 당신과의 운명을 알고 싶어합니다. 응답하면 둘의 궁합이 드러납니다.
-            </p>
-            <div style={{ marginTop: 12 }}>
-              <Button size="large" color="primary" variant="fill" display="full" onClick={onMakeResponseLink}>
-                ✨ 인연에 응답하기
-              </Button>
+          {/* Show partial chemistry preview after modal is closed */}
+          {!showModal && partialReport && (
+            <PartialChemistryCard
+              score={partialReport.score}
+              label={partialReport.label}
+              mode="needResponse"
+              onAction={onMakeResponseLink}
+            />
+          )}
+          {/* Fallback CTA if no partial report */}
+          {!showModal && !partialReport && (
+            <div className="card" style={{ border: '1px solid rgba(147, 112, 219, 0.4)' }}>
+              <div className="h2 mystical-title">✨ 인연의 부름</div>
+              <p className="p" style={{ marginTop: 8 }}>
+                누군가 당신과의 운명을 알고 싶어합니다. 응답하면 둘의 궁합이 드러납니다.
+              </p>
+              <div style={{ marginTop: 12 }}>
+                <Button size="large" color="primary" variant="fill" display="full" onClick={onMakeResponseLink}>
+                  ✨ 인연에 응답하기
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
 

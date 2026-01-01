@@ -73,4 +73,20 @@ export class RewardStore {
     this.save();
     return { already: false, record: rec };
   }
+
+  /**
+   * Get reward record by composite key (userKey:dateKey).
+   * Used for checking if reward was already earned.
+   */
+  getByKey(key: string): RewardRecord | null {
+    return this.db.rewards[key] ?? null;
+  }
+
+  /**
+   * Check if reward exists for user on specific date.
+   */
+  hasReward(userKey: string, dateKey: string): boolean {
+    const key = `${userKey}:${dateKey}`;
+    return !!this.db.rewards[key];
+  }
 }

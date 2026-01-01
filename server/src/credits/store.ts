@@ -2,10 +2,15 @@
  * Credit Store - 크레딧 관리 시스템
  *
  * 인앱결제로 구매한 크레딧을 관리하고, AI 상담 시 차감
+ *
+ * Security: Uses mutex for thread-safe operations and atomic writes
+ * to prevent race conditions and data corruption.
  */
 
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, readFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
+import * as mutex from '../lib/mutex.js';
+import { writeJsonAtomic, cleanupTempFiles } from '../lib/atomicWrite.js';
 
 // ============================================================
 // Types
@@ -253,29 +258,37 @@ export class CreditStore {
         mkdirSync(dir, { recursive: true });
       }
 
-      writeFileSync(
+      // Use atomic writes to prevent corruption on crash
+      writeJsonAtomic(
         this.balancesFile,
-        JSON.stringify(Object.fromEntries(this.balances), null, 2)
+        Object.fromEntries(this.balances)
       );
-      writeFileSync(
+      writeJsonAtomic(
         this.transactionsFile,
-        JSON.stringify(this.transactions.slice(-10000), null, 2) // 최근 10000건만 유지
+        this.transactions.slice(-10000) // 최근 10000건만 유지
       );
-      writeFileSync(
+      writeJsonAtomic(
         this.purchasesFile,
-        JSON.stringify(Object.fromEntries(this.purchases), null, 2)
+        Object.fromEntries(this.purchases)
       );
-      writeFileSync(
+      writeJsonAtomic(
         this.referralsFile,
-        JSON.stringify(Object.fromEntries(this.referrals), null, 2)
+        Object.fromEntries(this.referrals)
       );
-      writeFileSync(
+      writeJsonAtomic(
         this.streakRewardsFile,
-        JSON.stringify(Object.fromEntries(this.streakRewards), null, 2)
+        Object.fromEntries(this.streakRewards)
       );
     } catch (e) {
       console.error('CreditStore save error:', e);
     }
+  }
+
+  /**
+   * Get mutex key for user-specific locking
+   */
+  private getMutexKey(userKey: string): string {
+    return `credit:${userKey}`;
   }
 
   // ----------------------------------------------------------
@@ -351,7 +364,8 @@ export class CreditStore {
   }
 
   /**
-   * 크레딧 사용 (차감)
+   * 크레딧 사용 (차감) - 동기 버전 (내부용)
+   * @deprecated Use useCreditsAsync for thread-safe operations
    */
   useCredits(
     userKey: string,
@@ -386,6 +400,20 @@ export class CreditStore {
     this.save();
 
     return { success: true, transaction };
+  }
+
+  /**
+   * 크레딧 사용 (차감) - 비동기 버전 (뮤텍스 적용)
+   * Thread-safe credit usage with mutex locking
+   */
+  async useCreditsAsync(
+    userKey: string,
+    amount: number,
+    description: string
+  ): Promise<{ success: boolean; transaction?: CreditTransaction; error?: string }> {
+    return mutex.withLock(this.getMutexKey(userKey), () => {
+      return this.useCredits(userKey, amount, description);
+    });
   }
 
   // ----------------------------------------------------------

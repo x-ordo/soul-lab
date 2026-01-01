@@ -72,7 +72,10 @@ describe('IAP Module', () => {
 
       expect(balance?.credits).toBe(25);
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/credits/balance?userKey=user123')
+        expect.stringContaining('/api/credits/balance?userKey=user123'),
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'X-User-Key': 'user123' }),
+        })
       );
     });
 
