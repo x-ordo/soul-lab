@@ -89,8 +89,8 @@ const D1_REMINDER: NotificationPayload = {
   type: 'd1_reminder',
   title: '오늘의 운명이 도착했어요 ✨',
   body: '어제와는 다른 별의 메시지가 기다리고 있습니다.',
-  icon: '/icon-192.png',
-  badge: '/badge-72.png',
+  icon: '/icon-192.svg',
+  badge: '/badge-72.svg',
   data: { url: '/' },
   actions: [
     { action: 'open', title: '운세 확인하기' },

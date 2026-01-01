@@ -37,8 +37,8 @@ self.addEventListener('push', (event) => {
   let data = {
     title: 'Soul Lab',
     body: '새로운 메시지가 있습니다.',
-    icon: '/icon-192.png',
-    badge: '/badge-72.png',
+    icon: '/icon-192.svg',
+    badge: '/badge-72.svg',
     data: { url: '/' },
   };
 

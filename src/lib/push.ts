@@ -47,7 +47,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 // Push Subscription
 // ============================================
 
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
+function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
@@ -55,7 +55,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   for (let i = 0; i < rawData.length; ++i) {
     outputArray[i] = rawData.charCodeAt(i);
   }
-  return outputArray;
+  return outputArray.buffer as ArrayBuffer;
 }
 
 export async function subscribeToPush(): Promise<PushSubscription | null> {
@@ -187,8 +187,8 @@ export const D1_REMINDER_CONTENT: NotificationPayload = {
   type: 'd1_reminder',
   title: '오늘의 운명이 도착했어요 ✨',
   body: '어제와는 다른 별의 메시지가 기다리고 있습니다.',
-  icon: '/icon-192.png',
-  badge: '/badge-72.png',
+  icon: '/icon-192.svg',
+  badge: '/badge-72.svg',
   data: { url: '/' },
   actions: [
     { action: 'open', title: '운세 확인하기' },
@@ -201,8 +201,8 @@ export const STREAK_REMINDER_CONTENT: NotificationPayload = {
   type: 'streak_reminder',
   title: '연속 방문 기록을 유지하세요! 🔥',
   body: '오늘 방문하면 연속 방문 보너스를 받을 수 있어요.',
-  icon: '/icon-192.png',
-  badge: '/badge-72.png',
+  icon: '/icon-192.svg',
+  badge: '/badge-72.svg',
   data: { url: '/' },
   actions: [
     { action: 'open', title: '지금 확인하기' },

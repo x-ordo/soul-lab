@@ -1,0 +1,19 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff6b6b"/>
+      <stop offset="100%" style="stop-color:#ff8e8e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="600" y="200" text-anchor="middle" fill="#fff" font-family="system-ui, sans-serif" font-size="64">💕</text>
+  <text x="600" y="290" text-anchor="middle" fill="#fff" font-family="system-ui, sans-serif" font-size="56" font-weight="bold">궁합 테스트</text>
+  <text x="600" y="370" text-anchor="middle" fill="url(#accent)" font-family="system-ui, sans-serif" font-size="36">친구가 나와의 궁합을 확인하고 싶어해요!</text>
+  <text x="600" y="430" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="system-ui, sans-serif" font-size="24">생년월일로 알아보는 우리의 케미스트리</text>
+  <rect x="400" y="490" width="400" height="60" rx="30" fill="url(#accent)"/>
+  <text x="600" y="530" text-anchor="middle" fill="#fff" font-family="system-ui, sans-serif" font-size="24" font-weight="600">궁합 확인하기</text>
+</svg>

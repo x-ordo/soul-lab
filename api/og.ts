@@ -44,22 +44,22 @@ function getOgMeta(type: OgType): OgMeta {
     daily: {
       title: '오늘의 운명이 도착했어요 ✨',
       description: '별들이 당신에게 전하는 신비로운 메시지. 오늘의 운세를 확인하세요.',
-      image: `${baseUrl}/og-daily.png`,
+      image: `${baseUrl}/og-daily.svg`,
     },
     chemistry: {
       title: '우리의 인연을 확인해볼래? 💫',
       description: '둘의 기운이 만나면 운명이 드러납니다. 인연의 궁합을 확인하세요.',
-      image: `${baseUrl}/og-chemistry.png`,
+      image: `${baseUrl}/og-chemistry.svg`,
     },
     result: {
       title: '별들이 전하는 오늘의 메시지 🌙',
       description: '오늘 나에게 전해진 운명의 메시지. 당신도 확인해보세요.',
-      image: `${baseUrl}/og-result.png`,
+      image: `${baseUrl}/og-result.svg`,
     },
     tarot: {
       title: '타로 카드가 말하는 운명 🔮',
       description: '78장의 타로 카드가 전하는 신비로운 메시지.',
-      image: `${baseUrl}/og-tarot.png`,
+      image: `${baseUrl}/og-tarot.svg`,
     },
   };
 
