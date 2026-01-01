@@ -32,14 +32,19 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // Vendor chunk: React ecosystem
+          // Vendor chunk: React ecosystem + third-party libs
           if (id.includes('node_modules')) {
+            // React core
             if (
               id.includes('react') ||
               id.includes('react-dom') ||
               id.includes('react-router')
             ) {
-              return 'vendor';
+              return 'vendor-react';
+            }
+            // Korean lunar calendar (used by empathy engine)
+            if (id.includes('korean-lunar-calendar')) {
+              return 'vendor-lunar';
             }
           }
 
@@ -57,6 +62,11 @@ export default defineConfig({
             id.includes('src/lib/tarot')
           ) {
             return 'tarot-data';
+          }
+
+          // Empathy data chunk: empathy parts templates
+          if (id.includes('src/data/empathyParts')) {
+            return 'empathy-data';
           }
 
           // Core utils chunk: seed, attribution, analytics
