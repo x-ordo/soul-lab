@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
 import { EventLogger } from './logger.js';
 import { createRateLimiter } from './lib/rateLimiter.js';
 import { createInviteStore } from './stores/inviteStore.js';
@@ -74,6 +75,44 @@ await app.register(cors, {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Correlation-Id', 'X-User-Key', 'X-Timestamp', 'X-Signature', 'X-Session-Token'],
+});
+
+// Security headers (helmet)
+await app.register(helmet, {
+  // Content Security Policy - API server doesn't serve HTML, but good baseline
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles for error pages
+      imgSrc: ["'self'", 'data:', 'https:'],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"], // Prevent clickjacking
+      upgradeInsecureRequests: [],
+    },
+  },
+  // HTTP Strict Transport Security - force HTTPS
+  hsts: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true,
+  },
+  // Prevent MIME type sniffing
+  noSniff: true,
+  // XSS filter (legacy browsers)
+  xssFilter: true,
+  // Prevent clickjacking
+  frameguard: { action: 'deny' },
+  // Hide X-Powered-By header
+  hidePoweredBy: true,
+  // Referrer Policy
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  // Cross-Origin policies
+  crossOriginEmbedderPolicy: false, // Disable for API compatibility
+  crossOriginOpenerPolicy: { policy: 'same-origin' },
+  crossOriginResourcePolicy: { policy: 'same-origin' },
 });
 
 // Register middleware plugins
