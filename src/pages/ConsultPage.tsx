@@ -245,27 +245,17 @@ export default function ConsultPage() {
   };
 
   return (
-    <div className="container" style={{ display: 'flex', flexDirection: 'column', height: '100vh', padding: 0 }}>
+    <div className="container consult-container">
       {/* Header */}
-      <div style={{ padding: '16px 16px 0' }}>
+      <div className="consult-header">
         <Header title="✨ AI 운명 상담" />
       </div>
 
       {/* Credit Badge */}
-      <div style={{ padding: '0 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            background: 'rgba(255, 215, 0, 0.15)',
-            border: '1px solid rgba(255, 215, 0, 0.3)',
-            borderRadius: 20,
-            padding: '6px 14px',
-          }}
-        >
-          <span style={{ fontSize: 14 }}>💎</span>
-          <span className="small" style={{ color: 'rgba(255, 215, 0, 0.9)', fontWeight: 600 }}>
+      <div className="consult-credit-bar">
+        <div className="consult-credit-badge">
+          <span className="consult-credit-badge__icon">💎</span>
+          <span className="small consult-credit-badge__text">
             {credits} 크레딧
           </span>
         </div>
@@ -275,16 +265,7 @@ export default function ConsultPage() {
       </div>
 
       {/* Messages */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '0 16px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 12,
-        }}
-      >
+      <div className="consult-messages">
         {messages.map((message) => (
           <MessageBubble
             key={message.id}
@@ -299,19 +280,13 @@ export default function ConsultPage() {
             role="status"
             aria-live="polite"
             aria-label="AI가 응답을 작성하는 중"
-            style={{ display: 'flex', justifyContent: 'flex-start' }}
+            className="consult-loading-indicator"
           >
-            <div
-              style={{
-                background: 'rgba(147, 112, 219, 0.2)',
-                borderRadius: '16px 16px 16px 4px',
-                padding: '12px 16px',
-              }}
-            >
-              <div style={{ display: 'flex', gap: 4 }}>
-                <span aria-hidden="true" style={{ animation: 'pulse 1s ease-in-out infinite' }}>✨</span>
-                <span aria-hidden="true" style={{ animation: 'pulse 1s ease-in-out infinite', animationDelay: '0.2s' }}>✨</span>
-                <span aria-hidden="true" style={{ animation: 'pulse 1s ease-in-out infinite', animationDelay: '0.4s' }}>✨</span>
+            <div className="consult-loading-bubble">
+              <div className="consult-loading-dots">
+                <span aria-hidden="true" className="consult-loading-dot">✨</span>
+                <span aria-hidden="true" className="consult-loading-dot">✨</span>
+                <span aria-hidden="true" className="consult-loading-dot">✨</span>
               </div>
             </div>
           </div>
@@ -322,29 +297,18 @@ export default function ConsultPage() {
 
       {/* Quick Prompts */}
       {messages.length <= 1 && (
-        <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(147, 112, 219, 0.2)' }}>
-          <div className="small" style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>
+        <div className="consult-quick-prompts">
+          <div className="small consult-quick-prompts__title">
             빠른 질문
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <div className="consult-quick-prompts__list">
             {QUICK_PROMPTS.map((prompt, idx) => (
               <button
                 key={idx}
                 onClick={() => handleQuickPrompt(prompt.text)}
-                style={{
-                  background: 'rgba(147, 112, 219, 0.15)',
-                  border: '1px solid rgba(147, 112, 219, 0.3)',
-                  borderRadius: 20,
-                  padding: '8px 14px',
-                  color: '#fff',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
+                className="consult-quick-prompt-button"
               >
-                <span>{prompt.icon}</span>
+                <span aria-hidden="true">{prompt.icon}</span>
                 <span>{prompt.text}</span>
               </button>
             ))}
@@ -353,15 +317,8 @@ export default function ConsultPage() {
       )}
 
       {/* Input */}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          padding: 16,
-          borderTop: '1px solid rgba(147, 112, 219, 0.2)',
-          background: 'rgba(26, 15, 46, 0.9)',
-        }}
-      >
-        <div style={{ display: 'flex', gap: 12 }}>
+      <form onSubmit={handleSubmit} className="consult-input-form">
+        <div className="consult-input-row">
           <label htmlFor="chat-input" className="sr-only">운명 상담 질문 입력</label>
           <input
             id="chat-input"
@@ -371,15 +328,7 @@ export default function ConsultPage() {
             placeholder="운명에 대해 물어보세요..."
             aria-label="운명에 대해 물어보세요"
             disabled={isLoading}
-            style={{
-              flex: 1,
-              background: 'rgba(147, 112, 219, 0.1)',
-              border: '1px solid rgba(147, 112, 219, 0.3)',
-              borderRadius: 24,
-              padding: '12px 18px',
-              color: '#fff',
-              fontSize: 15,
-            }}
+            className="consult-chat-input"
           />
           <Button
             type="submit"
@@ -392,13 +341,13 @@ export default function ConsultPage() {
             전송
           </Button>
         </div>
-        <div className="small" style={{ color: 'rgba(255,255,255,0.4)', marginTop: 8, textAlign: 'center' }}>
+        <div className="small consult-input-hint">
           메시지 1회당 1 크레딧이 소모됩니다
         </div>
       </form>
 
       {/* Back Button */}
-      <div style={{ padding: '0 16px 16px' }}>
+      <div className="consult-back-button">
         <Button size="medium" color="dark" variant="weak" display="full" onClick={() => navigate('/result')}>
           운세로 돌아가기
         </Button>
@@ -407,19 +356,7 @@ export default function ConsultPage() {
       {/* Insufficient Credits Modal - WCAG SC 2.4.3 Focus Order, SC 4.1.2 Name Role Value */}
       {showInsufficientModal && (
         <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: 20,
-          }}
+          className="consult-modal-overlay"
           onClick={() => setShowInsufficientModal(false)}
         >
           <div
@@ -428,24 +365,19 @@ export default function ConsultPage() {
             aria-modal="true"
             aria-labelledby="insufficient-credits-title"
             aria-describedby="insufficient-credits-desc"
-            className="card"
-            style={{
-              maxWidth: 340,
-              textAlign: 'center',
-              border: '1px solid rgba(147, 112, 219, 0.4)',
-            }}
+            className="card consult-modal"
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ fontSize: 48, marginBottom: 16 }} aria-hidden="true">💎</div>
-            <h2 id="insufficient-credits-title" className="h2" style={{ marginBottom: 8 }}>
+            <div className="consult-modal__icon" aria-hidden="true">💎</div>
+            <h2 id="insufficient-credits-title" className="h2 consult-modal__title">
               크레딧이 부족합니다
             </h2>
-            <p id="insufficient-credits-desc" className="p" style={{ color: 'rgba(255,255,255,0.7)', marginBottom: 20 }}>
+            <p id="insufficient-credits-desc" className="p consult-modal__desc">
               AI 상담을 이용하려면 크레딧이 필요합니다.
               <br />
               크레딧을 충전하시겠어요?
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="consult-modal__actions">
               <Button
                 size="large"
                 color="primary"
@@ -486,16 +418,8 @@ function MessageBubble({ message, isStreaming = false }: MessageBubbleProps) {
 
   if (isSystem) {
     return (
-      <div style={{ textAlign: 'center', padding: '8px 0' }}>
-        <span
-          className="small"
-          style={{
-            color: 'rgba(240, 68, 82, 0.8)',
-            background: 'rgba(240, 68, 82, 0.1)',
-            padding: '6px 14px',
-            borderRadius: 12,
-          }}
-        >
+      <div className="message-bubble--system">
+        <span className="small message-bubble__system-content">
           {message.content}
         </span>
       </div>
@@ -503,70 +427,26 @@ function MessageBubble({ message, isStreaming = false }: MessageBubbleProps) {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
-      <div
-        style={{
-          maxWidth: '80%',
-          background: isUser
-            ? 'linear-gradient(135deg, rgba(147, 112, 219, 0.4) 0%, rgba(75, 0, 130, 0.5) 100%)'
-            : 'rgba(147, 112, 219, 0.15)',
-          border: isUser ? '1px solid rgba(147, 112, 219, 0.4)' : '1px solid rgba(147, 112, 219, 0.2)',
-          borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-          padding: '12px 16px',
-        }}
-      >
+    <div className={`message-bubble ${isUser ? 'message-bubble--user' : 'message-bubble--assistant'}`}>
+      <div className={`message-bubble__content ${isUser ? 'message-bubble__content--user' : 'message-bubble__content--assistant'}`}>
         {!isUser && (
-          <div style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 14 }}>🔮</span>
-            <span className="small" style={{ color: 'rgba(147, 112, 219, 0.8)', fontWeight: 600 }}>
+          <div className="message-bubble__header">
+            <span className="message-bubble__icon">🔮</span>
+            <span className="small message-bubble__name">
               AI 상담사
             </span>
           </div>
         )}
-        <p
-          className="p"
-          style={{
-            margin: 0,
-            whiteSpace: 'pre-wrap',
-            lineHeight: 1.6,
-          }}
-        >
+        <p className="p message-bubble__text">
           {message.content}
-          {isStreaming && (
-            <span
-              style={{
-                display: 'inline-block',
-                width: 2,
-                height: '1em',
-                background: 'rgba(147, 112, 219, 0.8)',
-                marginLeft: 2,
-                animation: 'blink 0.8s ease-in-out infinite',
-              }}
-            />
-          )}
+          {isStreaming && <span className="message-bubble__cursor" />}
         </p>
         {!isStreaming && (
-          <div
-            className="small"
-            style={{
-              marginTop: 6,
-              color: 'rgba(255,255,255,0.4)',
-              fontSize: 11,
-              textAlign: isUser ? 'right' : 'left',
-            }}
-          >
+          <div className={`small message-bubble__timestamp ${isUser ? 'message-bubble__timestamp--user' : 'message-bubble__timestamp--assistant'}`}>
             {message.timestamp.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
           </div>
         )}
       </div>
-
-      {/* 타이핑 커서 애니메이션 */}
-      <style>{`
-        @keyframes blink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0; }
-        }
-      `}</style>
     </div>
   );
 }
