@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import type { BirthInfo, CalendarType } from '../lib/storage';
+import { FormSelect, FormSegmentedControl, FormCheckbox } from './form';
+import type { FormSelectOption, SegmentOption } from './form';
 
 interface BirthDatePickerProps {
   value: BirthInfo;
@@ -15,6 +17,14 @@ const months = Array.from({ length: 12 }, (_, i) => i + 1);
 function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }
+
+const calendarOptions: SegmentOption[] = [
+  { value: 'solar', label: '양력' },
+  { value: 'lunar', label: '음력' },
+];
+
+const yearOptions: FormSelectOption[] = years.map((y) => ({ value: String(y), label: `${y}년` }));
+const monthOptions: FormSelectOption[] = months.map((m) => ({ value: String(m), label: `${m}월` }));
 
 export default function BirthDatePicker({ value, onChange, error, errorMessage }: BirthDatePickerProps) {
   const parsed = useMemo(() => {
@@ -36,6 +46,11 @@ export default function BirthDatePicker({ value, onChange, error, errorMessage }
     }
     return Array.from({ length: 31 }, (_, i) => i + 1);
   }, [parsed.year, parsed.month]);
+
+  const dayOptions: FormSelectOption[] = useMemo(
+    () => days.map((d) => ({ value: String(d), label: `${d}일` })),
+    [days]
+  );
 
   const handleDateChange = (field: 'year' | 'month' | 'day', val: string) => {
     const numVal = parseInt(val, 10) || 0;
@@ -66,145 +81,85 @@ export default function BirthDatePicker({ value, onChange, error, errorMessage }
     onChange({ ...value, yyyymmdd });
   };
 
-  const handleCalendarChange = (calendar: CalendarType) => {
-    onChange({ ...value, calendar, leapMonth: calendar === 'lunar' ? value.leapMonth : false });
+  const handleCalendarChange = (calendar: string) => {
+    onChange({
+      ...value,
+      calendar: calendar as CalendarType,
+      leapMonth: calendar === 'lunar' ? value.leapMonth : false,
+    });
   };
 
-  const handleLeapMonthChange = (leapMonth: boolean) => {
-    onChange({ ...value, leapMonth });
-  };
-
-  const selectStyle: React.CSSProperties = {
-    flex: 1,
-    padding: '12px 8px',
-    fontSize: '16px',
-    background: 'rgba(26, 15, 46, 0.9)',
-    border: error ? '1px solid #ff6b6b' : '1px solid rgba(147, 112, 219, 0.3)',
-    borderRadius: '8px',
-    color: 'rgba(255, 255, 255, 0.95)',
-    appearance: 'none',
-    WebkitAppearance: 'none',
-    cursor: 'pointer',
-    textAlign: 'center',
-  };
-
-  const radioLabelStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 4,
-    cursor: 'pointer',
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
-  };
-
-  const checkboxLabelStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 4,
-    cursor: 'pointer',
-    fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.7)',
+  const handleLeapMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({ ...value, leapMonth: e.target.checked });
   };
 
   const errorId = 'birthdate-error';
 
   return (
-    <fieldset style={{ border: 'none', margin: 0, padding: 0 }}>
+    <fieldset className="birthdate-picker">
       <legend className="sr-only">생년월일 선택</legend>
 
       {/* Calendar type toggle */}
-      <div style={{ display: 'flex', gap: 16, marginBottom: 12, alignItems: 'center' }}>
-        <label style={radioLabelStyle}>
-          <input
-            type="radio"
-            name="calendar-type"
-            value="solar"
-            checked={value.calendar === 'solar'}
-            onChange={() => handleCalendarChange('solar')}
-            style={{ accentColor: '#9370DB' }}
-          />
-          양력
-        </label>
-        <label style={radioLabelStyle}>
-          <input
-            type="radio"
-            name="calendar-type"
-            value="lunar"
-            checked={value.calendar === 'lunar'}
-            onChange={() => handleCalendarChange('lunar')}
-            style={{ accentColor: '#9370DB' }}
-          />
-          음력
-        </label>
-        {value.calendar === 'lunar' && (
-          <label style={checkboxLabelStyle}>
-            <input
-              type="checkbox"
+      <div className="birthdate-picker__calendar-row">
+        <FormSegmentedControl
+          options={calendarOptions}
+          value={value.calendar}
+          onChange={handleCalendarChange}
+          name="calendar-type"
+          aria-label="양력/음력 선택"
+          size="sm"
+        />
+        <div className={`birthdate-picker__leap-month ${value.calendar === 'lunar' ? 'birthdate-picker__leap-month--visible' : ''}`}>
+          {value.calendar === 'lunar' && (
+            <FormCheckbox
+              label="윤달"
               checked={value.leapMonth}
-              onChange={(e) => handleLeapMonthChange(e.target.checked)}
-              style={{ accentColor: '#9370DB' }}
+              onChange={handleLeapMonthChange}
+              size="sm"
             />
-            윤달
-          </label>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Date selects */}
-      <div style={{ display: 'flex', gap: 8 }}>
-        <div style={{ flex: 1 }}>
-          <label htmlFor="birth-year" className="sr-only">출생 년도</label>
-          <select
-            id="birth-year"
-            style={selectStyle}
-            value={parsed.year || ''}
-            onChange={(e) => handleDateChange('year', e.target.value)}
-            aria-describedby={error ? errorId : undefined}
-            aria-invalid={error ? 'true' : undefined}
-          >
-            <option value="">년</option>
-            {years.map((y) => (
-              <option key={y} value={y}>{y}년</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ flex: 1 }}>
-          <label htmlFor="birth-month" className="sr-only">출생 월</label>
-          <select
-            id="birth-month"
-            style={selectStyle}
-            value={parsed.month || ''}
-            onChange={(e) => handleDateChange('month', e.target.value)}
-            aria-describedby={error ? errorId : undefined}
-            aria-invalid={error ? 'true' : undefined}
-          >
-            <option value="">월</option>
-            {months.map((m) => (
-              <option key={m} value={m}>{m}월</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ flex: 1 }}>
-          <label htmlFor="birth-day" className="sr-only">출생 일</label>
-          <select
-            id="birth-day"
-            style={selectStyle}
-            value={parsed.day || ''}
-            onChange={(e) => handleDateChange('day', e.target.value)}
-            aria-describedby={error ? errorId : undefined}
-            aria-invalid={error ? 'true' : undefined}
-          >
-            <option value="">일</option>
-            {days.map((d) => (
-              <option key={d} value={d}>{d}일</option>
-            ))}
-          </select>
-        </div>
+      <div className="birthdate-picker__date-row">
+        <FormSelect
+          id="birth-year"
+          options={yearOptions}
+          value={parsed.year ? String(parsed.year) : ''}
+          onChange={(e) => handleDateChange('year', e.target.value)}
+          placeholder="년"
+          error={error ? ' ' : undefined}
+          aria-describedby={error ? errorId : undefined}
+          aria-label="출생 년도"
+          showGlow={true}
+        />
+        <FormSelect
+          id="birth-month"
+          options={monthOptions}
+          value={parsed.month ? String(parsed.month) : ''}
+          onChange={(e) => handleDateChange('month', e.target.value)}
+          placeholder="월"
+          error={error ? ' ' : undefined}
+          aria-describedby={error ? errorId : undefined}
+          aria-label="출생 월"
+          showGlow={true}
+        />
+        <FormSelect
+          id="birth-day"
+          options={dayOptions}
+          value={parsed.day ? String(parsed.day) : ''}
+          onChange={(e) => handleDateChange('day', e.target.value)}
+          placeholder="일"
+          error={error ? ' ' : undefined}
+          aria-describedby={error ? errorId : undefined}
+          aria-label="출생 일"
+          showGlow={true}
+        />
       </div>
 
       {error && errorMessage && (
-        <div id={errorId} role="alert" style={{ marginTop: 6, fontSize: 12, color: '#ff6b6b' }}>
+        <div id={errorId} className="form-error-message" role="alert">
           {errorMessage}
         </div>
       )}

@@ -99,10 +99,12 @@ describe.sequential('Accessibility: Core Components', () => {
   });
 
   describe('BirthDatePicker', () => {
+    const defaultValue = { yyyymmdd: '', calendar: 'solar' as const, leapMonth: false };
+
     it('should have no accessibility violations', async () => {
       const { container } = render(
         <TestWrapper>
-          <BirthDatePicker value="" onChange={() => {}} />
+          <BirthDatePicker value={defaultValue} onChange={() => {}} />
         </TestWrapper>
       );
 
@@ -113,7 +115,7 @@ describe.sequential('Accessibility: Core Components', () => {
     it('should have accessible labels for all select fields', () => {
       const { container } = render(
         <TestWrapper>
-          <BirthDatePicker value="" onChange={() => {}} />
+          <BirthDatePicker value={defaultValue} onChange={() => {}} />
         </TestWrapper>
       );
 
@@ -125,20 +127,16 @@ describe.sequential('Accessibility: Core Components', () => {
       expect(monthSelect).toBeInTheDocument();
       expect(daySelect).toBeInTheDocument();
 
-      // Check for associated labels
-      const yearLabel = container.querySelector('label[for="birth-year"]');
-      const monthLabel = container.querySelector('label[for="birth-month"]');
-      const dayLabel = container.querySelector('label[for="birth-day"]');
-
-      expect(yearLabel).toBeInTheDocument();
-      expect(monthLabel).toBeInTheDocument();
-      expect(dayLabel).toBeInTheDocument();
+      // Check for aria-label accessibility (FormSelect uses aria-label instead of visible labels)
+      expect(yearSelect).toHaveAttribute('aria-label', '출생 년도');
+      expect(monthSelect).toHaveAttribute('aria-label', '출생 월');
+      expect(daySelect).toHaveAttribute('aria-label', '출생 일');
     });
 
     it('should have fieldset and legend for grouping', () => {
       const { container } = render(
         <TestWrapper>
-          <BirthDatePicker value="" onChange={() => {}} />
+          <BirthDatePicker value={defaultValue} onChange={() => {}} />
         </TestWrapper>
       );
 
@@ -153,7 +151,7 @@ describe.sequential('Accessibility: Core Components', () => {
       const { container } = render(
         <TestWrapper>
           <BirthDatePicker
-            value=""
+            value={defaultValue}
             onChange={() => {}}
             error={true}
             errorMessage="Please select a valid date"
@@ -164,7 +162,8 @@ describe.sequential('Accessibility: Core Components', () => {
       const selects = container.querySelectorAll('select');
       selects.forEach((select) => {
         expect(select).toHaveAttribute('aria-invalid', 'true');
-        expect(select).toHaveAttribute('aria-describedby', 'birthdate-error');
+        // aria-describedby may contain multiple IDs due to FormSelect error handling
+        expect(select.getAttribute('aria-describedby')).toContain('birthdate-error');
       });
 
       const errorMessage = container.querySelector('#birthdate-error');

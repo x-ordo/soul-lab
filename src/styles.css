@@ -379,6 +379,23 @@ a:focus {
   margin-top: 2px;
 }
 
+/* ============================================
+   More Actions Section - 스크롤 하단 더보기
+   ============================================ */
+.more-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--stroke);
+}
+
+.more-section-header {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
 /* ========================================
    Form Component Styles
    ======================================== */
