@@ -5,7 +5,7 @@
  * Issue #37: AI 폴백 테스트 및 모니터링
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   getFallbackDailyFortune,
   getFallbackTarotInterpretation,
@@ -14,6 +14,71 @@ import {
   getFallbackConsultResponse,
 } from './fallback.js';
 import type { TarotReading, DrawnCard } from '../tarot/engine.js';
+
+/**
+ * Helper function to create a mock DrawnCard.
+ */
+function createMockCard(overrides: Partial<DrawnCard> = {}): DrawnCard {
+  return {
+    id: '0',
+    emoji: '🃏',
+    name: 'The Fool',
+    nameKorean: '광대',
+    keywords: ['새로운 시작', '모험', '자유'],
+    arcana: 'major',
+    upright: 'New beginnings',
+    reversed: 'Recklessness',
+    element: 'air',
+    position: 'past',
+    positionKorean: '과거',
+    isReversed: false,
+    interpretation: '새로운 시작의 에너지가 느껴집니다.',
+    ...overrides,
+  };
+}
+
+/**
+ * Helper function to create a mock TarotReading.
+ */
+function createMockReading(overrides: Partial<TarotReading> = {}): TarotReading {
+  return {
+    spreadType: 'three',
+    spreadTypeKorean: '쓰리카드',
+    spread: [
+      createMockCard({ id: '0', position: 'past', positionKorean: '과거' }),
+      createMockCard({
+        id: '1',
+        name: 'The Magician',
+        nameKorean: '마법사',
+        emoji: '🎭',
+        keywords: ['능력', '창조', '의지'],
+        position: 'present',
+        positionKorean: '현재',
+        isReversed: true,
+        upright: 'Willpower',
+        reversed: 'Manipulation',
+        interpretation: '현재 상황에서의 변화가 필요합니다.',
+      }),
+      createMockCard({
+        id: '2',
+        name: 'The High Priestess',
+        nameKorean: '여사제',
+        emoji: '👸',
+        keywords: ['직관', '신비', '지혜'],
+        position: 'future',
+        positionKorean: '미래',
+        upright: 'Intuition',
+        reversed: 'Secrets',
+        element: 'water',
+        interpretation: '직관을 따르면 길이 열릴 것입니다.',
+      }),
+    ],
+    summary: '과거의 새로운 시작이 현재의 변화를 통해 미래의 지혜로 연결됩니다.',
+    advice: '직관을 믿고 새로운 도전을 두려워하지 마세요.',
+    timestamp: new Date(),
+    ...overrides,
+  };
+}
 
 describe('AI Fallback Templates', () => {
   describe('getFallbackDailyFortune', () => {
@@ -56,51 +121,7 @@ describe('AI Fallback Templates', () => {
   });
 
   describe('getFallbackTarotInterpretation', () => {
-    const mockReading: TarotReading = {
-      spreadType: 'three',
-      drawnAt: Date.now(),
-      spread: [
-        {
-          id: 0,
-          emoji: '🃏',
-          name: 'The Fool',
-          nameKorean: '광대',
-          keywords: ['새로운 시작', '모험', '자유'],
-          position: 'past',
-          positionKorean: '과거',
-          isReversed: false,
-          meaning: { upright: 'New beginnings', reversed: 'Recklessness' },
-          arcana: 'major',
-          element: 'air',
-        } as DrawnCard,
-        {
-          id: 1,
-          emoji: '🎭',
-          name: 'The Magician',
-          nameKorean: '마법사',
-          keywords: ['능력', '창조', '의지'],
-          position: 'present',
-          positionKorean: '현재',
-          isReversed: true,
-          meaning: { upright: 'Willpower', reversed: 'Manipulation' },
-          arcana: 'major',
-          element: 'air',
-        } as DrawnCard,
-        {
-          id: 2,
-          emoji: '👸',
-          name: 'The High Priestess',
-          nameKorean: '여사제',
-          keywords: ['직관', '신비', '지혜'],
-          position: 'future',
-          positionKorean: '미래',
-          isReversed: false,
-          meaning: { upright: 'Intuition', reversed: 'Secrets' },
-          arcana: 'major',
-          element: 'water',
-        } as DrawnCard,
-      ],
-    };
+    const mockReading = createMockReading();
 
     it('should generate interpretation for tarot reading', () => {
       const result = getFallbackTarotInterpretation(mockReading);
@@ -251,19 +272,18 @@ describe('AI Fallback Templates', () => {
     });
 
     it('should include daily card when provided', () => {
-      const dailyCard: DrawnCard = {
-        id: 0,
+      const dailyCard = createMockCard({
+        id: '17',
         emoji: '⭐',
         name: 'The Star',
         nameKorean: '별',
         keywords: ['희망', '영감'],
         position: 'daily',
         positionKorean: '오늘',
-        isReversed: false,
-        meaning: { upright: 'Hope', reversed: 'Despair' },
-        arcana: 'major',
-        element: 'air',
-      };
+        upright: 'Hope',
+        reversed: 'Despair',
+        interpretation: '희망의 빛이 비추고 있습니다.',
+      });
 
       const result = getFallbackConsultResponse('love', '양자리', dailyCard);
 
@@ -275,23 +295,22 @@ describe('AI Fallback Templates', () => {
 
   describe('Fallback Response Properties', () => {
     it('all fallback functions should return non-empty strings', () => {
-      const mockReading: TarotReading = {
+      const mockReading = createMockReading({
         spreadType: 'one',
-        drawnAt: Date.now(),
-        spread: [{
-          id: 0,
+        spreadTypeKorean: '원카드',
+        spread: [createMockCard({
+          id: '17',
           emoji: '🌟',
           name: 'The Star',
           nameKorean: '별',
           keywords: ['희망'],
           position: 'daily',
           positionKorean: '오늘',
-          isReversed: false,
-          meaning: { upright: 'Hope', reversed: 'Despair' },
-          arcana: 'major',
-          element: 'air',
-        } as DrawnCard],
-      };
+          upright: 'Hope',
+          reversed: 'Despair',
+          interpretation: '희망이 가득합니다.',
+        })],
+      });
 
       expect(getFallbackDailyFortune()).toBeTruthy();
       expect(getFallbackTarotInterpretation(mockReading)).toBeTruthy();
@@ -301,23 +320,22 @@ describe('AI Fallback Templates', () => {
     });
 
     it('fallback responses should not contain error indicators', () => {
-      const mockReading: TarotReading = {
+      const mockReading = createMockReading({
         spreadType: 'one',
-        drawnAt: Date.now(),
-        spread: [{
-          id: 0,
+        spreadTypeKorean: '원카드',
+        spread: [createMockCard({
+          id: '17',
           emoji: '🌟',
           name: 'The Star',
           nameKorean: '별',
           keywords: ['희망'],
           position: 'daily',
           positionKorean: '오늘',
-          isReversed: false,
-          meaning: { upright: 'Hope', reversed: 'Despair' },
-          arcana: 'major',
-          element: 'air',
-        } as DrawnCard],
-      };
+          upright: 'Hope',
+          reversed: 'Despair',
+          interpretation: '희망이 가득합니다.',
+        })],
+      });
 
       const responses = [
         getFallbackDailyFortune('양자리'),
