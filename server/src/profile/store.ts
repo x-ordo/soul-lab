@@ -7,6 +7,7 @@ import path from 'node:path';
 import { encrypt, decrypt, hash, isEncryptionConfigured } from '../lib/crypto.js';
 import { writeFileAtomic } from '../lib/atomicWrite.js';
 import * as mutex from '../lib/mutex.js';
+import { logger } from '../lib/logger.js';
 
 // ============================================================
 // Types
@@ -148,7 +149,7 @@ export class ProfileStore {
         syncedAt: profile.updatedAt,
       };
     } catch (err) {
-      console.error(`[ProfileStore] Failed to decrypt profile for ${userKey}:`, err);
+      logger.error({ userKey, err }, 'profile_decryption_failed');
       return null;
     }
   }

@@ -71,9 +71,12 @@ export const userAuthPlugin: FastifyPluginAsync = async (app) => {
     });
 
     // In development mode, fall back to simple header check if no signature provided
+    // SECURITY NOTE: This bypass exists for local development convenience.
+    // In production, signature verification is always required.
     if (!signatureData) {
       if (isDevelopment()) {
-        // Legacy mode: just check X-User-Key header
+        // Development-only fallback: check X-User-Key header without HMAC
+        logger.debug({ ip: request.ip, url: request.url }, 'user_auth_dev_bypass');
         const authUserKey = request.headers['x-user-key'];
         if (!authUserKey || typeof authUserKey !== 'string') {
           logger.warn({ ip: request.ip, url: request.url }, 'user_auth_missing_header');

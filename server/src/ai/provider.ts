@@ -9,6 +9,14 @@ import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 import type { NatalChart, TransitData, SynastryResult } from '../astrology/calculator.js';
 import type { TarotReading, DrawnCard } from '../tarot/engine.js';
+import {
+  withCache,
+  buildDailyFortuneKey,
+  buildTarotCacheKey,
+  buildSynastryCacheKey,
+  type CacheType,
+} from './cache.js';
+import { logger } from '../lib/logger.js';
 
 // ============================================================
 // Types
@@ -615,4 +623,90 @@ export function selectProvider(userKey: string): AIProvider {
     hash = hash & hash;
   }
   return Math.abs(hash) % 2 === 0 ? 'openai' : 'anthropic';
+}
+
+// ============================================================
+// Cached AI Functions
+// ============================================================
+
+export interface CachedAIResponse extends AIResponse {
+  cacheHit: boolean;
+}
+
+/**
+ * 캐시된 일일 운세 생성
+ */
+export async function generateDailyFortuneCached(
+  context: FortuneContext,
+  tier: ModelTier = 'mini',
+  cacheParams?: {
+    userKey?: string;
+    birthdate?: string;
+    dateKey: string;
+    zodiacSign?: string;
+  }
+): Promise<CachedAIResponse> {
+  // Skip cache if no cache params provided
+  if (!cacheParams?.dateKey) {
+    const response = await generateDailyFortune(context, tier);
+    return { ...response, cacheHit: false };
+  }
+
+  const cacheKey = buildDailyFortuneKey(cacheParams);
+
+  return withCache(cacheKey, 'daily_fortune', async () => {
+    logger.info({ cacheKey, tier }, 'ai_daily_fortune_generating');
+    return generateDailyFortune(context, tier);
+  });
+}
+
+/**
+ * 캐시된 타로 해석 생성
+ */
+export async function generateTarotReadingCached(
+  reading: TarotReading,
+  question?: string,
+  tier: ModelTier = 'mini',
+  cacheParams?: {
+    userKey?: string;
+  }
+): Promise<CachedAIResponse> {
+  const cacheKey = buildTarotCacheKey({
+    userKey: cacheParams?.userKey,
+    spreadType: reading.spreadType,
+    cardIds: reading.spread.map((c) => `${c.id}:${c.isReversed}`),
+    question,
+  });
+
+  return withCache(cacheKey, 'tarot_reading', async () => {
+    logger.info({ cacheKey, tier, spreadType: reading.spreadType }, 'ai_tarot_generating');
+    return generateTarotReading(reading, question, tier);
+  });
+}
+
+/**
+ * 캐시된 궁합 분석 생성
+ */
+export async function generateSynastryAnalysisCached(
+  chart1: NatalChart,
+  chart2: NatalChart,
+  synastry: SynastryResult,
+  tier: ModelTier = 'standard',
+  cacheParams?: {
+    birthdate1: string;
+    birthdate2: string;
+  }
+): Promise<CachedAIResponse> {
+  // Skip cache if no cache params provided
+  if (!cacheParams?.birthdate1 || !cacheParams?.birthdate2) {
+    const response = await generateSynastryAnalysis(chart1, chart2, synastry, tier);
+    return { ...response, cacheHit: false };
+  }
+
+  const cacheKey = buildSynastryCacheKey(cacheParams);
+
+  return withCache(cacheKey, 'synastry', async () => {
+    logger.info({ cacheKey, tier }, 'ai_synastry_generating');
+    return generateSynastryAnalysis(chart1, chart2, synastry, tier);
+  });
 }

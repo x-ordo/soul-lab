@@ -338,6 +338,14 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 app.listen({ port: PORT, host: '0.0.0.0' }).then(() => {
   pinoLogger.info({ port: PORT, dataDir: DATA_DIR, env: config.NODE_ENV }, 'server_started');
+
+  // Security warning for development mode
+  if (config.NODE_ENV === 'development') {
+    pinoLogger.warn(
+      'Running in DEVELOPMENT mode - auth signature verification is relaxed. ' +
+      'Do NOT use in production!'
+    );
+  }
 }).catch((err) => {
   pinoLogger.fatal({ err }, 'server_startup_failed');
   process.exit(1);

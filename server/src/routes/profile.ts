@@ -4,6 +4,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { ProfileStore, CreateProfileInput } from '../profile/store.js';
 import { isEncryptionConfigured } from '../lib/crypto.js';
+import { logger } from '../lib/logger.js';
 
 interface ProfileRouteOptions {
   profileStore: ProfileStore;
@@ -100,7 +101,7 @@ export default async function profileRoutes(
         },
       };
     } catch (err) {
-      console.error('[POST /api/profile] Error:', err);
+      logger.error({ err }, 'profile_create_error');
       return reply.code(500).send({ error: 'internal_error' });
     }
   });
@@ -163,7 +164,7 @@ export default async function profileRoutes(
         },
       };
     } catch (err) {
-      console.error('[POST /api/profile/sync] Error:', err);
+      logger.error({ err }, 'profile_sync_error');
       return reply.code(500).send({ error: 'internal_error' });
     }
   });
