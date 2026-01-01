@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
+import { FormInput } from '../components/form';
 import { getAdminToken, setAdminToken, clearAdminToken } from '../lib/storage';
 import {
   adminLogin,
@@ -83,11 +84,14 @@ function LoginForm({ onLogin }: { onLogin: (token: string) => void }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [shake, setShake] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!password.trim()) {
       setError('비밀번호를 입력하세요');
+      setShake(true);
+      setTimeout(() => setShake(false), 300);
       return;
     }
 
@@ -102,6 +106,8 @@ function LoginForm({ onLogin }: { onLogin: (token: string) => void }) {
       onLogin(result.token);
     } else {
       setError(result.error === 'invalid_password' ? '비밀번호가 올바르지 않습니다' : '로그인에 실패했습니다');
+      setShake(true);
+      setTimeout(() => setShake(false), 300);
     }
   };
 
@@ -111,51 +117,33 @@ function LoginForm({ onLogin }: { onLogin: (token: string) => void }) {
 
       <form onSubmit={handleSubmit}>
         <div className="card">
-          <label htmlFor="admin-password" className="sr-only">
-            관리자 비밀번호
-          </label>
-          <input
+          <FormInput
             id="admin-password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="관리자 비밀번호"
-            style={{
-              width: '100%',
-              padding: 12,
-              fontSize: 16,
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              background: 'var(--bg)',
-              color: 'var(--fg)',
-              marginBottom: 12,
-            }}
+            label="관리자 비밀번호"
+            error={error || undefined}
+            shake={shake}
+            showPasswordToggle={true}
             autoFocus
           />
-
-          {error && (
-            <div style={{ color: '#ff6b6b', marginBottom: 12, fontSize: 14 }} role="alert">
-              {error}
-            </div>
-          )}
 
           <button
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: 14,
-              fontSize: 16,
-              fontWeight: 600,
-              background: 'var(--accent)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 8,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-            }}
+            className="form-submit-button"
+            style={{ marginTop: 12 }}
           >
-            {loading ? '로그인 중...' : '로그인'}
+            {loading ? (
+              <span className="form-button-loading">
+                <span className="form-spinner" />
+                로그인 중...
+              </span>
+            ) : (
+              '로그인'
+            )}
           </button>
         </div>
       </form>
@@ -387,18 +375,17 @@ function Dashboard({ token, onLogout }: { token: string; onLogout: () => void })
         <button
           onClick={loadData}
           disabled={loading}
-          style={{
-            padding: '10px 24px',
-            fontSize: 14,
-            background: 'var(--accent)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1,
-          }}
+          className="form-submit-button"
+          style={{ width: 'auto', padding: '10px 24px' }}
         >
-          {loading ? '새로고침 중...' : '새로고침'}
+          {loading ? (
+            <span className="form-button-loading">
+              <span className="form-spinner" />
+              새로고침 중...
+            </span>
+          ) : (
+            '새로고침'
+          )}
         </button>
       </div>
     </div>
