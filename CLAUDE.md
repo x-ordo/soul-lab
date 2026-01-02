@@ -47,14 +47,26 @@ npx vitest run src/lib/seed.test.ts  # Single test file
 - **Invite System**: Create/join/reissue invites with 24h TTL for paired chemistry unlocks
 - **Rate Limiting**: Fixed-window limits per IP and user key (configurable via env)
 - **Reward Tracking**: Server-side record of rewarded ad completions (1 per user per day)
-- **Credit System** (`server/src/credits/store.ts`): 복채 잔액, 구매, 트랜잭션 관리
+- **Credit System** (`server/src/credits/store.ts`): 크레딧 잔액, 구매, 트랜잭션 관리
   - IAP Flow: `/api/credits/purchase/start` → `/api/credits/purchase/complete`
   - 보상: 레퍼럴(초대자 +5, 피초대자 +3), 스트릭(7d:+3, 14d:+5, 21d:+10, 30d:+20)
 - **Tarot Engine** (`server/src/tarot/engine.ts`): AI 기반 타로 해석
+- **AI Provider** (`server/src/ai/provider.ts`): OpenAI/Anthropic 통합, 폴백 지원
+
+### Frontend Lib Domains (`src/lib/`)
+
+도메인별 barrel exports 구조:
+
+- `api/` - API 클라이언트, 세션 토큰, 요청 서명
+- `credit/` - IAP, 보상, 레퍼럴, 스트릭
+- `fortune/` - 운세 엔진, 타로, 리포트
+- `platform/` - 토스 플랫폼, 공유, 푸시
+- `analytics/` - 이벤트 추적, A/B 테스트
+- `content/` - 카피 변형, 컴플라이언스
 
 ### Credit & IAP (`src/lib/iap.ts`)
 
-- `purchaseCredits`: 인앱결제로 복채 구매
+- `purchaseCredits`: 인앱결제로 크레딧 구매
 - `claimReferralReward`: 레퍼럴 보상 청구
 - `claimStreakReward`: 스트릭 보상 청구 (마일스톤 + 3일 간격 데일리 보너스)
 
@@ -69,7 +81,8 @@ npx vitest run src/lib/seed.test.ts  # Single test file
 - **Vite 6** with esbuild minification
 - **Gzip/Brotli compression** via vite-plugin-compression
 - **Bundle analysis**: `pnpm build:web` generates `stats.html`
-- Initial JS: ~231KB (gzip: 76KB, brotli: 63KB)
+- **Fortune Templates**: 1,260개 템플릿 (2경+ 조합)
+- Initial JS: ~755KB (brotli: ~125KB) - fortune-data 청크 포함
 
 ### Key Integration Points
 
@@ -154,3 +167,5 @@ B2C/B2B/B2G 전 영역 적용.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) - 전체 시스템 아키텍처, 성숙도 평가, 개선 로드맵
 - [`docs/ENGINEERING.md`](docs/ENGINEERING.md) - 프론트엔드 번들링, 최적화, 성능
 - [`docs/ROLES.md`](docs/ROLES.md) - 11개 전문가 역할별 체크리스트
+- [`docs/RUNBOOK.md`](docs/RUNBOOK.md) - 인시던트 대응 런북
+- [`docs/DISASTER_RECOVERY.md`](docs/DISASTER_RECOVERY.md) - 재해복구 계획
