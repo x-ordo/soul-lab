@@ -146,7 +146,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 3,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0021",
@@ -186,7 +186,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0145",
@@ -196,7 +196,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0180",
@@ -406,7 +406,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0207",
@@ -636,7 +636,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 1,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0148",
@@ -746,7 +746,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0246",
@@ -1036,7 +1036,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 1,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0046",
@@ -1266,7 +1266,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0142",
@@ -1356,7 +1356,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 1,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0188",
@@ -1416,7 +1416,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 3,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0171",
@@ -1616,7 +1616,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 3,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0190",
@@ -1766,7 +1766,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0102",
@@ -1836,7 +1836,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0018",
@@ -1936,7 +1936,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 1,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0115",
@@ -2006,7 +2006,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0009",
@@ -2186,7 +2186,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 1,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0139",
@@ -2206,7 +2206,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 2,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0062",
@@ -2296,7 +2296,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 1,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0041",
@@ -2306,7 +2306,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 1,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0218",
@@ -2416,7 +2416,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "reassurance",
     "intensity": 1,
     "style": "direct",
-    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}이 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
+    "text": "일단, {name}가 이렇게 느끼는 건 자연스러워. {card1}(이)가 말하는 건 ‘감정의 진실’. 인정 안 하면 계속 같은 패턴 반복."
   },
   {
     "id": "EMP0118",
@@ -4596,7 +4596,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0508",
@@ -4716,7 +4716,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0560",
@@ -4896,7 +4896,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0633",
@@ -4916,7 +4916,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0470",
@@ -4946,7 +4946,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0540",
@@ -4966,7 +4966,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0643",
@@ -5186,7 +5186,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 3,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0576",
@@ -5326,7 +5326,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 3,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0607",
@@ -5426,7 +5426,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 1,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0477",
@@ -5526,7 +5526,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 1,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0586",
@@ -5586,7 +5586,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0492",
@@ -5596,7 +5596,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0495",
@@ -5616,7 +5616,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 3,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0531",
@@ -5666,7 +5666,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0520",
@@ -5686,7 +5686,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 3,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0574",
@@ -5716,7 +5716,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0541",
@@ -5796,7 +5796,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0494",
@@ -5806,7 +5806,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0500",
@@ -6006,7 +6006,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 요즘은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0604",
@@ -6226,7 +6226,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 3,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0522",
@@ -6256,7 +6256,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0568",
@@ -6336,7 +6336,7 @@ export const EMPATHY_PARTS: EmpathyPart[] = [
     "need": "clarity",
     "intensity": 2,
     "style": "soft",
-    "text": "포인트는 하나야: {card2}가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
+    "text": "포인트는 하나야: {card2}(이)가 말하는 건 ‘관점 전환’이야. 지금은 {topicNoun}을 ‘잃지 않기’보다 ‘쌓기’로 보면 답이 달라져."
   },
   {
     "id": "EMP0469",
