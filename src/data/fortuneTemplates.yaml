@@ -13271,3 +13271,609 @@ templates:
       moneyDetail: "87% 달성, 거의 다 왔습니다."
       loveDetail: "함께 온 여정을 축하하세요."
       conditionDetail: "마지막 힘을 내세요."
+
+  # T1101-T1110: 소리/음악 (Sound/Music)
+  - id: T1101
+    open:
+      oneLiner: "고요한 소리가 들립니다."
+      summary: "침묵 속에서 진정한 소리를 듣습니다."
+    locked:
+      luckyTime: "05:00~05:30 (고요의 시간)"
+      helper: "함께 침묵할 수 있는 벗"
+      caution: "소음에 휩쓸리지 마세요."
+      moneyDetail: "조용히 기회를 엿보세요."
+      loveDetail: "말없이도 통하는 관계입니다."
+      conditionDetail: "정적 속에서 회복하세요."
+
+  - id: T1102
+    open:
+      oneLiner: "멜로디가 흐릅니다."
+      summary: "삶에 아름다운 선율이 깃듭니다."
+    locked:
+      luckyTime: "09:00~09:30 (선율의 시간)"
+      helper: "음악적 감각이 있는 사람"
+      caution: "불협화음을 조심하세요."
+      moneyDetail: "흐름을 타세요."
+      loveDetail: "조화로운 하모니를 이루세요."
+      conditionDetail: "음악으로 치유하세요."
+
+  - id: T1103
+    open:
+      oneLiner: "리듬이 살아납니다."
+      summary: "몸이 저절로 움직이는 리듬입니다."
+    locked:
+      luckyTime: "14:00~14:30 (박동의 시간)"
+      helper: "리듬감이 좋은 파트너"
+      caution: "박자를 놓치지 마세요."
+      moneyDetail: "시장의 리듬을 읽으세요."
+      loveDetail: "호흡을 맞추세요."
+      conditionDetail: "심장 박동을 느끼세요."
+
+  - id: T1104
+    open:
+      oneLiner: "화음이 울립니다."
+      summary: "여러 소리가 아름답게 어우러집니다."
+    locked:
+      luckyTime: "16:00~16:30 (화합의 시간)"
+      helper: "팀워크가 좋은 동료"
+      caution: "혼자 튀려 하지 마세요."
+      moneyDetail: "협업의 시너지를 내세요."
+      loveDetail: "서로 다름이 조화를 이룹니다."
+      conditionDetail: "균형을 맞추세요."
+
+  - id: T1105
+    open:
+      oneLiner: "종소리가 울립니다."
+      summary: "새로운 시작을 알리는 종이 울립니다."
+    locked:
+      luckyTime: "12:00~12:30 (정오의 종)"
+      helper: "새 출발을 축하해줄 사람"
+      caution: "과거에 매달리지 마세요."
+      moneyDetail: "새로운 투자처가 나타납니다."
+      loveDetail: "새로운 만남이 시작됩니다."
+      conditionDetail: "새 습관을 시작하세요."
+
+  - id: T1106
+    open:
+      oneLiner: "바람 소리가 스칩니다."
+      summary: "바람이 변화의 소식을 전합니다."
+    locked:
+      luckyTime: "15:00~15:30 (바람의 속삭임)"
+      helper: "소식을 전해줄 메신저"
+      caution: "소문에 휘둘리지 마세요."
+      moneyDetail: "바람의 방향을 읽으세요."
+      loveDetail: "설렘이 다가옵니다."
+      conditionDetail: "신선한 공기를 마시세요."
+
+  - id: T1107
+    open:
+      oneLiner: "물 흐르는 소리입니다."
+      summary: "시냇물처럼 유유히 흘러갑니다."
+    locked:
+      luckyTime: "10:00~10:30 (유수의 시간)"
+      helper: "유연한 사고를 가진 조언자"
+      caution: "고집을 부리지 마세요."
+      moneyDetail: "현금 흐름을 관리하세요."
+      loveDetail: "자연스럽게 흘러가게 두세요."
+      conditionDetail: "수분을 충분히 섭취하세요."
+
+  - id: T1108
+    open:
+      oneLiner: "새가 노래합니다."
+      summary: "새벽 새소리처럼 희망찬 날입니다."
+    locked:
+      luckyTime: "06:00~06:30 (새벽 새소리)"
+      helper: "낙관적인 에너지를 주는 친구"
+      caution: "비관에 빠지지 마세요."
+      moneyDetail: "희망적인 신호가 있습니다."
+      loveDetail: "사랑의 세레나데입니다."
+      conditionDetail: "기분 좋게 시작하세요."
+
+  - id: T1109
+    open:
+      oneLiner: "천둥이 울립니다."
+      summary: "강력한 에너지가 몰려옵니다."
+    locked:
+      luckyTime: "17:00~17:30 (뇌성의 시간)"
+      helper: "카리스마 있는 리더"
+      caution: "폭풍 후 고요가 옵니다."
+      moneyDetail: "큰 변화가 임박합니다."
+      loveDetail: "격렬한 감정이 일어납니다."
+      conditionDetail: "에너지 폭발에 대비하세요."
+
+  - id: T1110
+    open:
+      oneLiner: "박수 소리가 들립니다."
+      summary: "당신의 노력에 갈채가 쏟아집니다."
+    locked:
+      luckyTime: "19:00~19:30 (갈채의 시간)"
+      helper: "진심으로 응원해주는 팬"
+      caution: "박수에 취하지 마세요."
+      moneyDetail: "성과가 인정받습니다."
+      loveDetail: "사랑받고 있습니다."
+      conditionDetail: "보람을 느끼세요."
+
+  # T1111: 엔젤 넘버 마일스톤
+  - id: T1111
+    open:
+      oneLiner: "1111 엔젤 넘버, 우주가 응답합니다."
+      summary: "네 개의 1이 모여 새로운 시작의 포털을 엽니다."
+    locked:
+      luckyTime: "11:11~11:41 (엔젤 타임)"
+      helper: "영적 감각이 뛰어난 안내자"
+      caution: "이 기회를 놓치지 마세요."
+      moneyDetail: "새로운 시작에 투자하세요."
+      loveDetail: "운명적 만남의 징조입니다."
+      conditionDetail: "영혼이 깨어납니다."
+
+  # T1112-T1120: 향기/냄새 (Scent/Smell)
+  - id: T1112
+    open:
+      oneLiner: "꽃향기가 납니다."
+      summary: "봄날의 꽃처럼 향기로운 하루입니다."
+    locked:
+      luckyTime: "08:00~08:30 (꽃향기 시간)"
+      helper: "아름다운 감성을 가진 사람"
+      caution: "겉모습에 속지 마세요."
+      moneyDetail: "외면도 중요합니다."
+      loveDetail: "로맨틱한 분위기입니다."
+      conditionDetail: "아로마 테라피가 좋습니다."
+
+  - id: T1113
+    open:
+      oneLiner: "풀 냄새가 납니다."
+      summary: "자연 속에서 힐링하는 날입니다."
+    locked:
+      luckyTime: "07:00~07:30 (자연의 시간)"
+      helper: "자연을 사랑하는 친구"
+      caution: "인공적인 것을 피하세요."
+      moneyDetail: "친환경 투자가 유망합니다."
+      loveDetail: "순수한 마음으로 다가가세요."
+      conditionDetail: "야외 활동이 좋습니다."
+
+  - id: T1114
+    open:
+      oneLiner: "커피 향이 퍼집니다."
+      summary: "따뜻한 한 잔처럼 여유로운 날입니다."
+    locked:
+      luckyTime: "09:00~09:30 (커피 타임)"
+      helper: "차분히 대화할 수 있는 상대"
+      caution: "너무 서두르지 마세요."
+      moneyDetail: "여유를 가지고 판단하세요."
+      loveDetail: "차 한 잔의 여유를 나누세요."
+      conditionDetail: "카페인 섭취량을 조절하세요."
+
+  - id: T1115
+    open:
+      oneLiner: "빗냄새가 납니다."
+      summary: "비가 내린 후 맑아지는 공기입니다."
+    locked:
+      luckyTime: "16:00~16:30 (페트리코르)"
+      helper: "감성적인 동료"
+      caution: "우울함에 빠지지 마세요."
+      moneyDetail: "정화 후 기회가 옵니다."
+      loveDetail: "눈물 뒤에 웃음이 있습니다."
+      conditionDetail: "감정을 정화하세요."
+
+  - id: T1116
+    open:
+      oneLiner: "바다 냄새가 납니다."
+      summary: "광활한 바다처럼 마음이 넓어집니다."
+    locked:
+      luckyTime: "14:00~14:30 (바다의 시간)"
+      helper: "큰 그림을 보는 멘토"
+      caution: "좁은 시야에서 벗어나세요."
+      moneyDetail: "해외로 시야를 넓히세요."
+      loveDetail: "넓은 마음으로 포용하세요."
+      conditionDetail: "바다가 치유해줍니다."
+
+  - id: T1117
+    open:
+      oneLiner: "나무 향이 납니다."
+      summary: "숲속에서 얻는 안정감입니다."
+    locked:
+      luckyTime: "11:00~11:30 (숲의 시간)"
+      helper: "안정감을 주는 사람"
+      caution: "불안에 흔들리지 마세요."
+      moneyDetail: "장기 투자가 유리합니다."
+      loveDetail: "믿음직한 파트너입니다."
+      conditionDetail: "삼림욕이 좋습니다."
+
+  - id: T1118
+    open:
+      oneLiner: "갓 구운 빵 냄새입니다."
+      summary: "가정의 따뜻함이 느껴지는 날입니다."
+    locked:
+      luckyTime: "08:00~08:30 (아침 식사 시간)"
+      helper: "가족같은 친구"
+      caution: "안락함에 안주하지 마세요."
+      moneyDetail: "기본에 충실하세요."
+      loveDetail: "소소한 행복이 큽니다."
+      conditionDetail: "규칙적인 식사를 하세요."
+
+  - id: T1119
+    open:
+      oneLiner: "향수 냄새가 납니다."
+      summary: "옛 추억이 떠오르는 날입니다."
+    locked:
+      luckyTime: "20:00~20:30 (추억의 시간)"
+      helper: "오래된 친구"
+      caution: "과거에 너무 빠지지 마세요."
+      moneyDetail: "경험에서 배우세요."
+      loveDetail: "첫사랑 같은 설렘입니다."
+      conditionDetail: "향기로 기분을 전환하세요."
+
+  - id: T1120
+    open:
+      oneLiner: "연기 냄새가 납니다."
+      summary: "무언가 타오르고 있습니다."
+    locked:
+      luckyTime: "18:00~18:30 (불꽃의 시간)"
+      helper: "열정적인 파트너"
+      caution: "너무 태우면 재가 됩니다."
+      moneyDetail: "열정을 투자하세요."
+      loveDetail: "뜨거운 감정입니다."
+      conditionDetail: "과열을 조심하세요."
+
+  # T1121-T1130: 맛/미각 (Taste)
+  - id: T1121
+    open:
+      oneLiner: "단맛이 납니다."
+      summary: "달콤한 결실의 날입니다."
+    locked:
+      luckyTime: "15:00~15:30 (디저트 타임)"
+      helper: "달콤한 말을 하는 사람"
+      caution: "너무 달면 물립니다."
+      moneyDetail: "달콤한 수익이 예상됩니다."
+      loveDetail: "달콤한 사랑입니다."
+      conditionDetail: "당 섭취를 조절하세요."
+
+  - id: T1122
+    open:
+      oneLiner: "쓴맛이 납니다."
+      summary: "쓰디쓴 경험이 약이 됩니다."
+    locked:
+      luckyTime: "06:00~06:30 (아침 약 시간)"
+      helper: "쓴소리를 해주는 조언자"
+      caution: "쓴맛을 피하지 마세요."
+      moneyDetail: "손실이 교훈이 됩니다."
+      loveDetail: "아픔이 성장이 됩니다."
+      conditionDetail: "쓴 것도 필요합니다."
+
+  - id: T1123
+    open:
+      oneLiner: "신맛이 납니다."
+      summary: "상큼하게 정신이 번쩍 드는 날입니다."
+    locked:
+      luckyTime: "10:00~10:30 (상쾌한 시간)"
+      helper: "에너지를 주는 사람"
+      caution: "너무 신 것은 이가 상합니다."
+      moneyDetail: "자극적인 기회가 있습니다."
+      loveDetail: "새콤달콤한 연애입니다."
+      conditionDetail: "비타민C를 섭취하세요."
+
+  - id: T1124
+    open:
+      oneLiner: "짠맛이 납니다."
+      summary: "눈물의 맛이지만 치유됩니다."
+    locked:
+      luckyTime: "21:00~21:30 (성찰의 시간)"
+      helper: "함께 울어줄 친구"
+      caution: "소금기가 많으면 해롭습니다."
+      moneyDetail: "힘든 시기지만 지나갑니다."
+      loveDetail: "진심 어린 눈물입니다."
+      conditionDetail: "나트륨 섭취를 줄이세요."
+
+  - id: T1125
+    open:
+      oneLiner: "매운맛이 납니다."
+      summary: "얼얼하게 자극적인 날입니다."
+    locked:
+      luckyTime: "12:00~12:30 (점심 매운탕 시간)"
+      helper: "스릴을 주는 동료"
+      caution: "너무 자극적이면 탈납니다."
+      moneyDetail: "모험적인 투자입니다."
+      loveDetail: "짜릿한 감정입니다."
+      conditionDetail: "위장을 보호하세요."
+
+  - id: T1126
+    open:
+      oneLiner: "감칠맛이 납니다."
+      summary: "깊은 맛처럼 풍요로운 날입니다."
+    locked:
+      luckyTime: "19:00~19:30 (저녁 식사 시간)"
+      helper: "경험이 풍부한 선배"
+      caution: "겉만 화려하면 공허합니다."
+      moneyDetail: "깊이 있는 투자를 하세요."
+      loveDetail: "깊어지는 사랑입니다."
+      conditionDetail: "영양가 있게 드세요."
+
+  - id: T1127
+    open:
+      oneLiner: "담백한 맛입니다."
+      summary: "자극 없이 편안한 날입니다."
+    locked:
+      luckyTime: "07:00~07:30 (아침 죽 시간)"
+      helper: "부담 없는 친구"
+      caution: "심심해도 좋은 것입니다."
+      moneyDetail: "안정적인 수익입니다."
+      loveDetail: "편안한 관계입니다."
+      conditionDetail: "소화가 잘 됩니다."
+
+  - id: T1128
+    open:
+      oneLiner: "고소한 맛입니다."
+      summary: "구수하고 든든한 하루입니다."
+    locked:
+      luckyTime: "08:00~08:30 (미숫가루 시간)"
+      helper: "든든한 후원자"
+      caution: "기름지면 무거워집니다."
+      moneyDetail: "고소한 수익입니다."
+      loveDetail: "따뜻하고 고소한 사랑입니다."
+      conditionDetail: "견과류가 좋습니다."
+
+  - id: T1129
+    open:
+      oneLiner: "떫은맛이 납니다."
+      summary: "처음엔 거부감이 있지만 익숙해집니다."
+    locked:
+      luckyTime: "16:00~16:30 (녹차 시간)"
+      helper: "인내심 있는 조언자"
+      caution: "첫인상에 속지 마세요."
+      moneyDetail: "처음엔 어렵지만 익숙해집니다."
+      loveDetail: "천천히 정이 듭니다."
+      conditionDetail: "타닌이 도움됩니다."
+
+  - id: T1130
+    open:
+      oneLiner: "시원한 맛입니다."
+      summary: "속이 뻥 뚫리는 날입니다."
+    locked:
+      luckyTime: "13:00~13:30 (냉면 시간)"
+      helper: "속 시원한 얘기를 하는 친구"
+      caution: "너무 차가우면 배탈납니다."
+      moneyDetail: "막힌 것이 뚫립니다."
+      loveDetail: "오해가 풀립니다."
+      conditionDetail: "시원하게 풀어주세요."
+
+  # T1131-T1140: 촉각/감각 (Touch/Sensation)
+  - id: T1131
+    open:
+      oneLiner: "부드러운 감촉입니다."
+      summary: "비단처럼 부드러운 하루입니다."
+    locked:
+      luckyTime: "09:00~09:30 (부드러운 시간)"
+      helper: "다정한 사람"
+      caution: "너무 부드러우면 흐물해집니다."
+      moneyDetail: "순조로운 거래입니다."
+      loveDetail: "다정한 손길입니다."
+      conditionDetail: "피부가 부드러워집니다."
+
+  - id: T1132
+    open:
+      oneLiner: "거친 감촉입니다."
+      summary: "울퉁불퉁한 길이지만 단련됩니다."
+    locked:
+      luckyTime: "14:00~14:30 (단련의 시간)"
+      helper: "터프한 멘토"
+      caution: "상처받을 수 있습니다."
+      moneyDetail: "거친 시장이지만 기회입니다."
+      loveDetail: "부딪히며 알아갑니다."
+      conditionDetail: "굳은살이 생깁니다."
+
+  - id: T1133
+    open:
+      oneLiner: "따뜻한 온기입니다."
+      summary: "포근한 온기가 감싸는 날입니다."
+    locked:
+      luckyTime: "20:00~20:30 (포근한 저녁)"
+      helper: "따뜻한 마음을 가진 사람"
+      caution: "뜨거우면 데입니다."
+      moneyDetail: "따뜻한 지원이 있습니다."
+      loveDetail: "따뜻한 품입니다."
+      conditionDetail: "체온을 유지하세요."
+
+  - id: T1134
+    open:
+      oneLiner: "차가운 느낌입니다."
+      summary: "냉정하지만 명확한 날입니다."
+    locked:
+      luckyTime: "06:00~06:30 (새벽 냉수)"
+      helper: "냉철한 분석가"
+      caution: "너무 차가우면 얼어붙습니다."
+      moneyDetail: "냉정하게 판단하세요."
+      loveDetail: "쿨한 관계입니다."
+      conditionDetail: "냉수로 정신 차리세요."
+
+  - id: T1135
+    open:
+      oneLiner: "묵직한 무게감입니다."
+      summary: "책임감이 무겁지만 버텨냅니다."
+    locked:
+      luckyTime: "10:00~10:30 (무게의 시간)"
+      helper: "함께 짐을 나눌 동료"
+      caution: "혼자 다 지려 하지 마세요."
+      moneyDetail: "무거운 책임, 큰 보상입니다."
+      loveDetail: "무게감 있는 약속입니다."
+      conditionDetail: "무거운 것을 내려놓으세요."
+
+  - id: T1136
+    open:
+      oneLiner: "가벼운 느낌입니다."
+      summary: "홀가분하게 날아갈 것 같은 날입니다."
+    locked:
+      luckyTime: "07:00~07:30 (아침 산책 시간)"
+      helper: "가볍게 해주는 유머러스한 친구"
+      caution: "가벼우면 날아갑니다."
+      moneyDetail: "부담 없는 투자입니다."
+      loveDetail: "가벼운 만남도 좋습니다."
+      conditionDetail: "몸이 가벼워집니다."
+
+  - id: T1137
+    open:
+      oneLiner: "날카로운 감각입니다."
+      summary: "촉이 살아있어 예리하게 판단합니다."
+    locked:
+      luckyTime: "11:00~11:30 (예리한 시간)"
+      helper: "날카로운 통찰력의 조언자"
+      caution: "찔리면 아픕니다."
+      moneyDetail: "예리하게 기회를 잡으세요."
+      loveDetail: "감각적인 연애입니다."
+      conditionDetail: "감각을 깨우세요."
+
+  - id: T1138
+    open:
+      oneLiner: "둔한 느낌입니다."
+      summary: "느리지만 확실하게 갑니다."
+    locked:
+      luckyTime: "15:00~15:30 (우직의 시간)"
+      helper: "느긋한 친구"
+      caution: "너무 느리면 기회를 놓칩니다."
+      moneyDetail: "천천히 하지만 확실히."
+      loveDetail: "서서히 깊어집니다."
+      conditionDetail: "조급해하지 마세요."
+
+  - id: T1139
+    open:
+      oneLiner: "쫀득한 질감입니다."
+      summary: "찰지게 착 달라붙는 날입니다."
+    locked:
+      luckyTime: "12:00~12:30 (점심 시간)"
+      helper: "끈끈한 유대의 동료"
+      caution: "너무 달라붙으면 끈적합니다."
+      moneyDetail: "착실히 쌓여갑니다."
+      loveDetail: "찰떡궁합입니다."
+      conditionDetail: "쫀득한 음식이 좋습니다."
+
+  - id: T1140
+    open:
+      oneLiner: "바삭한 질감입니다."
+      summary: "경쾌하게 부서지며 새로워집니다."
+    locked:
+      luckyTime: "10:00~10:30 (스낵 타임)"
+      helper: "상쾌한 에너지의 친구"
+      caution: "부서지면 원상복구 어렵습니다."
+      moneyDetail: "깔끔하게 정리하세요."
+      loveDetail: "시원시원한 관계입니다."
+      conditionDetail: "가볍게 즐기세요."
+
+  # T1141-T1150: 색채/색깔 (Color)
+  - id: T1141
+    open:
+      oneLiner: "빨간색의 날입니다."
+      summary: "열정과 에너지가 넘치는 날입니다."
+    locked:
+      luckyTime: "14:00~14:30 (열정의 시간)"
+      helper: "열정적인 리더"
+      caution: "너무 뜨거우면 번아웃됩니다."
+      moneyDetail: "공격적인 투자입니다."
+      loveDetail: "뜨거운 사랑입니다."
+      conditionDetail: "에너지가 넘칩니다."
+
+  - id: T1142
+    open:
+      oneLiner: "파란색의 날입니다."
+      summary: "차분하고 신뢰감 있는 날입니다."
+    locked:
+      luckyTime: "09:00~09:30 (맑은 시간)"
+      helper: "신뢰할 수 있는 조언자"
+      caution: "너무 차가워 보일 수 있습니다."
+      moneyDetail: "안정적인 선택입니다."
+      loveDetail: "깊은 신뢰의 관계입니다."
+      conditionDetail: "마음이 차분해집니다."
+
+  - id: T1143
+    open:
+      oneLiner: "노란색의 날입니다."
+      summary: "밝고 희망찬 에너지의 날입니다."
+    locked:
+      luckyTime: "08:00~08:30 (해돋이 시간)"
+      helper: "낙천적인 친구"
+      caution: "너무 가벼워 보일 수 있습니다."
+      moneyDetail: "희망적인 전망입니다."
+      loveDetail: "밝은 에너지의 만남입니다."
+      conditionDetail: "기분이 밝아집니다."
+
+  - id: T1144
+    open:
+      oneLiner: "초록색의 날입니다."
+      summary: "성장과 치유의 에너지입니다."
+    locked:
+      luckyTime: "07:00~07:30 (자연의 시간)"
+      helper: "힐링을 주는 사람"
+      caution: "질투의 감정을 조심하세요."
+      moneyDetail: "성장주에 주목하세요."
+      loveDetail: "건강한 관계입니다."
+      conditionDetail: "자연 속에서 힐링하세요."
+
+  - id: T1145
+    open:
+      oneLiner: "보라색의 날입니다."
+      summary: "신비롭고 창의적인 에너지입니다."
+    locked:
+      luckyTime: "21:00~21:30 (신비의 시간)"
+      helper: "창의적인 예술가"
+      caution: "현실과 동떨어질 수 있습니다."
+      moneyDetail: "창의적인 아이디어가 수익이 됩니다."
+      loveDetail: "신비로운 인연입니다."
+      conditionDetail: "상상력이 풍부해집니다."
+
+  - id: T1146
+    open:
+      oneLiner: "주황색의 날입니다."
+      summary: "따뜻하고 사교적인 에너지입니다."
+    locked:
+      luckyTime: "17:00~17:30 (노을 시간)"
+      helper: "사교적인 네트워커"
+      caution: "산만해질 수 있습니다."
+      moneyDetail: "인맥이 재물이 됩니다."
+      loveDetail: "밝고 따뜻한 교류입니다."
+      conditionDetail: "활력이 생깁니다."
+
+  - id: T1147
+    open:
+      oneLiner: "분홍색의 날입니다."
+      summary: "로맨틱하고 부드러운 에너지입니다."
+    locked:
+      luckyTime: "16:00~16:30 (로맨스 타임)"
+      helper: "로맨틱한 파트너"
+      caution: "현실을 잊지 마세요."
+      moneyDetail: "감성 소비가 있습니다."
+      loveDetail: "핑크빛 사랑입니다."
+      conditionDetail: "마음이 부드러워집니다."
+
+  - id: T1148
+    open:
+      oneLiner: "검은색의 날입니다."
+      summary: "깊이 있고 단호한 에너지입니다."
+    locked:
+      luckyTime: "23:00~23:30 (밤의 시간)"
+      helper: "카리스마 있는 멘토"
+      caution: "너무 어두우면 위축됩니다."
+      moneyDetail: "단호한 결정이 필요합니다."
+      loveDetail: "깊은 끌림입니다."
+      conditionDetail: "내면을 들여다보세요."
+
+  - id: T1149
+    open:
+      oneLiner: "흰색의 날입니다."
+      summary: "순수하고 깨끗한 시작입니다."
+    locked:
+      luckyTime: "06:00~06:30 (새벽 시간)"
+      helper: "순수한 마음의 친구"
+      caution: "더러워지기 쉽습니다."
+      moneyDetail: "깨끗하게 시작하세요."
+      loveDetail: "순수한 마음입니다."
+      conditionDetail: "정화의 시간입니다."
+
+  - id: T1150
+    open:
+      oneLiner: "금색의 날입니다."
+      summary: "황금빛 기회가 빛나는 날입니다."
+    locked:
+      luckyTime: "12:00~12:30 (정오의 빛)"
+      helper: "황금 인맥"
+      caution: "모든 것이 금은 아닙니다."
+      moneyDetail: "황금 같은 기회입니다."
+      loveDetail: "소중한 인연입니다."
+      conditionDetail: "빛나는 컨디션입니다."
